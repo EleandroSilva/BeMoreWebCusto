@@ -1,0 +1,240 @@
+unit ufrmLocalProducao;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Data.DB,
+
+  ufrmModelodbEdit,
+
+  udmPrincipal,
+
+  Whorkshop.Controller,
+  Whorkshop.Controller.Interfaces;
+
+type
+  TfrmLocalProducao = class(TfrmModelodbEdit)
+    dbgCadastro: TDBGrid;
+    rgInternoExterno: TRadioGroup;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
+    procedure dbgCadastroDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnSearchClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnUpdateClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure btnSalveClick(Sender: TObject);
+  private
+    FController: iController;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmLocalProducao: TfrmLocalProducao;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TfrmLocalProducao.btnCancelClick(Sender: TObject);
+begin
+  if dmPrincipal.cdsLocal.State in [DsInsert, DsEdit] then
+    dmPrincipal.cdsLocal.Cancel;
+
+  if dmPrincipal.cdsLocal.ChangeCount > 0 then
+    dmPrincipal.cdsLocal.CancelUpdates;
+
+  if dmprincipal.sqlconexao.InTransaction then
+    dmprincipal.sqlconexao.Rollback(TD);
+
+  dmPrincipal.sqlLocal.Active := False;
+  dmPrincipal.cdsLocal.Active := False;
+  inherited;
+end;
+
+procedure TfrmLocalProducao.btnDeleteClick(Sender: TObject);
+var
+  Erros: Integer;
+begin
+  if MessageBox(handle, 'Deseja excluir este registro?', 'Aviso', mb_IconQuestion or mb_Yesno) = mrYes then
+  begin
+    dmPrincipal.cdsLocal.Delete;
+
+    if not dmprincipal.sqlconexao.InTransaction then
+      dmprincipal.sqlconexao.StartTransaction(TD);
+
+    Erros := dmPrincipal.cdsLocal.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmprincipal.sqlconexao.Commit(TD);
+      showmessage('Parabéns ' + edtOperator.Text + ' Registro excluído com sucesso!');
+    end
+    else
+    begin
+      dmprincipal.sqlconexao.Rollback(TD);
+      showmessage('Atenção ' + edtOperator.Text + ' Registro não pode ser excluído!');
+      Abort;
+    end;
+
+    dmPrincipal.cdsLocal.Active := False;
+    dmPrincipal.sqlLocal.Active := False;
+    dmPrincipal.sqlLocal.CommandText := ('select * from Local ');
+  end;
+
+  inherited;
+end;
+
+procedure TfrmLocalProducao.btnNewClick(Sender: TObject);
+begin
+  inherited;
+  dmPrincipal.sqlLocal.Active := False;
+  dmPrincipal.sqlLocal.CommandText := ('select * from Local where id=0 ');
+  dmPrincipal.cdsLocal.Active := True;
+  dmPrincipal.cdsLocal.Append;
+  dmPrincipal.cdsLocal.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsLocal.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  dmPrincipal.cdsLocal.FieldByName('DataLancamento').AsDateTime := Now;
+  dmPrincipal.cdsLocal.FieldByName('Status').AsInteger := 1;
+  dmPrincipal.cdsLocal.FieldByName('Ativo').AsInteger := 1;
+end;
+
+procedure TfrmLocalProducao.btnSalveClick(Sender: TObject);
+var
+  Erros: Integer;
+begin
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', MB_YESNO) = IDYES then
+  begin
+    dmPrincipal.cdsLocal.Edit;
+
+    if dmPrincipal.cdsLocal.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsLocal.Post;
+
+    dmPrincipal.SQLConexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsLocal.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsLocal.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.SQLConexao.Commit(TD);
+      showmessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      dmPrincipal.cdsLocal.Active := False;
+    end
+    else
+    begin
+      dmPrincipal.SQLConexao.RollBack(TD);
+      showmessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+    end;
+    inherited;
+    btnCancel.Click;
+  end
+  else
+    Abort;
+end;
+
+procedure TfrmLocalProducao.btnSearchClick(Sender: TObject);
+begin
+  try
+    dmPrincipal.sqlLocal.Active := False;
+    dmPrincipal.sqlLocal.CommandText := ('select * from Local ' +
+      'where ativo=1 ' +
+      'order by descricao ');
+    dmPrincipal.cdsLocal.Active := False;
+    dmPrincipal.cdsLocal.Active := True;
+
+    if dmPrincipal.cdsLocal.IsEmpty then
+    begin
+      raise Exception.Create('Atenção... ' + FController
+        .EntidadesEmpresaLogada
+        .DadosEmpresaLogada
+        .Operador + ' Registro não encontrado!');
+    end;
+
+  finally
+
+  end;
+
+  inherited;
+
+end;
+
+procedure TfrmLocalProducao.btnUpdateClick(Sender: TObject);
+begin
+  inherited;
+  dmPrincipal.cdsLocal.Edit;
+end;
+
+procedure TfrmLocalProducao.dbgCadastroDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmLocalProducao.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  frmLocalProducao := nil;
+  Action := caFree;
+end;
+
+procedure TfrmLocalProducao.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FController := TController.New;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmLocalProducao.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Local de Produção';
+end;
+
+end.

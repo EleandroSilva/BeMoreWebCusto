@@ -1,0 +1,733 @@
+unit ufrmModelProduct;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.ImageList,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.ImgList,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  ufrmModelo,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.Mask,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller;
+
+type
+  TfrmModelProduct = class(TfrmModelo)
+    dsModel: TDataSource;
+    dsProduct: TDataSource;
+    Panel7: TPanel;
+    dbgProduct: TDBGrid;
+    Panel10: TPanel;
+    dbgModelProduct: TDBGrid;
+    Label5: TLabel;
+    btnModel: TBitBtn;
+    pProduct: TPanel;
+    Panel8: TPanel;
+    Label2: TLabel;
+    edtProduct: TEdit;
+    btnSearchProduct: TBitBtn;
+    rgProduct: TRadioGroup;
+    Panel11: TPanel;
+    dbgModeloProduto: TDBGrid;
+    dbId: TDBEdit;
+    MdbReleaseDate: TDBEdit;
+    dbIdModelo: TDBEdit;
+    lModel: TDBText;
+    dbOperador: TDBEdit;
+    Panel3: TPanel;
+    dbnModeloProdutoItem: TDBNavigator;
+    DBText1: TDBText;
+    Label3: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnNewClick(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure btnSalveClick(Sender: TObject);
+    procedure dblcbModelExit(Sender: TObject);
+    procedure dbgProductDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure dbgProductCellClick(Column: TColumn);
+    procedure dbgProductColEnter(Sender: TObject);
+    procedure btnSearchProductClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure btnModelClick(Sender: TObject);
+    procedure edtProductExit(Sender: TObject);
+    procedure dbgModelProductDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure edtSearchExit(Sender: TObject);
+    procedure dbgModeloProdutoDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnPrintClick(Sender: TObject);
+    procedure dbIdModeloExit(Sender: TObject);
+    procedure dbIdModeloKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure dbIdModeloKeyPress(Sender: TObject; var Key: Char);
+    procedure NavigatorClick(Sender: TObject; Button: TNavigateBtn);
+  private
+    FController: iController;
+
+    function PesquisaModeloProduto(aValue: String): Boolean;
+    function PesquisaModeloProdutoItem(aValue: String): Boolean;
+    function PesquisaModelo(aValue: String): Boolean;
+    function ListaModeloProdutoImprimir(aValue: String): Boolean;
+
+    procedure AtualizaNew;
+    procedure AtualizarSearch;
+    procedure AtualizarSalve;
+
+    procedure InserirModeloProduto;
+    procedure SalvarModeloProduto;
+    procedure InserirModeloProdutoItem;
+
+    function PegarGenId: Integer;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmModelProduct: TfrmModelProduct;
+
+implementation
+
+uses
+  ufrmSearchModel,
+  ufrmModel,
+  udmEntidade.Relatorios,
+  udmPrincipal;
+
+{$R *.dfm}
+
+
+function TfrmModelProduct.PegarGenId: Integer;
+begin
+  dmPrincipal.queryAuxiliar.Active := False;
+  dmPrincipal.queryAuxiliar.SQL.Clear;
+  dmPrincipal.queryAuxiliar.SQL.Text := ('select gen_id(GEN_MODELOPRODUTO_ID,0) from rdb$database ');
+  Result := dmPrincipal.queryAuxiliar.FieldByName('gen_id').AsInteger;
+  dmPrincipal.queryAuxiliar.Active := False;
+end;
+
+procedure TfrmModelProduct.InserirModeloProduto;
+begin
+  if not dmPrincipal.cdsModeloProduto.Active then
+  begin
+    dmPrincipal.sqlModeloProduto.Active := False;
+    dmPrincipal.sqlModeloProduto.CommandText := ('select ' +
+      'mp.id, ' +
+      'mp.idmodelo, ' +
+      'm.descricao Modelo, ' +
+      'mp.datalancamento, ' +
+      'mp.operador, ' +
+      'mp.ativo ' +
+      'from ModeloProduto mp ' +
+      'inner join Modelo m on m.id = mp.idmodelo ' +
+      'where mp.id=:Id ');
+    dmPrincipal.sqlModeloProduto.Params.ParamByName('ID').DataType := ftInteger;
+    dmPrincipal.sqlModeloProduto.Params.ParamValues['ID'] := 0;
+    dmPrincipal.cdsModeloProduto.Active := True;
+  end;
+  dmPrincipal.cdsModeloProduto.Append;
+
+  dmPrincipal.cdsModeloProduto.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsModeloProduto.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  dmPrincipal.cdsModeloProduto.FieldByName('DataLancamento').AsDateTime := Now;
+  dmPrincipal.cdsModeloProduto.FieldByName('Ativo').AsInteger := 1;
+end;
+
+procedure TfrmModelProduct.SalvarModeloProduto;
+var
+  Erros: Integer;
+begin
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', mb_Yesno) = IDYES then
+  begin
+    InserirModeloProdutoItem;
+
+    if dmPrincipal.cdsModeloProdutoItem.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsModeloProdutoItem.Post;
+
+    if dmPrincipal.cdsModeloProduto.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsModeloProduto.Post;
+
+    dmPrincipal.sqlconexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsModeloProduto.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsModeloProduto.ApplyUpdates(0);
+
+    if dmPrincipal.cdsModeloProdutoItem.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsModeloProdutoItem.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.sqlconexao.Commit(TD);
+      ShowMessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      dmPrincipal.FecharQuery;
+    end
+    else
+    begin
+      dmPrincipal.sqlconexao.Rollback(TD);
+      ShowMessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+      dmPrincipal.FecharQuery;
+    end;
+    AtualizarSalve;
+  end
+  else
+    Abort;
+end;
+
+procedure TfrmModelProduct.InserirModeloProdutoItem;
+begin
+  if not dmPrincipal.cdsModeloProduto.IsEmpty then
+    if not dsProduct.DataSet.IsEmpty then
+    begin
+      dsProduct.DataSet.First;
+      if not dmPrincipal.cdsModeloProdutoItem.Active then
+      begin
+        dmPrincipal.sqlModeloProdutoItem.Active := False;
+        dmPrincipal.sqlModeloProdutoItem.CommandText := ('select ' +
+          'mpi.id, ' +
+          'mpi.idmodeloproduto, ' +
+          'mpi.idProduto, ' +
+          'pro.descricao Produto, ' +
+
+          '( ' +
+          ' select ' +
+          '   count(*) QtdeModelo ' +
+          ' from ModeloProdutoItem mpi ' +
+          ' inner join ModeloProduto mp1 on mp1.id = mpi.idmodeloproduto ' +
+          ' where mp1.idmodelo = mp.IdModelo ' +
+          '), ' +
+
+          '( ' +
+          ' select ' +
+          '   count(*) QtdeRegistro ' +
+          ' from ModeloProdutoItem mpi ' +
+          ' inner join ModeloProduto mp1 on mp1.id = mpi.idmodeloproduto ' +
+          ') ' +
+
+          'from ModeloProdutoItem mpi ' +
+          'inner join Cad_Pro pro on pro.id_Pro = mpi.IdProduto ' +
+          'inner join ModeloProduto mp on mp.id = mpi.idmodeloproduto ' +
+          'where mpi.idmodeloProduto=:Id ');
+        dmPrincipal.sqlModeloProdutoItem.Params.ParamByName('ID').DataType := ftInteger;
+        dmPrincipal.sqlModeloProdutoItem.Params.ParamValues['ID'] := 0;
+
+        dmPrincipal.cdsModeloProdutoItem.Active := False;
+        dmPrincipal.cdsModeloProdutoItem.Active := True;
+      end;
+
+      while not dsProduct.DataSet.Eof do
+      begin
+        if dsProduct.DataSet.FieldByName('Enviar').AsInteger = 1 then
+        begin
+          dmPrincipal.cdsModeloProdutoItem.Append;
+          dmPrincipal.cdsModeloProdutoItem.FieldByName('ID').AsInteger := 0;
+          dmPrincipal.cdsModeloProdutoItem.FieldByName('IDModeloProduto').AsInteger := 0;
+          dmPrincipal.cdsModeloProdutoItem.FieldByName('IdProduto').AsString := dbgProduct.Fields[0].AsString;
+          dmPrincipal.cdsModeloProdutoItem.FieldByName('Produto').AsString := dbgProduct.Fields[2].AsString;
+          dmPrincipal.queryAuxiliar.Active := False;
+        end;
+        dsProduct.DataSet.Next;
+      end;
+    end;
+end;
+
+function TfrmModelProduct.ListaModeloProdutoImprimir(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+  lOrdem := '';
+
+  lSQL := ('select ' +
+    'mpi.id, ' +
+    'mp.idmodelo, ' +
+    'm.descricao Modelo, ' +
+
+    'mpi.idmodeloproduto, ' +
+    'mpi.idProduto, ' +
+
+    'case when cor.descricao=''.'' then pro.descricao ' +
+    '   else (pro.descricao||'' ''||cor.descricao) ' +
+    'end Produto, ' +
+
+    '( ' +
+    ' select ' +
+    '   count(*) QtdeModelo ' +
+    ' from ModeloProdutoItem mpi ' +
+    ' inner join ModeloProduto mp1 on mp1.id = mpi.idmodeloproduto ' +
+    ' where mp1.idmodelo = mp.IdModelo ' +
+    '), ' +
+
+    '( ' +
+    ' select ' +
+    '   count(*) QtdeRegistro ' +
+    ' from ModeloProdutoItem mpi ' +
+    ' inner join ModeloProduto mp1 on mp1.id = mpi.idmodeloproduto ' +
+    ') ' +
+
+    'from ModeloProdutoItem mpi ' +
+    'inner join ModeloProduto mp on mp.id          = mpi.idmodeloproduto ' +
+    'inner join Modelo         m on m.id           = mp.idmodelo ' +
+    'inner join Cad_Pro      pro on pro.id_Pro     = mpi.IdProduto ' +
+    'inner join cad_cores    cor on cor.id_cod_cor = pro.id_cod_cor ');
+
+  if aValue <> '' then
+    lWhere := ('where mp.Id=' + aValue + ' ');
+
+  lOrdem := ('Order by mp.Id asc, mp.IdModelo asc, (pro.descricao||'' ''||cor.descricao) ');
+
+  dmPrincipal.sqlListaModeloProduto.Active := False;
+  dmPrincipal.sqlListaModeloProduto.CommandText := lSQL + lWhere + lOrdem;
+  dmPrincipal.cdsListaModeloProduto.Active := False;
+  dmPrincipal.cdsListaModeloProduto.Active := True;
+
+  if dmPrincipal.cdsListaModeloProduto.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+procedure TfrmModelProduct.NavigatorClick(Sender: TObject;
+  Button: TNavigateBtn);
+begin
+  if not dmPrincipal.cdsModeloProduto.IsEmpty then
+    if edtSearch.Text <> '' then
+      frmModelProduct.PesquisaModeloProdutoItem(dmPrincipal.cdsModeloProduto.FieldByName('Id').AsString)
+    else
+      frmModelProduct.PesquisaModeloProdutoItem('');
+end;
+
+procedure TfrmModelProduct.AtualizarSearch;
+begin
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnDelete.Enabled := True;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnNew.Enabled := True;
+end;
+
+procedure TfrmModelProduct.AtualizaNew;
+begin
+  btnNew.Enabled := False;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := False;
+end;
+
+procedure TfrmModelProduct.AtualizarSalve;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelProduct.btnCloseClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmModelProduct.btnDeleteClick(Sender: TObject);
+begin
+  FController
+    .Entidades
+    .ModelProduct
+    .DataSet(DataSource1)
+    .Delete(dmPrincipal.cdsModeloProduto.FieldByName('Id').AsString);
+end;
+
+procedure TfrmModelProduct.btnModelClick(Sender: TObject);
+begin
+  Application.CreateForm(TfrmModel, frmModel);
+  frmModel.lfrmExecutando.Caption := 'frmModelProduct';
+  frmModel.ShowModal;
+end;
+
+procedure TfrmModelProduct.btnNewClick(Sender: TObject);
+begin
+  dmPrincipal.Alterar := False;
+  InserirModeloProduto;
+  MdbReleaseDate.SetFocus;
+  AtualizaNew;
+end;
+
+procedure TfrmModelProduct.btnPrintClick(Sender: TObject);
+begin
+  if not dmPrincipal.cdsModeloProduto.IsEmpty then
+  begin
+    if edtSearch.Text <> '' then
+      frmModelProduct.ListaModeloProdutoImprimir(dmPrincipal.cdsModeloProduto.FieldByName('Id').AsString)
+    else
+      frmModelProduct.ListaModeloProdutoImprimir('');
+    if dmPrincipal.cdsListaModeloProduto.IsEmpty then
+      raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado)
+    else
+      dmEntidadeRelatorios.pprModeloProduto.Print;
+  end
+  else
+    raise Exception.Create(dmPrincipal.cMSGImpressao);
+end;
+
+procedure TfrmModelProduct.btnSalveClick(Sender: TObject);
+begin
+  SalvarModeloProduto;
+
+  AtualizarSalve;
+  // inherited;
+end;
+
+procedure TfrmModelProduct.btnSearchClick(Sender: TObject);
+begin
+  if not frmModelProduct.PesquisaModeloProduto(edtSearch.Text) then
+  begin
+    btnCancel.Click;
+    raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado);
+  end
+  else
+  begin
+    if edtSearch.Text <> '' then
+      frmModelProduct.PesquisaModeloProdutoItem(dmPrincipal.cdsModeloProduto.FieldByName('Id').AsString)
+    else
+      frmModelProduct.PesquisaModeloProdutoItem('');
+    pgMain.ActivePageIndex := 1;
+  end;
+
+  AtualizarSearch;
+end;
+
+procedure TfrmModelProduct.btnSearchProductClick(Sender: TObject);
+begin
+  FController
+    .Entidades
+    .Product
+    .DataSet(dsProduct)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(rgProduct.ItemIndex)
+    .TextoFiltro(edtProduct.Text)
+    .Buscar(edtProduct.Text);
+end;
+
+procedure TfrmModelProduct.dbgModelProductDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  inherited;
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmModelProduct.dbgProductCellClick(Column: TColumn);
+begin
+  if not dbgProduct.Fields[1].IsNull then
+    if Column.Field = dsProduct.DataSet.FieldByName('Enviar') then
+    begin
+      dsProduct.DataSet.Edit;
+
+      if dsProduct.DataSet.FieldByName('Enviar').AsInteger = 1 then
+        dsProduct.DataSet.FieldByName('Enviar').AsInteger := 0
+      else
+        dsProduct.DataSet.FieldByName('Enviar').AsInteger := 1;
+    end;
+end;
+
+procedure TfrmModelProduct.dbgProductColEnter(Sender: TObject);
+begin
+  if dbgProduct.SelectedField = dsProduct.DataSet.FieldByName('Enviar') then
+    dbgProduct.Options := dbgProduct.Options - [DgEditing]
+  else
+    dbgProduct.Options := dbgProduct.Options + [DgEditing];
+end;
+
+procedure TfrmModelProduct.dbgProductDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+
+  // pinta checkbox
+  if Column.Field = dsProduct.DataSet.FieldByName('Enviar') then
+  begin
+    dbgProduct.Canvas.FillRect(Rect);
+    ImageList1.Draw(dbgProduct.Canvas, Rect.Left + 10, Rect.Top + 1, 0);
+
+    if dsProduct.DataSet.FieldByName('Enviar').AsInteger = 1 then
+      ImageList1.Draw(dbgProduct.Canvas, Rect.Left + 10, Rect.Top + 1, 2)
+    else
+      ImageList1.Draw(dbgProduct.Canvas, Rect.Left + 10, Rect.Top + 1, 0);
+  end;
+end;
+
+procedure TfrmModelProduct.dbgModeloProdutoDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  inherited;
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmModelProduct.dbIdModeloExit(Sender: TObject);
+begin
+  if dbIdModelo.Text = '' then
+  begin
+    dbIdModelo.SetFocus;
+    raise Exception.Create('Atenção... ' + edtOperator.Text + ' Favor informar Id Modelo!');
+  end;
+
+  if frmModelProduct.PesquisaModelo(dbIdModelo.Text) then
+  begin
+    dmPrincipal.cdsModeloProduto.FieldByName('Modelo').AsString := dmPrincipal.queryAuxiliar.FieldByName('Modelo').AsString;
+    edtProduct.SetFocus;
+  end
+  else
+  begin
+    dmPrincipal.cdsModeloProduto.FieldByName('Modelo').Clear;
+    dbIdModelo.SetFocus;
+    raise Exception.Create('Registro não encontrado!');
+  end;
+end;
+
+procedure TfrmModelProduct.dbIdModeloKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_F1:
+      begin
+        Application.CreateForm(TfrmSearchModel, frmSearchModel);
+        frmSearchModel.lfrmExecutando.Caption := 'frmModelProduct';
+        frmSearchModel.ShowModal;
+      end;
+  end;
+end;
+
+procedure TfrmModelProduct.dbIdModeloKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+    Key := #0;
+end;
+
+procedure TfrmModelProduct.dblcbModelExit(Sender: TObject);
+begin
+  inherited;
+  FController
+    .Entidades
+    .Model
+    .DataSet(DataSource1)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(0)
+    .Buscar('');
+end;
+
+procedure TfrmModelProduct.edtProductExit(Sender: TObject);
+begin
+  inherited;
+  btnSalve.Enabled := True;
+end;
+
+procedure TfrmModelProduct.edtSearchExit(Sender: TObject);
+begin
+  {
+    if ((not DataSource1.DataSet.IsEmpty) and (edtSearch.Text <> '')) then
+    btnDelete.Enabled := true
+    else
+    btnDelete.Enabled := false;
+  }
+end;
+
+procedure TfrmModelProduct.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  frmModelProduct := nil;
+  Action := caFree;
+end;
+
+procedure TfrmModelProduct.FormCreate(Sender: TObject);
+begin
+  inherited;
+
+  FController := TController.New;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmModelProduct.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Combinação Modelo/Produtos';
+
+  edtOperator.Text := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+end;
+
+function TfrmModelProduct.PesquisaModelo(aValue: String): Boolean;
+begin
+  dmPrincipal.queryAuxiliar.Active := False;
+  dmPrincipal.queryAuxiliar.SQL.Clear;
+  dmPrincipal.queryAuxiliar.SQL.Text := ('select ' +
+    'm.Id, ' +
+    'm.Descricao Modelo ' +
+    'from Modelo m ' +
+    'where m.Id=' + aValue + '');
+  dmPrincipal.queryAuxiliar.Active := True;
+  if dmPrincipal.queryAuxiliar.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+function TfrmModelProduct.PesquisaModeloProduto(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+  lOrdem := '';
+
+  lSQL := ('select ' +
+    'mp.id, ' +
+    'mp.idmodelo, ' +
+    'm.descricao Modelo, ' +
+    'mp.datalancamento, ' +
+    'mp.operador, ' +
+    'mp.ativo ' +
+    'from ModeloProduto mp ' +
+    'inner join Modelo m on m.id = mp.idmodelo ');
+
+  if aValue <> '' then
+    case rgChoice.ItemIndex of
+      0: lWhere := ('where mp.Id=' + aValue + ' ');
+      1: lWhere := ('where mp.IdModelo=' + aValue + ' ');
+      2: lWhere := ('where m.Descricao CONTAINING ''' + aValue + ''' ');
+      3: lWhere := ('where mp.Operador CONTAINING ''' + aValue + ''' ');
+    end;
+
+  lOrdem := ('order by mp.IdModelo asc  ');
+
+  dmPrincipal.sqlModeloProduto.Active := False;
+  dmPrincipal.sqlModeloProduto.CommandText := (lSQL + lWhere + lOrdem);
+  dmPrincipal.cdsModeloProduto.Active := False;
+  dmPrincipal.cdsModeloProduto.Active := True;
+
+  if dmPrincipal.cdsModeloProduto.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+function TfrmModelProduct.PesquisaModeloProdutoItem(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+  lOrdem := '';
+
+  lSQL := ('select ' +
+    'mpi.id, ' +
+    'mpi.idmodeloproduto, ' +
+    'mpi.idProduto, ' +
+
+    'case when cor.descricao=''.'' then pro.descricao ' +
+    '   else (pro.descricao||'' ''||cor.descricao) ' +
+    'end Produto, ' +
+
+    '( ' +
+    'select ' +
+    '  count(*) QtdeModelo ' +
+    'from ModeloProdutoItem mpi ' +
+    'inner join ModeloProduto mp1 on mp1.id = mpi.idmodeloproduto ' +
+    'where mp1.idmodelo = mp.IdModelo ' +
+    '), ' +
+
+    '( ' +
+    'select ' +
+    '  count(*) QtdeRegistro ' +
+    'from ModeloProdutoItem mpi ' +
+    'inner join ModeloProduto mp1 on mp1.id = mpi.idmodeloproduto ' +
+    ') ' +
+
+    'from ModeloProdutoItem mpi ' +
+    'inner join Cad_Pro      pro on pro.id_Pro     = mpi.IdProduto ' +
+    'inner join Cad_Cores    cor on cor.id_cod_cor = pro.id_cod_cor ' +
+    'inner join ModeloProduto mp on mp.id          = mpi.idmodeloproduto ');
+
+  if aValue <> '' then
+    lWhere := ('where mpi.IdModeloProduto=' + aValue + '');
+
+  lOrdem := ('Order by (pro.descricao||'' ''||cor.descricao) ');
+
+  dmPrincipal.sqlModeloProdutoItem.Active := False;
+  dmPrincipal.sqlModeloProdutoItem.CommandText := lSQL + lWhere + lOrdem;
+
+  dmPrincipal.cdsModeloProdutoItem.Active := False;
+  dmPrincipal.cdsModeloProdutoItem.Active := True;
+
+  if dmPrincipal.cdsModeloProdutoItem.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+end.

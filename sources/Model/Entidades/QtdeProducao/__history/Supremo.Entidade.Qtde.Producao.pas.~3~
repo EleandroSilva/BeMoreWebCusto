@@ -1,0 +1,88 @@
+unit Supremo.Entidade.Qtde.Producao;
+
+interface
+
+uses
+  Data.DB,
+
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TQtdeProducao = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData: Integer;
+    FEscolhaTipoLancamento: Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus: Integer;
+
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo: String;
+    FIdProduto: String;
+    FIdParametro1: String;
+    FIdParametro2: String;
+    FValorLancamento1: Currency;
+    FValorLancamento2: Currency;
+    FQtdeInteger: Integer;
+    FQtdeCurrency: Currency;
+    FAliquota: Currency;
+    FPrazoMedio: Currency;
+    FInicioPeriodo: TDateTime;
+    FFimPeriodo: TDateTime;
+
+    FGenId: Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue: Integer): iModelEntidade;
+    function EscolhaTipoLancamento(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue: Integer): iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro1(aValue: String): iModelEntidade;
+    function IdParametro2(aValue: String): iModelEntidade;
+    function ValorLancamento1(aValue: Currency): iModelEntidade;
+    function ValorLancamento2(aValue: Currency): iModelEntidade;
+    function Qtde(aValue: Integer): iModelEntidade; overload;
+    function Qtde(aValue: Currency): iModelEntidade; overload;
+    function Aliquota(aValue: Currency): iModelEntidade;
+    function PrazoMedio(aValue: Currency): iModelEntidade;
+    function InicioPeriodo(aValue: TDateTime): iModelEntidade;
+    function FimPeriodo(aValue: TDateTime): iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade; overload;
+    function Buscar(aValue: Integer): iModelEntidade; overload;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+end.

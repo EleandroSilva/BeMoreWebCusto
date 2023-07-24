@@ -1,0 +1,13 @@
+unit Model.Factory.Entidade.Interfaces;
+
+interface
+
+type
+  iFactoryEntidade = interface
+    ['{DD4DB681-A424-4AD5-BB0F-FB97062A6BB6}']
+    function Usuario        : iDAOUsuario;
+  end;
+
+implementation
+
+end.

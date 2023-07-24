@@ -1,0 +1,611 @@
+unit ufrmFixedExpense;
+
+interface
+
+uses
+  Winapi.Messages,
+  Winapi.Windows,
+
+  System.Types,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.Mask,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+  Vcl.ImgList,
+
+  Data.DB,
+
+  ufrmModelo,
+  ufrmSearchAccountClass,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller;
+
+type
+  TfrmFixedExpense = class(TfrmModelo)
+    btnModel: TBitBtn;
+    lDescription: TLabel;
+    edtMoney: TEdit;
+    lMoney: TLabel;
+    pProduct: TPanel;
+    Panel8: TPanel;
+    Label2: TLabel;
+    edtProduct: TEdit;
+    btnSearchProduct: TBitBtn;
+    rgPeriodoContas: TRadioGroup;
+    dbgPayAccounts: TDBGrid;
+    dsPayAccounts: TDataSource;
+    rgChoiceTypeAccount: TRadioGroup;
+    Panel7: TPanel;
+    btnInsertContasPagarDespesaFixa: TBitBtn;
+    Label3: TLabel;
+    rdTipoDespesa: TRadioGroup;
+    edtMedtReleaseDate: TDBEdit;
+    dbId: TDBEdit;
+    edtIdClasseContas: TDBEdit;
+    dbValor: TDBEdit;
+    dbtDescricaoClasseContas: TDBText;
+    dsAccountSearch: TDataSource;
+    dbOperador: TDBEdit;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure btnSalveClick(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure dbgSearchDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnSearchProductClick(Sender: TObject);
+    procedure dbgPayAccountsDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure dbgPayAccountsCellClick(Column: TColumn);
+    procedure dbgPayAccountsColEnter(Sender: TObject);
+    procedure dsPayAccountsDataChange(Sender: TObject; Field: TField);
+    procedure btnInsertContasPagarDespesaFixaClick(Sender: TObject);
+    procedure dsPayAccountsUpdateData(Sender: TObject);
+    procedure edtIdClasseContasExit(Sender: TObject);
+    procedure edtIdClasseContasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtIdClasseContasKeyPress(Sender: TObject; var Key: Char);
+    procedure dbValorExit(Sender: TObject);
+    procedure dbValorKeyPress(Sender: TObject; var Key: Char);
+    procedure btnUpdateClick(Sender: TObject);
+  private
+
+    FController: iController;
+    FId: String;
+    procedure Atualizaedt;
+    procedure LimparEdit;
+
+    procedure SalvarDespesaFixa;
+    function PesquisaDespesaFixa(aValue: String): Boolean;
+    procedure InserirDespesaFixa;
+
+    procedure AtualizarBtnNew;
+    procedure AtualizarSearch;
+    procedure AtualizarSalve;
+    { Private declarations }
+
+  Const
+    cMSGAtencao = 'Atenção... ';
+    cMSGParabens = 'Parabéns ...';
+    cMSGVazio = ' Registro não encontrado, favor tentar outro filtro!';
+    cMGSSucesso = 'Registro salvo com sucesso!';
+  public
+    { Public declarations }
+  end;
+
+var
+  frmFixedExpense: TfrmFixedExpense;
+
+implementation
+
+{$R *.dfm}
+
+
+uses udmPrincipal;
+
+procedure TfrmFixedExpense.AtualizarBtnNew;
+begin
+  btnNew.Enabled := False;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := True;
+  pgMain.ActivePageIndex := 0;
+  btnSearch.Enabled := False;
+end;
+
+procedure TfrmFixedExpense.AtualizarSearch;
+begin
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnDelete.Enabled := True;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnNew.Enabled := True;
+end;
+
+procedure TfrmFixedExpense.AtualizarSalve;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmFixedExpense.SalvarDespesaFixa;
+var
+  Erros: Integer;
+begin
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', mb_Yesno) = IDYES then
+  begin
+    if dmPrincipal.cdsDespesaFixa.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsDespesaFixa.Post;
+
+    dmPrincipal.sqlconexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsDespesaFixa.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsDespesaFixa.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.sqlconexao.Commit(TD);
+      ShowMessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      dmPrincipal.FecharQuery;
+    end
+    else
+    begin
+      dmPrincipal.sqlconexao.Rollback(TD);
+      ShowMessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+      dmPrincipal.FecharQuery;
+    end;
+    AtualizarSalve;
+  end
+  else
+    Abort;
+end;
+
+procedure TfrmFixedExpense.InserirDespesaFixa;
+begin
+  dmPrincipal.sqlDespesaFixa.Active := False;
+  dmPrincipal.sqlDespesaFixa.CommandText := ('select ' +
+    'df.id, ' +
+    'df.idclassecontas, ' +
+    'ccc.descricao, ' +
+    'df.valor, ' +
+    'df.origem, ' +
+    'df.datalancamento, ' +
+    'df.operador, ' +
+    'df.ativo ' +
+    'from despesafixa df ' +
+    'inner join cad_classe_contas ccc on ccc.id_ccc = df.IdClasseContas ' +
+    'where df.id=:Id ');
+
+  dmPrincipal.sqlDespesaFixa.Params.ParamByName('ID').DataType := ftInteger;
+  dmPrincipal.sqlDespesaFixa.Params.ParamValues['ID'] := 0;
+
+  dmPrincipal.cdsDespesaFixa.Active := True;
+  dmPrincipal.cdsDespesaFixa.Append;
+
+  dmPrincipal.cdsDespesaFixa.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsDespesaFixa.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  dmPrincipal.cdsDespesaFixa.FieldByName('DataLancamento').AsDateTime := Now;
+  dmPrincipal.cdsDespesaFixa.FieldByName('Origem').AsInteger := 2; //Origem 1-> vem do contas a pagar 2-> Lançamento manual
+  dmPrincipal.cdsDespesaFixa.FieldByName('Ativo').AsInteger := 1;
+  pgMain.TabIndex := 0;
+  edtMedtReleaseDate.SetFocus;
+end;
+
+procedure TfrmFixedExpense.Atualizaedt;
+begin
+  edtId.Text := DataSource1.DataSet.FieldByName('Id').AsString;
+  MedtReleaseDate.Text := DataSource1.DataSet.FieldByName('DataLancamento').AsString;
+  edtDescription.Text := DataSource1.DataSet.FieldByName('Descricao').AsString;
+  edtOperator.Text := DataSource1.DataSet.FieldByName('Operador').AsString;
+end;
+
+procedure TfrmFixedExpense.btnDeleteClick(Sender: TObject);
+begin
+  FId := DataSource1.DataSet.FieldByName('Id').AsString;
+  FController
+    .Entidades
+    .FixedExpense
+    .DataSet(DataSource1)
+    .DataLancamento(Now)
+    .Operador(edtOperator.Text)
+    .Insert(DataSource1.DataSet.FieldByName('Id').AsString);
+
+  FController
+    .Entidades
+    .FixedExpense
+    .DataSet(DataSource1)
+    .Status(3) // 3 Origem excluída
+    .Delete(FId);
+end;
+
+procedure TfrmFixedExpense.btnInsertContasPagarDespesaFixaClick(
+  Sender: TObject);
+begin
+  dsPayAccounts.DataSet.First;
+  while not dsPayAccounts.DataSet.Eof do
+  begin
+    if dsPayAccounts.DataSet.FieldByName('Status').AsInteger = 1 then
+    begin
+      FController
+        .Entidades
+        .FixedExpense
+        .DataSet(dsAccountSearch)
+        .Ativo(1)
+        .EscolhaFiltro(1) // filtro por idclassecontas
+        .TextoFiltro(dsPayAccounts.DataSet.FieldByName('IdClasseContas').AsString)
+        .Buscar(dsPayAccounts.DataSet.FieldByName('IdClasseContas').AsString);
+
+      if not dsAccountSearch.DataSet.IsEmpty then
+      begin
+        FController
+          .Entidades
+          .FixedExpense
+          .DataSet(DataSource1)
+          .ValorLancamento1(StrToFloat(dsPayAccounts.DataSet.FieldByName('ValorClasse').AsString))
+          .DataLancamento(Now)
+          .Operador(edtOperator.Text)
+          .Status(3) // Origem vindo do contas a pagar
+          .Insert(DataSource1.DataSet.FieldByName('Id').AsString);
+
+        FController
+          .Entidades
+          .FixedExpense
+          .DataSet(DataSource1)
+          .IdParametro1(dsPayAccounts.DataSet.FieldByName('IdClasseContas').AsString)
+          .Delete(dsPayAccounts.DataSet.FieldByName('IdClasseContas').AsString);
+
+      end;
+
+      FController
+        .Entidades
+        .FixedExpense
+        .DataSet(DataSource1)
+        .IdParametro1(dsPayAccounts.DataSet.FieldByName('IdClasseContas').AsString)
+        .ValorLancamento1(StrToFloat(dsPayAccounts.DataSet.FieldByName('ValorClasse').AsString))
+        .DataLancamento(Now)
+        .Operador(edtOperator.Text)
+        .Status(1) // Origem vindo do contas a pagar
+        .Insert;
+
+    end;
+    dsPayAccounts.DataSet.Next;
+  end;
+end;
+
+procedure TfrmFixedExpense.btnNewClick(Sender: TObject);
+begin
+  dmPrincipal.Alterar := False;
+  InserirDespesaFixa;
+  AtualizarBtnNew;
+  {
+    inherited;
+    edtOperator.Text := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  }
+end;
+
+procedure TfrmFixedExpense.btnSalveClick(Sender: TObject);
+begin
+  SalvarDespesaFixa;
+
+  {
+    FController
+    .Entidades
+    .FixedExpense
+    .DataSet(DataSource1)
+    .IdParametro1(edtDescription.Text)
+    .ValorLancamento1(StrToFloat(edtMoney.Text))
+    .DataLancamento(StrToDate(MedtReleaseDate.Text))
+    .Operador(edtOperator.Text)
+    .Status(2) // Origem lançamento manual
+    .Insert;
+  }
+end;
+
+procedure TfrmFixedExpense.btnSearchClick(Sender: TObject);
+begin
+  frmFixedExpense.PesquisaDespesaFixa(edtSearch.Text);
+
+  inherited;
+  btnDelete.Enabled := True;
+end;
+
+procedure TfrmFixedExpense.btnSearchProductClick(Sender: TObject);
+begin
+  FController
+    .Entidades
+    .ContasPagar
+    .DataSet(dsPayAccounts)
+    .EscolhaFiltro(rgPeriodoContas.ItemIndex)
+    .EscolhaTipoData(rgChoiceTypeAccount.ItemIndex)
+    .EscolhaTipoLancamento(rdTipoDespesa.ItemIndex)
+    .Buscar('');
+
+  if dsPayAccounts.DataSet.IsEmpty then
+    raise Exception.Create(cMSGAtencao + ' ' + edtOperator.Text + ' ' + cMSGVazio);
+end;
+
+procedure TfrmFixedExpense.btnUpdateClick(Sender: TObject);
+begin
+  if not dmPrincipal.cdsDespesaFixa.IsEmpty then
+  begin
+    pgMain.ActivePageIndex := 0;
+    edtMedtReleaseDate.SetFocus;
+    dmPrincipal.cdsDespesaFixa.Edit;
+  end;
+end;
+
+procedure TfrmFixedExpense.DataSource1DataChange(Sender: TObject;
+  Field: TField);
+begin
+  TNumericField(dbgSearch.Fields[3]).DisplayFormat := '#,##0.00';
+end;
+
+procedure TfrmFixedExpense.dbgPayAccountsCellClick(Column: TColumn);
+begin
+  if not dbgPayAccounts.Fields[1].IsNull then
+    if Column.Field = dsPayAccounts.DataSet.FieldByName('Status') then
+    begin
+      dsPayAccounts.DataSet.Edit;
+
+      if dsPayAccounts.DataSet.FieldByName('Status').AsInteger = 1 then
+        dsPayAccounts.DataSet.FieldByName('Status').AsInteger := 0
+      else
+        dsPayAccounts.DataSet.FieldByName('Status').AsInteger := 1;
+    end;
+end;
+
+procedure TfrmFixedExpense.dbgPayAccountsColEnter(Sender: TObject);
+begin
+  if dbgPayAccounts.SelectedField = dsPayAccounts.DataSet.FieldByName('Status') then
+    dbgPayAccounts.Options := dbgPayAccounts.Options - [DgEditing]
+  else
+    dbgPayAccounts.Options := dbgPayAccounts.Options + [DgEditing];
+end;
+
+procedure TfrmFixedExpense.dbgPayAccountsDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  inherited;
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+
+  // pinta checkbox
+
+  if Column.Field = dsPayAccounts.DataSet.FieldByName('Status') then
+  begin
+    dbgPayAccounts.Canvas.FillRect(Rect);
+    ImageList1.Draw(dbgPayAccounts.Canvas, Rect.Left + 10, Rect.Top + 1, 0);
+
+    if dsPayAccounts.DataSet.FieldByName('Status').AsInteger = 1 then
+      ImageList1.Draw(dbgPayAccounts.Canvas, Rect.Left + 10, Rect.Top + 1, 2)
+    else
+      ImageList1.Draw(dbgPayAccounts.Canvas, Rect.Left + 10, Rect.Top + 1, 0);
+  end;
+end;
+
+procedure TfrmFixedExpense.dbgSearchDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmFixedExpense.dbValorExit(Sender: TObject);
+begin
+  if dmPrincipal.cdsDespesaFixa.FieldByName('Valor').AsCurrency > 0 then
+  begin
+    btnSalve.Enabled := True;
+    btnSalve.SetFocus;
+  end
+  else
+    raise Exception.Create('Valor não pode ser menor ou igual a 0');
+end;
+
+procedure TfrmFixedExpense.dbValorKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not(Key in ['0' .. '9', ',', #8]) then
+    Key := #0;
+end;
+
+procedure TfrmFixedExpense.dsPayAccountsDataChange(Sender: TObject;
+  Field: TField);
+begin
+  TNumericField(dbgPayAccounts.Fields[3]).DisplayFormat := '#,##0.00';
+end;
+
+procedure TfrmFixedExpense.dsPayAccountsUpdateData(Sender: TObject);
+begin
+  dsPayAccounts.DataSet.FieldByName('codigo').ProviderFlags := [pfInUpdate, pfInWhere, pfInKey];
+end;
+
+procedure TfrmFixedExpense.edtIdClasseContasExit(Sender: TObject);
+begin
+  if edtIdClasseContas.Text = '' then
+    raise Exception.Create('Atenção... ' + edtIdClasseContas.Text + ' Favor informar Id Classe de Contas!');
+
+  FController
+    .Entidades
+    .ClasseContas
+    .DataSet(dsAccountSearch)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(0)
+    .TextoFiltro(edtIdClasseContas.Text)
+    .Buscar(edtIdClasseContas.Text);
+
+  if dmPrincipal.cdsDespesaFixa.IsEmpty then
+  begin
+    edtIdClasseContas.Clear;
+    edtIdClasseContas.SetFocus;
+    raise Exception.Create('Atenção... ' + edtIdClasseContas.Text + ' Favor informar Id Classe de Contas!');
+  end
+  else
+  begin
+    dmPrincipal.cdsDespesaFixa.FieldByName('Descricao').AsString := dsAccountSearch.DataSet.FieldByName('Descricao').AsString;
+    dbValor.SetFocus;
+  end;
+end;
+
+procedure TfrmFixedExpense.edtIdClasseContasKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  case Key of
+    VK_F1:
+      begin
+        Application.CreateForm(TfrmSearchAccountClass, frmSearchAccountClass);
+        frmSearchAccountClass.lfrmExecutando.Caption := 'frmFixedExpense';
+        frmSearchAccountClass.btnSearch.Click;
+        frmSearchAccountClass.ShowModal;
+      end;
+  end;
+end;
+
+procedure TfrmFixedExpense.edtIdClasseContasKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+    Key := #0;
+end;
+
+procedure TfrmFixedExpense.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  frmFixedExpense := nil;
+  Action := caFree;
+end;
+
+procedure TfrmFixedExpense.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FController := TController.New;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmFixedExpense.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Despesa Fixa';
+
+  edtOperator.Text := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+end;
+
+procedure TfrmFixedExpense.LimparEdit;
+begin
+  edtDescription.Clear;
+  edtMoney.Clear;
+end;
+
+function TfrmFixedExpense.PesquisaDespesaFixa(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+  lOrdem := '';
+  lSQL := (
+    'select ' +
+    'df.id, ' +
+    'df.idclassecontas, ' +
+    'ccc.descricao, ' +
+    'df.valor, ' +
+    'df.origem, ' +
+    'df.datalancamento, ' +
+    'df.operador, ' +
+    'df.ativo ' +
+    'from despesafixa df ' +
+    'inner join cad_classe_contas ccc on ccc.id_ccc = df.IdClasseContas '
+    );
+  if aValue <> '' then
+    case rgChoice.ItemIndex of
+      0:
+        begin
+          lWhere := ('where df.id=' + aValue + ' ');
+          lOrdem := ('Order by df.id asc ');
+        end;
+
+      1:
+        begin
+          lWhere := ('where df.IdClasseContas=' + aValue + ' ');
+          lOrdem := ('Order by df.IdClasseContas asc ');
+        end;
+
+      2:
+        begin
+          lWhere := ('Where ccc.Descricao CONTAINING ''' + aValue + ''' ');
+          lOrdem := ('Order by ccc.Descricao ');
+        end;
+
+      3:
+        begin
+          lWhere := ('Where df.Operador CONTAINING ''' + aValue + ''' ');
+          lOrdem := ('Order by ccc.Descricao ');
+        end;
+    end;
+
+  dmPrincipal.sqlDespesaFixa.Active := False;
+  dmPrincipal.sqlDespesaFixa.CommandText := lSQL + lWhere + lOrdem;
+  dmPrincipal.cdsDespesaFixa.Active := False;
+  dmPrincipal.cdsDespesaFixa.Active := True;
+
+  if dmPrincipal.cdsDespesaFixa.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+end.

@@ -1,0 +1,58 @@
+unit Whorkshop.Controller;
+
+interface
+
+uses
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Entidades.Factory,
+  Whorkshop.Model.Entidades.RedeInfocon.Interfaces,
+  Whorkshop.Model.Entidades.RedeInfocon.Factory;
+
+Type
+  TController = class(TInterfacedObject, iController)
+    private
+      FModelEntidades : iModelEntidadeFactory;
+      FModelEntidadesRedeInfocon : iModelEntidadeRedeInfoconFactory;
+    public
+      constructor Create;
+      destructor Destroy; override;
+      class function New : iController;
+      function Entidades : iModelEntidadeFactory;
+      function EntidadesRedeInfocon : iModelEntidadeRedeInfoconFactory;
+  end;
+
+implementation
+
+uses
+  System.SysUtils;
+
+{ TController }
+
+constructor TController.Create;
+begin
+  FModelEntidades := TModelEntidadeFactory.New;
+  FModelEntidadesRedeInfocon := TModelEntidadeRedeInfoconFactory.New;
+end;
+
+destructor TController.Destroy;
+begin
+  inherited;
+end;
+
+function TController.Entidades: iModelEntidadeFactory;
+begin
+  Result := FModelEntidades;
+end;
+
+function TController.EntidadesRedeInfocon: iModelEntidadeRedeInfoconFactory;
+begin
+  Result := FModelEntidadesRedeInfocon;
+end;
+
+class function TController.New: iController;
+begin
+  Result := Self.Create;
+end;
+
+end.

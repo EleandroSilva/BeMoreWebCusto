@@ -1,0 +1,171 @@
+unit Model.Imp.Entidade.Aliquota.Markup;
+
+interface
+
+uses
+  Model.Entidade.Aliquota.Markup.Interfaces;
+
+type
+  TAliquotaMarkup<T : iInterface> = class(TInterfacedObject, iAliquotaMarkup<T>)
+    private
+     [Weak]
+     FParent                  : T;
+     FId                      : Integer;
+     FStatusAliquotaNome      : Integer;
+     FNomeMarkup              : String;
+     FValorVendaaVista        : Currency;
+     FValorFichaTecnica       : Currency;
+     FAliquotaMarkup          : Currency;
+     FValorAliquota           : Currency;
+     FValorSomaMarkup         : Currency;
+     FValorFichatecnicaMarkup : Currency;
+    public
+      constructor Create(Parent : T);
+      destructor Destroy; override;
+      class function New(Parent : T) : iAliquotaMarkup<T>;
+
+      function Id(value : Integer)                 : iAliquotaMarkup<T>; overload;
+      function Id : Integer;                                             overload;
+      function StatusAliquotaNome(Value : Integer) : iAliquotaMarkup<T>; overload;
+      function StatusAliquotaNome : Integer;                             overload;
+      function NomeMarkup(Value : String)          : iAliquotaMarkup<T>; overload;
+      function NomeMarkup : String;                                      overload;
+      function ValorVendaAvista(Value : Currency)  : iAliquotaMarkup<T>; overload;
+      function ValorVendaaVista : Currency;                              overload;
+      function ValorFichaTecnica(Value : Currency) : iAliquotaMarkup<T>; overload;
+      function ValorFichaTecnica : Currency;                             overload;
+      function AliquotaMarkup(Value : Currency)    : iAliquotaMarkup<T>; overload;
+      function AliquotaMarkup : Currency;                                overload;
+      function ValorAliquota(Value : Currency)     : iAliquotaMarkup<T>; overload;
+      function ValorAliquota : Currency;                                 overload;
+      function ValorSomaMarkup(Value : Currency)   : iAliquotaMarkup<T>; overload;
+      function ValorSomaMarkup : Currency;                               overload;
+      function ValorFichatecnicaMarkup(Value : Currency) : iAliquotaMarkup<T>; overload;
+      function ValorFichatecnicaMarkup : Currency;                             overload;
+
+      function &End : T;
+  end;
+
+implementation
+
+constructor TAliquotaMarkup<T>.Create(Parent: T);
+begin
+  FParent := Parent;
+end;
+
+destructor TAliquotaMarkup<T>.Destroy;
+begin
+  inherited;
+end;
+
+function TAliquotaMarkup<T>.&End: T;
+begin
+  Result := FParent;
+end;
+
+class function TAliquotaMarkup<T>.New(Parent: T) : iAliquotaMarkup<T>;
+begin
+  Result := Self.Create(Parent);
+end;
+
+function TAliquotaMarkup<T>.Id(Value: Integer): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FId    := Value;
+end;
+
+function TAliquotaMarkup<T>.Id: Integer;
+begin
+  Result := FId;
+end;
+
+function TAliquotaMarkup<T>.StatusAliquotaNome(Value: Integer): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FStatusAliquotaNome := Value;
+end;
+
+function TAliquotaMarkup<T>.StatusAliquotaNome: Integer;
+begin
+  Result := FStatusAliquotaNome;
+end;
+
+function TAliquotaMarkup<T>.NomeMarkup(Value: String): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FNomeMarkup := Value;
+end;
+
+function TAliquotaMarkup<T>.NomeMarkup: String;
+begin
+  Result := FNomeMarkup;
+end;
+
+function TAliquotaMarkup<T>.ValorVendaAvista(Value: Currency): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FValorVendaaVista := Value;
+end;
+
+function TAliquotaMarkup<T>.ValorVendaAvista: Currency;
+begin
+  Result := FValorVendaAVista;
+end;
+
+function TAliquotaMarkup<T>.ValorFichaTecnica(Value: Currency): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FValorFichaTecnica := Value;
+end;
+
+function TAliquotaMarkup<T>.ValorFichaTecnica: Currency;
+begin
+  Result := FValorFichaTecnica;
+end;
+
+function TAliquotaMarkup<T>.AliquotaMarkup(Value: Currency): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FAliquotaMarkup := Value;
+end;
+
+function TAliquotaMarkup<T>.AliquotaMarkup: Currency;
+begin
+  Result := FAliquotaMarkup;
+end;
+
+function TAliquotaMarkup<T>.ValorAliquota(Value: Currency): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FValorAliquota := Value;
+end;
+
+function TAliquotaMarkup<T>.ValorAliquota: Currency;
+begin
+  Result := FValorAliquota;
+end;
+
+function TAliquotaMarkup<T>.ValorSomaMarkup(Value: Currency): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FValorSomaMarkup := Value;
+end;
+
+function TAliquotaMarkup<T>.ValorSomaMarkup: Currency;
+begin
+  Result := FValorSomaMarkup;
+end;
+
+function TAliquotaMarkup<T>.ValorFichatecnicaMarkup(Value: Currency): iAliquotaMarkup<T>;
+begin
+  Result := Self;
+  FValorFichatecnicaMarkup := Value;
+end;
+
+function TAliquotaMarkup<T>.ValorFichatecnicaMarkup: Currency;
+begin
+  Result := FValorFichatecnicaMarkup;
+end;
+
+
+end.

@@ -1,0 +1,85 @@
+inherited frmModelSearch: TfrmModelSearch
+  Caption = 'Pesquisa Modelo'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 488
+    inherited lfrmExecutando: TLabel
+      Visible = False
+    end
+    inherited Panel4: TPanel
+      inherited lSite: TLabel
+        Width = 218
+      end
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSearch: TBitBtn
+      OnClick = btnSearchClick
+      ExplicitLeft = 0
+    end
+    inherited btnClose: TBitBtn
+      ExplicitLeft = 90
+    end
+  end
+  inherited pSearch: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 34
+    ExplicitWidth = 938
+    inherited Panel6: TPanel
+      ExplicitLeft = 425
+      ExplicitTop = 0
+      ExplicitWidth = 513
+      inherited Label1: TLabel
+        Width = 513
+      end
+      inherited edtSearch: TEdit
+        ExplicitWidth = 513
+      end
+    end
+  end
+  inherited Panel2: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    inherited lTextoEmpresa: TLabel
+      Width = 870
+      Height = 34
+    end
+  end
+  inherited Panel1: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 100
+    ExplicitWidth = 938
+    ExplicitHeight = 388
+    inherited dbgSearch: TDBGrid
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'Id'
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Id:'
+          Width = 42
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Descricao'
+          Title.Caption = 'Descri'#231#227'o'
+          Width = 497
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'ativo'
+          Title.Caption = 'Ativo'
+          Visible = True
+        end>
+    end
+  end
+  inherited DataSource1: TDataSource
+    Left = 496
+  end
+end

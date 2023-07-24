@@ -1,0 +1,7 @@
+unit Model.Entidade.Aliquota.Nome.Interfaces;
+
+interface
+
+implementation
+
+end.

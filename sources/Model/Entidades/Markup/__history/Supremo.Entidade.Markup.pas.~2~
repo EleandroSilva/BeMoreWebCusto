@@ -1,0 +1,36 @@
+unit Supremo.Entidade.Markup;
+
+interface
+
+uses
+  Whorkshop.Model.Entidades.Interfaces;
+
+type
+  TMarkup = class(TInterfacedObject, iModelEntidade)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+  end;
+
+implementation
+
+{ TMarkup }
+
+constructor TMarkup.Create;
+begin
+
+end;
+
+destructor TMarkup.Destroy;
+begin
+  inherited;
+end;
+
+class function TMarkup.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+end.

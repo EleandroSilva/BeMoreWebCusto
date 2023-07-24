@@ -1,0 +1,82 @@
+unit ufrmProductGroup;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+
+  Data.DB,
+
+  ufrmModelo,
+  Whorkshop.Controller.Interfaces;
+
+type
+  TfrmProductGroup = class(TfrmModelo)
+    procedure FormShow(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmProductGroup: TfrmProductGroup;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TfrmProductGroup.btnSearchClick(Sender: TObject);
+begin
+  FController
+    .Entidades
+    .ProductGroup
+    .DataSet(DataSource1)
+    .EscolhaFiltro(rgChoice.ItemIndex)
+    .TextoFiltro(edtSearch.Text)
+    .Buscar(edtSearch.Text);
+
+
+  {
+  if edtSearch.Text = '' then
+    FController
+      .Entidades
+      .ProductGroup
+      .DataSet(DataSource1)
+      .Open
+  else
+    FController
+      .Entidades
+      .ProductGroup
+      .DataSet(DataSource1)
+      .Open(edtSearch.Text);
+  }
+
+
+  inherited;
+end;
+
+procedure TfrmProductGroup.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Grupo de Produtos';
+end;
+
+end.

@@ -1,0 +1,72 @@
+unit ufrmSearchRegiaoPessoa;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+
+  Data.DB,
+
+  ufrmModeloPesquisa,
+
+  Whorkshop.Controller.Interfaces;
+
+type
+  TfrmPesquisaRegiaoPessoa = class(TfrmModeloPesquisa)
+    procedure btnSearchClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    FController: iController;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPesquisaRegiaoPessoa: TfrmPesquisaRegiaoPessoa;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmPesquisaRegiaoPessoa.btnSearchClick(Sender: TObject);
+begin
+  FController
+    .Entidades
+    .Model
+    .DataSet(DataSource1)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(rgChoice.ItemIndex)
+    .TextoFiltro(edtSearch.Text)
+    .Buscar(edtSearch.Text);
+end;
+
+procedure TfrmPesquisaRegiaoPessoa.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  if frmPesquisaRegiaoPessoa.lfrmExecutando.Caption = 'frmModelProduct' then
+    frmModelProduct.edtDescription.Text := DataSource1.DataSet.FieldByName('Id').AsString;
+
+  frmPesquisaRegiaoPessoa := nil;
+  Action := caFree;
+end;
+
+end.

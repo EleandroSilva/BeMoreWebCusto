@@ -1,0 +1,3992 @@
+unit UnitFuncoes;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  system.SysUtils,
+  system.Classes,
+  system.Variants,
+  vcl.Graphics,
+  vcl.Controls,
+  vcl.Forms,
+  vcl.Dialogs,
+  vcl.StdCtrls,
+  vcl.Buttons,
+  vcl.DBCtrls,
+  vcl.Mask,
+  vcl.DBGrids,
+  vcl.ExtCtrls,
+  vcl.comctrls,
+  vcl.Menus,
+  vcl.Grids,
+  vcl.ImgList,
+  data.DB,
+  data.FMTBcd,
+  data.SqlExpr,
+  DBClient,
+  Provider,
+  IniFiles,
+  Gauges;
+
+procedure getmetadata_false(X: TDataModule);
+procedure getmetadata_false_form(X: Tform);
+procedure ENABLADE_FALSE(X: Tform);
+procedure ENABLADE_TRUE(X: Tform);
+procedure CARREGABOTAO_ABERTURA(X: Tform);
+procedure CARREGABOTAO_PCP(X: Tform);
+procedure CARREGABOTAO_FATURAMENTO(X: Tform);
+procedure CARREGABOTAO_FINANCEIRO(X: Tform);
+procedure CARREGABOTAO_ESTOQUE(X: Tform);
+procedure CARREGABOTAO_COMPRAS(X: Tform);
+procedure CARREGABOTAO_CUSTO(X: Tform);
+procedure CARREGABOTAO(X: Tform);
+procedure FECHA_TABELAS(X: TDataModule);
+procedure CANCELA_TABELAS(X: TDataModule);
+procedure FILTRO(X: TDataModule);
+function TRATAR_ERRO(Msg: string): Boolean;
+procedure ATUALIZA_DATA(D: Tform);
+procedure CURSOR_PROJETO(X: Tform);
+procedure AbreForm(aClasseForm: TComponentClass; aForm: Tform);
+
+procedure GRAVAINI_IMPRESSAO(PAGINA: Longint; Texto: string; P: Boolean;
+  Z: Boolean; R: Boolean; LASER: string);
+procedure LEINI_IMPRESSAO(var PAGINA: Longint; var Texto: string; var P: Boolean; var
+  Z: Boolean; var R: Boolean; var LASER: string);
+
+procedure GRAVAINI_MASTER(NUMERO_EMPRESA: Longint; ITEM: Boolean; MODULO: Boolean;
+  EMPRESAS: Boolean; PRODUTO: Boolean; PGTO: string; COMISSAO: Boolean;
+  FATURA_AUTOMATICA: Boolean; MAT_PRIMA_PROD_IND: Boolean);
+
+procedure LEINI_MASTER(var NUMERO_EMPRESA: Longint; var ITEM: Boolean; var MODULO: Boolean;
+  var EMPRESAS: Boolean; var PRODUTO: Boolean; var PGTO: string; var COMISSAO: Boolean;
+  var FATURA_AUTOMATICA: Boolean; var MAT_PRIMA_PROD_IND: Boolean);
+
+procedure GRAVAINI_MODULOS(FATURAMENTO: string; FINANCEIRO: string; ESTOQUE: string;
+  COMPRAS: string; CUSTO: string; PPCP: string);
+
+procedure LEINI_MODULOS(var FATURAMENTO: string; var FINANCEIRO: string; var ESTOQUE: string;
+  var COMPRAS: string; var CUSTO: string; var PPCP: string);
+
+procedure GRAVAINI_TIPO_SISTEMA(TP_SISTEMA: string; IMP_FRETE_NOTA: string;
+  IMP_PGTO_RODAPE: string; IMP_PED_COM_DESCONTO: string);
+
+procedure LEINI_TIPO_SISTEMA(var TP_SISTEMA: string; var IMP_FRETE_NOTA: string;
+  var IMP_PGTO_RODAPE: string; var IMP_PED_COM_DESCONTO: string);
+
+procedure GRAVAINI_TIPO_PEDIDO(TP_PEDIDO: string);
+
+procedure LEINI_TIPO_PEDIDO(var TP_PEDIDO: string);
+
+procedure GRAVAINI_RAMO_ATIVIDADE(ORDEM_PRODUCAO: Boolean; SOMA_PESO: Boolean;
+  COMISSAO_PRO: Boolean);
+
+procedure LEINI_RAMO_ATIVIDADE(var ORDEM_PRODUCAO: Boolean; var SOMA_PESO: Boolean;
+  var COMISSAO_PRO: Boolean);
+
+procedure GRAVASENHA(SENHA_DESCONTO: Boolean);
+procedure LEINI_SENHA(var SENHA_DESCONTO: Boolean);
+
+procedure ALTERA_FATURAMENTO(var SENHA1: string);
+
+procedure GRAVA_TAB_PRECO_PRO(TAB_PRECO: string; COR_ACER_ORCAMENTO: string; SEM_ACER_CAD_PRO: string;
+  COMP_LARG_FORA_DESC_PRO: string);
+
+procedure LEINI_TAB_PRECO_PRO(var TAB_PRECO: string; var COR_ACER_ORCAMENTO: string; var SEM_ACER_CAD_PRO: string;
+  var COMP_LARG_FORA_DESC_PRO: string);
+
+procedure GRAVA_END_BASE_DADOS(CAMINHO: string);
+procedure LEINI_END_BASE_DADOS(var CAMINHO: string);
+
+procedure GRAVA_INI_NOTA(COM_ESCOLHA_ITENS_NOTA: string; CONTABILIZAR_CT_PAGAR: string;
+  GERA_PGTO_NOTA: string; GERA_PGTO_NOTA_DUP: string);
+
+procedure LEINI_NOTA(var COM_ESCOLHA_ITENS_NOTA: string; var CONTABILIZAR_CT_PAGAR: string;
+  var GERA_PGTO_NOTA: string; var GERA_PGTO_NOTA_DUP: string);
+
+procedure GRAVA_TAB_PRECO(PRE_FIN: string; COM_GRUPO_TECIDO: string);
+procedure LEINI_TAB_PRECO(var PRE_FIN: string; var COM_GRUPO_TECIDO: string);
+
+procedure GRAVA_ETIQUETA_MD(PRODUTO_MD: string; NUMERO_MD: string);
+procedure LEINI_ETIQUETA_MD(var PRODUTO_MD: string; var NUMERO_MD: string);
+
+procedure GRAVA_RESOLUCAO_VIDEO(RESOLUCAO: string; WIN_CLASSICO: string);
+procedure LEINI_RESOLUCAO_VIDEO(var RESOLUCAO: string; var WIN_CLASSICO: string);
+
+procedure GRAVA_SERVIDOR_CLIENTE(SERVIDOR: string; CLIENTE: string; MAQUINA: string);
+procedure LEINI_SERVIDOR_CLIENTE(var SERVIDOR: string; var CLIENTE: string; var MAQUINA: string);
+
+procedure LEINI_SICIC3_0(var NOME_SERVIDOR: string; var SO_SERVIDOR: string;
+  var CAMINHO_BASE_DADOS: string; var DIRETORIO_SERVIDOR: string;
+  var DIRETORIO_SERVIDOR_EXEC: string);
+
+procedure GRAVA_FILTRO_CLIENTE(POR_COD_CLI: string; COMECA_COM: string; CONTEM: string; CNPJ: string;
+  IE: string; FONE: string; ENDERECO: string; CIDADE: string; BAIRRO: string; CEP: string; COD_REP: string;
+  ESTADO: string);
+procedure LEINI_FILTRO_CLIENTE(var POR_COD_CLI: string; var COMECA_COM: string; var CONTEM: string; var CNPJ: string;
+  var IE: string; var FONE: string; var ENDERECO: string; var CIDADE: string; var BAIRRO: string; var CEP: string; var COD_REP: string;
+  var ESTADO: string);
+
+// INI DE PESQUISA PRODUTOS
+procedure GRAVA_FILTRO_PRODUTO(POR_COD_BARRA: string; COMECA_COM: string; CONTEM: string; CORES: string;
+  ACESSORIOS: string; MARCA: string; UN: string; COD_GRUPO: string; COD_FORN: string; TIPO: string; ATIVO: string);
+
+procedure LEINI_FILTRO_PRODUTO(var POR_COD_BARRA: string; var COMECA_COM: string; var CONTEM: string; var CORES: string;
+  var ACESSORIOS: string; var MARCA: string; var UN: string; var COD_GRUPO: string; var COD_FORN: string; var TIPO: string; var ATIVO: string);
+
+procedure GRAVA_MOV_ESTOQUE(POR_CODIGO: string; POR_DESCRICAO: string; POR_DATA: string; PRODUTOS: string;
+  MAT_PRIMA: string);
+procedure LEINI_MOV_ESTOQUE(var POR_CODIGO: string; var POR_DESCRICAO: string; var POR_DATA: string;
+  var PRODUTOS: string; var MAT_PRIMA: string);
+
+procedure GRAVA_GRUPO(CLI_GRUPO: string; TIPO_PRO: string; TRANSP_CLI: string; DT_ENTREGA: string);
+procedure LEINI_GRUPO(var CLI_GRUPO: string; var TIPO_PRO: string; var TRANSP_CLI: string; var DT_ENTREGA: string);
+
+procedure GRAVA_SISCOMERC_CNPJ_CPF(SISTEMA_COMERCIAL: string; VERIFICA_CNPJ_CPF: string; CARGA_PEDIDO: string);
+procedure LEINI_SISCOMERC_CPNJ_CPF(var SISTEMA_COMERCIAL: string; var VERIFICA_CNPJ_CPF: string; var CARGA_PEDIDO: string);
+
+procedure GRAVA_INI_ALT_PGTO(PCARGA: Boolean; PPED: Boolean; PCLI: Boolean;
+  NCLI: Boolean; CCLI: Boolean; CCidade: Boolean);
+procedure LE_INI_ALT_PGTO(var PCARGA: Boolean; var PPED: Boolean; var PCLI: Boolean;
+  var NCLI: Boolean; var CCLI: Boolean; var CCidade: Boolean);
+
+procedure GRAVAINI_EMPRESA(CODEMPRESA: string; NOME: string; USUARIO: string);
+procedure LEINI_EMPRESA(var CODEMPRESA: string; var NOME: string; var USUARIO: string);
+
+procedure GRAVAINI_REL_PEDIDO(FATURADO: Boolean; FATURAR: Boolean; CARTEIRA: Boolean;
+  TODOS: Boolean; DESCONTO: Boolean; CLIENTE: Boolean; REPRES: Boolean;
+  data: Boolean; SIMPLES: Boolean; ARQUIVO: Boolean; RISCO: Boolean; PROD_REL: Boolean;
+  REL_EMP: Boolean; REL_CIDADE: Boolean; REL_JUNCOES: Boolean; REL_ESTADO: Boolean);
+
+procedure LEINI_REL_PPEDIDO(var FATURADO: Boolean; var FATURAR: Boolean; var CARTEIRA: Boolean;
+  var TODOS: Boolean; var DESCONTO: Boolean; var CLIENTE: Boolean; var REPRES: Boolean;
+  var data: Boolean; var SIMPLES: Boolean; var ARQUIVO: Boolean; var RISCO: Boolean;
+  var PROD_REL: Boolean; var REL_EMP: Boolean; var REL_CIDADE: Boolean;
+  var REL_JUNCOES: Boolean; var REL_ESTADO: Boolean);
+
+procedure GRAVAINI_MEIA_PAGINA(NUMERO: Longint; INTEIRA: Boolean);
+procedure LEINI_MEIA_PAGINA(var NUMERO: Longint; var INTEIRA: Boolean);
+
+procedure GRAVAINI_ESTOQUE(INSUMO: string; COR_AC_SEPARADO: string; EST_PED_IND: string);
+procedure LEINI_ESTOQUE(var INSUMO: string; var COR_AC_SEPARADO: string;
+  var EST_PED_IND: string);
+
+// PARAMETRO DE ESTOQUE MATERIA PRIMA
+procedure GRAVAINI_EST_MAT_PRIMA(TIRA_EST_ORDEM_SERVICO: string);
+procedure LEINI_EST_MAT_PRIMA(var TIRA_EST_ORDEM_SERVICO: string);
+
+// PARAMETRO DE USA TELE VENDAS NO SISTEMA
+procedure GRAVAINI_TELE_VENDAS(TELE_VENDAS: string; DESC_PED_DINHEIRO: string);
+procedure LEINI_TELE_VENDAS(var TELE_VENDAS: string; var DESC_PED_DINHEIRO: string);
+
+procedure GRAVA_TIPO_INDUSTRIA(GRAVA_VL_PRO_PED: string;
+  TAB_PRECO_CLI: string; BLOQ_CLI_EM_ATRASO: string; DIAS_BLOQ: string);
+procedure LEINI_TIPO_INDUSTRIA(var GRAVA_VL_PRO_PED: string;
+  var TAB_PRECO_CLI: string; var BLOQ_CLI_EM_ATRASO: string; var DIAS_BLOQ: string);
+
+procedure GRAVA_CONSULTA(CONSULTA: string);
+procedure LE_CONSULTA(var CONSULTA: string);
+
+procedure Grava_Informacoes_Backup(Origem: string; Destino: string);
+procedure Le_Informacoes_Backup(var Origem: string; var Destino: string);
+
+procedure Grava_Exclui_Fdb(Tipo_Filtro: Longint; Copia_Segura: Longint; Limpa: Longint);
+procedure Le_Exclui_Fdb(var Tipo_Filtro: Longint; var Copia_Segura: Longint; var Limpa: Longint);
+
+function Fun_Data(Texto: string): string;
+function ESPACOS(I: Byte): string;
+function Zero_Direita(I: Byte): String;
+function StrZero(Num: Real; Zeros, Deci: Integer): string;
+function Alltrim(Text: string): string;
+function ConvZero(Num: Real; Zeros, Deci: Integer): string;
+function SubStrAT(Pesq: string; Local: string): Boolean;
+function COMPLETA_ZEROS(NUMERO: string; TAMANHO: Integer): string;
+function PESQUISA(CAMPO, VALOR: string): string;
+function VALIDA_CNPJ(Num: string): Boolean;
+function VALIDA_CPF(Num: string): Boolean;
+function Inscricao(Inscricao, TIPO: string): Boolean;
+function Mascara_Inscricao(Inscricao, ESTADO: string): string;
+function COMPARAR_EXEC(Ver, Sis: string): Boolean;
+function pegabarra(X: string): string;
+function peganumero(X: string): string;
+function pegaletras(X: string): string;
+function TiraTracoPonto(CPF: string): string;
+function Pega_Letras_Numero_Espaco(X: string): string;
+function Tira_Traco_Ponto_Barra(CNPJ: string): string;
+function RemoveCaracter(Texto: string): string;
+function Bissexto(Ano: Integer): Boolean;
+function UltimoDiaMes(Text: string): string;
+function AnoBissexto(Ano: Integer): Boolean;
+function DataExtenso(data: TDateTime): string; // data por extenso
+function checaie(uf: string; IE: string): Boolean;
+function Arredondar(VALOR: Double; Dec: Integer): Double;
+function ValidarEMail(aStr: string): Boolean;
+function Extrai_Nome_Mes(MES: string): string;
+function Verifica_Folha_Paga(MES: string; Ano: string): string;
+function Pesquisa_Funcionario(): string;
+function Pesquisa_Funcionario_Parametro(ID_FUNC: Integer): Integer;
+function WordsCount(s: string): Integer;
+function RemoveEspaco(const str: string): string;
+function CST_ICMS(TP_SISTEMA: string; CST_ICMS: string): string;
+function Parametro_Fiscal_Empresa(ID_EMP: string): string;
+function Movimento_Receber(Id_Ped: Integer; ITEM: Integer; Nova: string; PGTO: Integer; Status: Integer; USUARIO: string; FistSoft: Integer): string;
+
+var
+  CODEMPRESA, NOME, USUARIO: string; // Variaveis para a função LEINIEMPRESA
+  PRE_FIN, COM_GRUPO_TECIDO: string; // Variavel para saber se o cliente deseja financeiro na tabela de preço
+  POR_COD_BARRA, COMECA_COM, CONTEM, CORES: string;
+  ACESSORIOS, MARCA, UN, COD_GRUPO, COD_FORN, TIPO, ATIVO: string;
+  SQL, SQL1, SQL2, UNION, INNER, WHERE, WHERE1, WHERE2, GRUPO, GRUPO1, GRUPO2, ORDEM, Ordem1: string;
+  NUMERO_EMPRESA, PAGINA: Longint;
+  ITEM, MODULO, EMPRESAS, PRODUTO, COMISSAO, FATURA_AUTOMATICA, MAT_PRIMA_PROD_IND, INTEIRA: Boolean;
+  P, Z, R, SENHA_DESCONTO, ACESSO: Boolean;
+  PGTO, CAMINHO, Texto, PRONTO, OBS, CONSULTA: string;
+  INSUMO, COR_AC_SEPARADO, EST_PED_IND: string;
+  RESOLUCAO, WIN_CLASSICO, var_vcarteira, Var_carteira_cobranca: string;
+  TAB_PRECO, COR_ACER_ORCAMENTO, SEM_ACER_CAD_PRO, COMP_LARG_FORA_DESC_PRO: string;
+  SISTEMA_COMERCIAL, VERIFICA_CNPJ_CPF, CARGA_PEDIDO: string;
+  ORDEM_PRODUCAO, SOMA_PESO, COMISSAO_PRO, IMPRIME: Boolean;
+  TP_SISTEMA, IMP_FRETE_NOTA, IMP_PGTO_RODAPE, IMP_PED_COM_DESCONTO: string;
+  POR_COD_CLI, CNPJ, IE, FONE, ENDERECO, CIDADE: string;
+  BAIRRO, CEP, COD_REP, ESTADO, TIPO_PEDIDO, Cabecalho: string;
+  CLI_GRUPO, TIPO_PRO, TRANSP_CLI, DT_ENTREGA: string;
+  GRAVA_VL_PRO_PED, TAB_PRECO_CLI, BLOQ_CLI_EM_ATRASO, DIAS_BLOQ: string;
+  TELE_VENDAS, DESC_PED_DINHEIRO: string;
+  COM_ESCOLHA_ITENS_NOTA, CONTABILIZAR_CT_PAGAR, GERA_PGTO_NOTA, LASER: string;
+  FATURAMENTO, FINANCEIRO, ESTOQUE, COMPRAS, CUSTO, PPCP: string;
+  TIRA_EST_ORDEM_SERVICO, SERVIDOR, CLIENTE, MAQUINA: string;
+  PRODUTO_MD, NUMERO_MD, QUEBRA: string;
+  NOME_SERVIDOR, SO_SERVIDOR, CAMINHO_BASE_DADOS, DIRETORIO_SERVIDOR, DIRETORIO_SERVIDOR_EXEC: string;
+  SEQUENCIA, COLUNA, QTDE, NUMERO, LINHA, CODIGO, CONTADOR, CRT, CRT_1: Integer;
+  DESCRICAO, COD_PRO, COD_BARRA, COD_INSUMO, ARREDONDA, COPIA, COD_IMP, data: string;
+  NIVEL_USU, COD_REGIAO, CFOP, var_multa, var_aliq_multa: string;
+  VALOR, VL_TOTAL, PESO_TOTAL, TT_CUBICO, ALIQ_ICMS, ALIQ_IPI, ALIQ_PIS, ALIQ_COFINS: Double;
+  SQL3, WHERE3, GRUPO3, QUEBRA1, DT_INICIAL, DT_FINAL, MES, T_FISCAL, CONT_IPI, T_FISCAL_1, CONT_IPI_1: string;
+  NUM_ITEM, ULTIMO_ITEM: Integer;
+  SOMA, SOMA1, SOMA2, SOMA3, SOMA4, SOMA5, SOMA6, SOMA7, SOMA8, SOMA9, SOMA10, SOMA11, SOMA12, SOMA13: Double;
+  SOMA14, SOMA15: Double;
+  PARCELA, ALIQ_COM, CUBICO_ACUM, PESO_ACUM, VL_PIS, VL_COFINS, VL_BASE_CALCULO, VAR_BASE_ICMS_ST, VAR_VL_ICMS_ST,
+    VAR_ICMS_ST, VAR_RED_BASE_ICMS_ST, VL_DESCONTO: Double;
+  FONE_1, FAX, GERA_PGTO_NOTA_DUP, JURO_AO_MES, MULTA, ID_BANCO, NOSSONUMERO, DIRETORIO, COD_REMESSA, ENVIAR, SVIA_BOLETO: string;
+  Origem, Destino, HR_INICIO, HR_FIM, Exclui_Caixa_Dois: string;
+  Convenio, Agencia, Conta, InicioNossoNumero, FimNossoNumero, TamConvenio,
+    TamAgencia, TamConta, TamIniNossoNumero, TamFimNossoNumero, Boleto_Remessa, TP_Filtro: string;
+  Tipo_Filtro, Copia_Segura, Limpa, Id_Parametro, Var_ID_CPROD, Var_ID_DFunc, Var_Id_Func, Var_Id_Meq, Var_Qtde: Integer;
+  Var_Id_Forn, Var_Id_CC, Var_Id_Pgto, Var_Id_Cfop, Var_Id_MP, Var_Erro: Integer;
+  Var_Impressao, Exclusao: Boolean;
+  Data_Bloquear, Data_Primeiro_Aviso, Bloquear, Var_Numero, Var_Importacao, Var_CSTI, Var_CST: string;
+  Var_Contador, Novo, Alterando, Var_Cadastro, Var_Mes, Var_Ano, Var_Pesquisa, Var_Deletar, Var_Nome_Mes: string;
+  Var_Abort, Cod_Cli, Var_DT_Demissao, Var_Cep, Var_Pessoa_FJ, Var_Conta_Caracteres, Var_Codigo_String, Var_Cfop, Var_Novo: string;
+  Var_Regime_Empresa, Var_FistSoft, Var_Status: Integer;
+  Var_Cont_IPI, Var_Cont_ICMS, Var_Id, Var_Tabela, Var_Mes_Var_Ano: string;
+  Var_Chave_Nfe, Var_instrucao_codificada: string;
+  extrair, extrair1, var_pegar_ano_mes: string;
+
+implementation
+
+
+uses UnitdmPrincipal, UdmPesquisa, UDebug;
+
+function ValidarEMail(aStr: string): Boolean;
+begin
+ aStr := Trim(UpperCase(aStr));
+ if Pos('@', aStr) > 1 then
+ begin
+   Delete(aStr, 1, pos('@', aStr));
+   Result := (Length(aStr) > 0) and (Pos('.', aStr) > 2);
+ end
+ else
+   Result := False;
+end;
+
+procedure getmetadata_false(X: TDataModule);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[I] is TSQLDataSet then
+      TSQLDataSet(X.Components[I]).GetMetadata := False;
+  end;
+end;
+
+procedure getmetadata_false_form(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[I] is TSQLDataSet then
+      TSQLDataSet(X.Components[I]).GetMetadata := False;
+  end;
+end;
+
+function Movimento_Receber(Id_Ped: Integer; ITEM: Integer; Nova: string; PGTO: Integer; Status: Integer; USUARIO: string; FistSoft: Integer): string;
+begin
+  dmPrincipal.qrInsert.Active := False;
+  dmPrincipal.qrInsert.SQL.Clear;
+  dmPrincipal.qrInsert.SQL.Text := ('insert into MOV_RECEBER ( ' +
+    'ID_PED, ' +
+    'ITEM, ' +
+    'PGTO, ' +
+    'NOVA, ' +
+    'FISTSOFT, ' +
+    'STATUS, ' +
+    'DATA, ' +
+    'HORA, ' +
+    'USUARIO )' +
+    'values( ' +
+    IntToStr(Id_Ped) + ',' +
+    IntToStr(ITEM) + ',' +
+    IntToStr(PGTO) + ',' +
+    '''' + (Nova) + ''',' +
+    IntToStr(FistSoft) + ',' +
+    IntToStr(Status) + ',' +
+    '''' + FormatDateTime('dd.mm.yyyy', Now) + ''',' +
+    '''' + FormatDateTime('hh:mm:ss', Now) + ''',' +
+    '''' + USUARIO + ''') ');
+
+  dmPrincipal.qrInsert.ExecSQL;
+end;
+
+function Parametro_Fiscal_Empresa(ID_EMP: string): string;
+begin
+  with dmPrincipal do
+  begin
+    Var_Regime_Empresa := 0;
+    Var_Cont_IPI := '';
+    Var_Cont_ICMS := '';
+
+    qrEmpresa.Active := False;
+    qrEmpresa.SQL.Clear;
+    qrEmpresa.SQL.Text := ('select * from CAD_RAZAO_SOCIAL ' +
+      'where COD_RAZAO=''' + ID_EMP + ''' ');
+    qrEmpresa.Active := True;
+
+    Var_Regime_Empresa := qrEmpresa.FieldByName('REGIME_EMPRESA').AsInteger;
+    Var_Cont_IPI := qrEmpresa.FieldByName('CONT_IPI').AsString;
+
+    if qrEmpresa.FieldByName('T_FISCAL').AsString = '2' then
+      Var_Cont_ICMS := 'Sim'
+    else
+      Var_Cont_ICMS := 'Não';
+    qrEmpresa.Active := False;
+  end;
+end;
+
+function CST_ICMS(TP_SISTEMA: string; CST_ICMS: string): string;
+begin
+  if TP_SISTEMA = 'COMERCIAL' then
+  begin
+    if CST_ICMS = '000' then
+      Var_CST := '000'
+    else
+      if CST_ICMS = '010' then
+      Var_CST := '060';
+  end;
+end;
+
+function RemoveEspaco(const str: string): string;
+const
+  cDouble = '  ';
+  cOne = ' ';
+begin
+  result := str;
+  while pos(cDouble, result) > 0 do
+    result := StringReplace(result, cDouble, cOne, [rfReplaceAll]);
+end;
+
+function WordsCount(s: string): Integer;
+var
+  ps: PChar;
+  nSpaces, n, o: Integer;
+begin
+  // total de palavras
+  n := 0;
+  // total de letras
+  o := 0;
+  s := s + #0;
+  ps := @s[1];
+  while (#0 <> ps^) do
+  begin
+    while (('\''\' = ps^) and (#0 <> ps^)) do
+    begin
+      inc(ps);
+      // conta total de letras
+      inc(o);
+    end;
+    nSpaces := 0;
+    while (('\'' \' <> ps^) and (#0 <> ps^)) do
+    begin
+      inc(nSpaces);
+      inc(ps);
+      // conta total de letras
+      inc(o);
+    end;
+    if (nSpaces > 0) then
+    begin
+      inc(n);
+    end;
+  end;
+  // recebe o total de letras contadas incluindo os espacos
+  result := o;
+end;
+
+function Pesquisa_Funcionario(): string;
+begin
+  dmPesquisa.sqlPesq_Funcionario.Active := False;
+  dmPesquisa.sqlPesq_Funcionario.CommandText := ('select ' +
+    'FUN.ID_FUNC, ' +
+    'FUN.ID_DFUNC, ' +
+    'FUN.ID_EMP, ' +
+    'FUN.NOME, ' +
+    'FUN.SALARIO, ' +
+    'FUN.SAL_FAMILIA ' +
+    'from CAD_FUNC FUN ' +
+    'where FUN.DT_DEMISSAO is null ' +
+    'and FUN.SALARIO>0 ' +
+    'order by FUN.NOME ');
+  dmPesquisa.cdsPesq_Funcionario.Active := False;
+  dmPesquisa.cdsPesq_Funcionario.Active := True;
+end;
+
+function Pesquisa_Funcionario_Parametro(ID_FUNC: Integer): Integer;
+begin
+  dmPesquisa.sqlPesq_Funcionario.Active := False;
+  dmPesquisa.sqlPesq_Funcionario.CommandText := ('select ' +
+    'FUN.ID_FUNC, ' +
+    'FUN.ID_DFUNC, ' +
+    'FUN.ID_EMP, ' +
+    'FUN.NOME, ' +
+    'FUN.SALARIO, ' +
+    'FUN.SAL_FAMILIA ' +
+    'from CAD_FUNC FUN ' +
+    'where FUN.ID_FUNC= ' + IntToStr(ID_FUNC) + ' ');
+  dmPesquisa.cdsPesq_Funcionario.Active := False;
+  dmPesquisa.cdsPesq_Funcionario.Active := True;
+end;
+
+function Verifica_Folha_Paga(MES: string; Ano: string): string;
+begin
+  with dmPrincipal do
+  begin
+    qrFiltro_Function.Active := False;
+    qrFiltro_Function.SQL.Clear;
+    qrFiltro_Function.SQL.Text := ('select * from PGTO_FINAL PF ' +
+      'where PF.MES=''' + MES + ''' ' +
+      'and PF.ANO=''' + Ano + ''' ' +
+      'and PF.FOLHA_PAGA=1 ');
+    qrFiltro_Function.Active := True;
+
+    if not qrFiltro_Function.IsEmpty then
+    begin
+      ShowMessage('Já consta folha Paga e Finalizada Referente à Mês ' + qrFiltro_Function.FieldByName('MES').AsString + ' ' +
+        'Ano ' + qrFiltro_Function.FieldByName('ANO').AsString + ' ' + 'Sendo assim impossível gerar novamente ou fazer quaisquer alterações!');
+      Var_Abort := 'Sim';
+    end
+    else
+      Var_Abort := 'Não';
+  end;
+end;
+
+function Extrai_Nome_Mes(MES: string): string;
+begin
+  if MES = '01' then
+    Var_Nome_Mes := 'Janeiro'
+  else
+    if MES = '02' then
+    Var_Nome_Mes := 'Fevereiro'
+  else
+    if MES = '03' then
+    Var_Nome_Mes := 'Março';
+
+  if MES = '04' then
+    Var_Nome_Mes := 'Abril'
+  else
+    if MES = '05' then
+    Var_Nome_Mes := 'Maio'
+  else
+    if MES = '06' then
+    Var_Nome_Mes := 'Junho';
+
+  if MES = '07' then
+    Var_Nome_Mes := 'Julho'
+  else
+    if MES = '08' then
+    Var_Nome_Mes := 'Agosto'
+  else
+    if MES = '09' then
+    Var_Nome_Mes := 'Setembto';
+
+  if MES = '10' then
+    Var_Nome_Mes := 'Outubro'
+  else
+    if MES = '11' then
+    Var_Nome_Mes := 'Novembro'
+  else
+    if MES = '12' then
+    Var_Nome_Mes := 'Dezembro';
+end;
+
+procedure Grava_Exclui_Fdb(Tipo_Filtro: Longint; Copia_Segura: Longint; Limpa: Longint);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'Configura_Software.Ini');
+  try
+    ArqIni.WriteInteger('Informacao', 'Tipo Filtro:', Tipo_Filtro);
+    ArqIni.WriteInteger('Informacao', 'Copia:', Copia_Segura);
+    ArqIni.WriteInteger('Informacao', 'Guardar:', Limpa);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure Le_Exclui_Fdb(var Tipo_Filtro: Longint; var Copia_Segura: Longint; var Limpa: Longint);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'Configura_Software.Ini');
+  try
+    Tipo_Filtro := ArqIni.ReadInteger('Informacao', 'Tipo Filtro:', Tipo_Filtro);
+    Copia_Segura := ArqIni.ReadInteger('Informacao', 'Copia:', Copia_Segura);
+    Limpa := ArqIni.ReadInteger('Informacao', 'Guardar:', Limpa);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure AbreForm(aClasseForm: TComponentClass; aForm: Tform);
+begin
+  Application.CreateForm(aClasseForm, aForm);
+  try
+    aForm.ShowModal;
+  finally
+    FreeAndNil(aForm);
+  end;
+end;
+
+
+
+function Arredondar(VALOR: Double; Dec: Integer): Double;
+var
+  Valor1,
+    Numero1,
+    Numero2,
+    Numero3: Double;
+begin
+  Valor1 := Exp(Ln(10) * (Dec + 1));
+  Numero1 := Int(VALOR * Valor1);
+  Numero2 := (Numero1 / 10);
+  Numero3 := Round(Numero2);
+  result := (Numero3 / (Exp(Ln(10) * Dec)));
+end;
+
+function Zero_Direita(I: Byte): String;
+var
+  Zip: String[255];
+begin
+  Zero_Direita := '';
+  if I > 0 then
+  begin
+    FillChar(Zip, I + 1, '0');
+    Zip[0] := AnsiChar(I);
+    Zero_Direita := Zip;
+  end;
+end;
+
+function checaie(uf, IE: string): Boolean;
+const
+  // Define Peso1 e peso2 com os pesos para o calculo do
+  // 1o. digito e 2o. Digito
+  Peso1: array [1 .. 8] of Integer = (1, 3, 4, 5, 6, 7, 8, 10);
+  Peso2: array [1 .. 11] of Integer = (3, 2, 10, 9, 8, 7, 6, 5, 4, 3, 2);
+var
+  tmp, SOMA, dig1, dig2: Integer;
+  FimIE: string;
+begin
+  SOMA := 0;
+  tmp := 0; // Zera todas as variaveis
+  dig1 := 0;
+  dig2 := 0;
+  FimIE := '';
+
+  if UpperCase(uf) = 'SP' then
+  begin
+    // Vamos achar o valor do 1o. digito
+    for tmp := 1 to 8 do
+      SOMA := SOMA + (StrToInt(IE[tmp]) * Peso1[tmp]);
+
+    dig1 := SOMA mod 11; // Grava o resto da divisão de soma por 11
+    if (dig1 >= 10) then
+      dig1 := 0;
+    // faz a junção dos 8 primeiros numeros com o digito encontrado,
+    // apartir desse ponto acharemos o segundo digito.
+    FimIE := Copy(IE, 1, 8) + IntToStr(dig1) + Copy(IE, 10, 2);
+    SOMA := 0;
+
+    for tmp := 1 to 11 do
+      SOMA := SOMA + (StrToInt(FimIE[tmp]) * Peso2[tmp]);
+
+    dig2 := SOMA mod 11;
+
+    if dig2 >= 10 then
+      dig2 := 0;
+
+    // Faz a junção do 2o. digito
+    FimIE := FimIE + IntToStr(dig2);
+    if FimIE = IE then
+      result := True
+    else
+      result := False;
+  end;
+end;
+
+function DataExtenso(data: TDateTime): string;
+{ Retorna uma data por extenso }
+var
+  NoDia: Integer;
+  DiaDoMes: array [1 .. 31] of string;
+  DiaDaSemana: array [1 .. 7] of string;
+  Meses: array [1 .. 12] of string;
+  Anos: array [2000 .. 2020] of string;
+  Dia, MES, Ano: Word;
+begin
+  { Dias do mes }
+  DiaDoMes[1] := 'Primeiro';
+  DiaDoMes[2] := 'Dois';
+  DiaDoMes[3] := 'Treis';
+  DiaDoMes[4] := 'Quatro';
+  DiaDoMes[5] := 'Cinco';
+  DiaDoMes[6] := 'Seis';
+  DiaDoMes[7] := 'Sete';
+  DiaDoMes[8] := 'Oito';
+  DiaDoMes[9] := 'Nove';
+  DiaDoMes[10] := 'Dez';
+  DiaDoMes[11] := 'Onze';
+  DiaDoMes[12] := 'Doze';
+  DiaDoMes[13] := 'Treze';
+  DiaDoMes[14] := 'Quatorze';
+  DiaDoMes[15] := 'Quinze';
+  DiaDoMes[16] := 'Dezesseis';
+  DiaDoMes[17] := 'Dezessete';
+  DiaDoMes[18] := 'Dezoito';
+  DiaDoMes[19] := 'Dezenove';
+  DiaDoMes[20] := 'Vinte';
+  DiaDoMes[21] := 'Vinte e Um';
+  DiaDoMes[22] := 'Vinte e Dois';
+  DiaDoMes[23] := 'Vinte e Tres';
+  DiaDoMes[24] := 'Vinte e Quatro';
+  DiaDoMes[25] := 'Vinte e Cinco';
+  DiaDoMes[26] := 'Vinte e Seis';
+  DiaDoMes[27] := 'Vinte e Sete';
+  DiaDoMes[28] := 'Vinte e Oito';
+  DiaDoMes[29] := 'Vinte e Nove';
+  DiaDoMes[30] := 'Trinta';
+  DiaDoMes[31] := 'Trinta e Um';
+
+  { Dias da Semana }
+
+  DiaDaSemana[1] := 'Domingo';
+  DiaDaSemana[2] := 'Segunda-feira';
+  DiaDaSemana[3] := 'Terçafeira';
+  DiaDaSemana[4] := 'Quarta-feira';
+  DiaDaSemana[5] := 'Quinta-feira';
+  DiaDaSemana[6] := 'Sexta-feira';
+  DiaDaSemana[7] := 'Sábado';
+
+  { Meses do ano }
+
+  Meses[1] := 'Janeiro';
+  Meses[2] := 'Fevereiro';
+  Meses[3] := 'Março';
+  Meses[4] := 'Abril';
+  Meses[5] := 'Maio';
+  Meses[6] := 'Junho';
+  Meses[7] := 'Julho';
+  Meses[8] := 'Agosto';
+  Meses[9] := 'Setembro';
+  Meses[10] := 'Outubro';
+  Meses[11] := 'Novembro';
+  Meses[12] := 'Dezembro';
+
+  { Anos }
+
+  Anos[2000] := 'Dois Mil';
+  Anos[2001] := 'Dois Mil e Um';
+  Anos[2002] := 'Dois Mil e Dois';
+  Anos[2003] := 'Dois Mil e Tres';
+  Anos[2004] := 'Dois Mil e Quatro';
+  Anos[2005] := 'Dois Mil e Cinco';
+  Anos[2006] := 'Dois Mil e Seis';
+  Anos[2007] := 'Dois Mil e Sete';
+  Anos[2008] := 'Dois Mil e Oito';
+  Anos[2009] := 'Dois Mil e Nove';
+  Anos[2010] := 'Dois Mil e Dez';
+  Anos[2011] := 'Dois Mil e Onze';
+  Anos[2012] := 'Dois Mil e Doze';
+  Anos[2013] := 'Dois Mil e Treze';
+  Anos[2014] := 'Dois Mil e Quatorze';
+  Anos[2015] := 'Dois Mil e Qinze';
+  Anos[2016] := 'Dois Mil e Dezesseis';
+  Anos[2017] := 'Dois Mil e Dezessete';
+  Anos[2018] := 'Dois Mil e Dezoito';
+  Anos[2019] := 'Dois Mil e Dezenove';
+  Anos[2020] := 'Dois Mil e Vinte';
+
+  DecodeDate(data, Ano, MES, Dia);
+  NoDia := DayOfweek(Dia);
+  result := DiaDoMes[NoDia] + ' de ' +
+    Meses[MES] + ' de ' + Anos[Ano];
+end;
+
+// Retorna se o ano é bissexto ou não
+
+function Bissexto(Ano: Integer): Boolean;
+begin
+  result := (Ano mod 4 = 0)
+    and ((Ano mod 100 <> 0)
+    or (Ano mod 400 = 0));
+end;
+
+function RemoveCaracter(Texto: string): string;
+var
+  X: Integer;
+  Resultado: string;
+begin
+  for X := 1 to Length(Texto) do
+  begin
+    if pos(Texto[X], '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~''""!@#$%^&*()_-+=|/\{}[]:;,.<>ºNº') = 0 then
+    begin
+      case Texto[X] of
+        'Á', 'À', 'Â', 'Ä', 'Ã', 'ã':
+          Texto[X] := 'A';
+        'É', 'È', 'Ê', 'Ë', 'é':
+          Texto[X] := 'E';
+        'Í', 'Ì', 'Î', 'Ï':
+          Texto[X] := 'I';
+        'Ó', 'Ò', 'Ô', 'Ö', 'Õ', 'õ':
+          Texto[X] := 'O';
+        'Ú', 'Ù', 'Û', 'Ü':
+          Texto[X] := 'U';
+        'Ç':
+          Texto[X] := 'C';
+        'ç':
+          Texto[X] := 'c';
+        'Ñ':
+          Texto[X] := 'N';
+      end;
+    end;
+    Resultado := Resultado + Copy(Texto, X, 1);
+  end;
+  result := Resultado;
+end;
+
+function RemoveLixo(LineData: string): string;
+var
+  I, n: Integer;
+begin
+  n := Length(LineData);
+  result := '';
+  for I := 0 to n - 1
+    do
+  begin
+    if LineData[I] in (['A' .. 'Z', #32, '0' .. '9']) then
+      result := result + LineData[I];
+  end;
+end;
+
+function TiraTracoPonto(CPF: string): string;
+var
+  I: Integer;
+  aux, NovoCPF: string;
+begin
+  NovoCPF := '';
+  for I := 1 to Length(CPF) do
+  begin
+    aux := CPF[I];
+    if (aux <> '.') and (aux <> '-') and (aux <> ',') and (aux <> '/') and (aux <> '\') then
+      NovoCPF := NovoCPF + aux;
+  end;
+  result := NovoCPF;
+end;
+
+function Tira_Traco_Ponto_Barra(CNPJ: string): string;
+var
+  I: Integer;
+  aux, NovoCNPJ: string;
+begin
+  NovoCNPJ := '';
+  for I := 1 to Length(CNPJ) do
+  begin
+    aux := CNPJ[I];
+    if (aux <> '.') and (aux <> '/') and (aux <> '-') and (aux <> '(') and
+      (aux <> ')') and (aux <> ':') then
+      NovoCNPJ := NovoCNPJ + aux;
+  end;
+  result := NovoCNPJ;
+end;
+
+// somente pega os numeros digitados
+
+function peganumero(X: string): string;
+var
+  y: string;
+  I: Integer;
+begin
+  y := '';
+  for I := 1 to Length(X) do
+  begin
+    if X[I] in ['0' .. '9'] then
+      y := y + X[I];
+  end;
+  peganumero := y;
+end;
+
+// somente pega os numeros digitados
+
+function pegabarra(X: string): string;
+var
+  y: string;
+  I: Integer;
+begin
+  y := '';
+  for I := 1 to Length(X) do
+  begin
+    if X[I] in ['/' .. '/'] then
+      y := y + X[I];
+  end;
+  pegabarra := y;
+end;
+
+// somente pega as letras digitados
+
+function pegaletras(X: string): string;
+var
+  y: string;
+  I: Integer;
+begin
+  y := '';
+  for I := 1 to Length(X) do
+  begin
+    if X[I] in (['A' .. 'Z', #32, ' ']) then
+      y := y + X[I];
+  end;
+  pegaletras := y;
+
+  if ((y = 'A') or (y = 'a')) then
+    pegaletras := '1'
+  else
+    if ((y = 'B') or (y = 'b')) then
+    pegaletras := '2'
+  else
+    if ((y = 'C') or (y = 'c')) then
+    pegaletras := '3'
+  else
+    if ((y = 'D') or (y = 'd')) then
+    pegaletras := '4';
+
+  if ((y = 'E') or (y = 'e')) then
+    pegaletras := '5'
+  else
+    if ((y = 'F') or (y = 'f')) then
+    pegaletras := '6'
+  else
+    if ((y = 'G') or (y = 'g')) then
+    pegaletras := '7'
+  else
+    if ((y = 'H') or (y = 'h')) then
+    pegaletras := '8';
+
+  if ((y = 'I') or (y = 'i')) then
+    pegaletras := '9'
+  else
+    if ((y = 'J') or (y = 'j')) then
+    pegaletras := '0';
+end;
+
+function Pega_Letras_Numero_Espaco(X: string): string;
+var
+  y: string;
+  I: Integer;
+begin
+  y := '';
+  for I := 1 to Length(X) do
+  begin
+    if X[I] in (['A' .. 'Z', #32, ' ', #32, '0' .. '9']) then
+      y := y + X[I];
+  end;
+  Pega_Letras_Numero_Espaco := y;
+end;
+
+procedure GRAVA_TIPO_INDUSTRIA(GRAVA_VL_PRO_PED: string;
+  TAB_PRECO_CLI: string; BLOQ_CLI_EM_ATRASO: string; DIAS_BLOQ: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TIPO_INDUSTRIA.INI');
+  try
+    ArqIni.WriteString('Informacao', 'GRAVA_VL_PRO_PED', GRAVA_VL_PRO_PED);
+    ArqIni.WriteString('Informacao', 'TAB_PRECO_CLI', TAB_PRECO_CLI);
+    ArqIni.WriteString('Informacao', 'BLOQ_CLI_EM_ATRASO', BLOQ_CLI_EM_ATRASO);
+    ArqIni.WriteString('Informacao', 'DIAS_BLOQ', DIAS_BLOQ);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_TIPO_INDUSTRIA(var GRAVA_VL_PRO_PED: string;
+  var TAB_PRECO_CLI: string; var BLOQ_CLI_EM_ATRASO: string; var DIAS_BLOQ: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TIPO_INDUSTRIA.INI');
+  try
+    GRAVA_VL_PRO_PED := ArqIni.ReadString('Informacao', 'GRAVA_VL_PRO_PED', GRAVA_VL_PRO_PED);
+    TAB_PRECO_CLI := ArqIni.ReadString('Informacao', 'TAB_PRECO_CLI', TAB_PRECO_CLI);
+    BLOQ_CLI_EM_ATRASO := ArqIni.ReadString('Informacao', 'BLOQ_CLI_EM_ATRASO', BLOQ_CLI_EM_ATRASO);
+    DIAS_BLOQ := ArqIni.ReadString('Informacao', 'DIAS_BLOQ', DIAS_BLOQ);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+function COMPARAR_EXEC(Ver, Sis: string): Boolean;
+var
+  Arq: TSearchRec;
+  Ret: Integer;
+  DatVer, DatSis: TDateTime;
+  DATA_SERVIDOR,
+    DATA_CLIENTE: string;
+begin
+  DatVer := 0;
+  DatSis := 0;
+
+  if FileExists(Ver) then
+  begin
+    Ret := FindFirst(Ver, faAnyFile, Arq);
+    if Ret = 0 then
+    begin
+      DatVer := FileDateToDateTime(Arq.Time); // Data do arquivo
+      DATA_SERVIDOR := FormatDateTime('DD.MM.YYYY HH:MM:SS', DatVer);
+    end;
+    FindClose(Arq);
+  end;
+
+  if FileExists(Sis) then
+  begin
+    Ret := FindFirst(Sis, faAnyFile, Arq);
+    if Ret = 0 then
+    begin
+      DatSis := FileDateToDateTime(Arq.Time); // Data do arquivo
+      DATA_CLIENTE := FormatDateTime('DD.MM.YYYY HH:MM:SS', DatSis);
+    end;
+    FindClose(Arq);
+  end;
+
+  if (DATA_SERVIDOR > DATA_CLIENTE) then
+    result := False
+  else
+    result := True;
+end;
+
+function VALIDA_CNPJ(Num: string): Boolean;
+var
+  n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12: Integer;
+  d1, d2: Integer;
+  digitado, calculado: string;
+begin
+  n1 := StrToInt(Num[1]);
+  n2 := StrToInt(Num[2]);
+  n3 := StrToInt(Num[3]);
+  n4 := StrToInt(Num[4]);
+  n5 := StrToInt(Num[5]);
+  n6 := StrToInt(Num[6]);
+  n7 := StrToInt(Num[7]);
+  n8 := StrToInt(Num[8]);
+  n9 := StrToInt(Num[9]);
+  n10 := StrToInt(Num[10]);
+  n11 := StrToInt(Num[11]);
+  n12 := StrToInt(Num[12]);
+  d1 := n12 * 2 + n11 * 3 + n10 * 4 + n9 * 5 + n8 * 6 + n7 * 7 + n6 * 8 + n5 * 9 + n4 * 2 + n3 * 3 + n2 * 4 + n1 * 5;
+  d1 := 11 - (d1 mod 11);
+  if d1 >= 10 then
+    d1 := 0;
+  d2 := d1 * 2 + n12 * 3 + n11 * 4 + n10 * 5 + n9 * 6 + n8 * 7 + n7 * 8 + n6 * 9 + n5 * 2 + n4 * 3 + n3 * 4 + n2 * 5 + n1 * 6;
+  d2 := 11 - (d2 mod 11);
+  if d2 >= 10 then
+    d2 := 0;
+  calculado := IntToStr(d1) + IntToStr(d2);
+  digitado := Num[13] + Num[14];
+
+  if calculado = digitado then
+    VALIDA_CNPJ := True
+  else
+    VALIDA_CNPJ := False;
+end;
+
+function VALIDA_CPF(Num: string): Boolean;
+var
+  n1, n2, n3, n4, n5, n6, n7, n8, n9: Integer;
+  d1, d2: Integer;
+  digitado, calculado: string;
+begin
+  n1 := StrToInt(Num[1]);
+  n2 := StrToInt(Num[2]);
+  n3 := StrToInt(Num[3]);
+  n4 := StrToInt(Num[4]);
+  n5 := StrToInt(Num[5]);
+  n6 := StrToInt(Num[6]);
+  n7 := StrToInt(Num[7]);
+  n8 := StrToInt(Num[8]);
+  n9 := StrToInt(Num[9]);
+  d1 := n9 * 2 + n8 * 3 + n7 * 4 + n6 * 5 + n5 * 6 + n4 * 7 + n3 * 8 + n2 * 9 + n1 * 10;
+  d1 := 11 - (d1 mod 11);
+  if d1 >= 10 then
+    d1 := 0;
+  d2 := d1 * 2 + n9 * 3 + n8 * 4 + n7 * 5 + n6 * 6 + n5 * 7 + n4 * 8 + n3 * 9 + n2 * 10 + n1 * 11;
+  d2 := 11 - (d2 mod 11);
+  if d2 >= 10 then
+    d2 := 0;
+  calculado := IntToStr(d1) + IntToStr(d2);
+  digitado := Num[10] + Num[11];
+  if calculado = digitado then
+    VALIDA_CPF := True
+  else
+    VALIDA_CPF := False;
+end;
+
+function Inscricao(Inscricao, TIPO: string): Boolean;
+var
+
+  CONTADOR: ShortInt;
+  Casos: ShortInt;
+  Digitos: ShortInt;
+
+  Tabela_1: string;
+  Tabela_2: string;
+  Tabela_3: string;
+
+  Base_1: string;
+  Base_2: string;
+  Base_3: string;
+
+  Valor_1: ShortInt;
+
+  Soma_1: Integer;
+  Soma_2: Integer;
+
+  Erro_1: ShortInt;
+  Erro_2: ShortInt;
+  Erro_3: ShortInt;
+
+  Posicao_1: string;
+  Posicao_2: string;
+
+  Tabela: string;
+  Rotina: string;
+  MODULO: ShortInt;
+  Peso: string;
+
+  Digito: ShortInt;
+
+  Resultado: string;
+  Retorno: Boolean;
+
+begin
+
+  try
+
+    Tabela_1 := ' ';
+    Tabela_2 := ' ';
+    Tabela_3 := ' ';
+
+    { }{ }
+    { Valores possiveis para os digitos (j) }
+    { }
+    { 0 a 9 = Somente o digito indicado. }
+    { N = Numeros 0 1 2 3 4 5 6 7 8 ou 9 }
+    { A = Numeros 1 2 3 4 5 6 7 8 ou 9 }
+    { B = Numeros 0 3 5 7 ou 8 }
+    { C = Numeros 4 ou 7 }
+    { D = Numeros 3 ou 4 }
+    { E = Numeros 0 ou 8 }
+    { F = Numeros 0 1 ou 5 }
+    { G = Numeros 1 7 8 ou 9 }
+    { H = Numeros 0 1 2 ou 3 }
+    { I = Numeros 0 1 2 3 ou 4 }
+    { J = Numeros 0 ou 9 }
+    { K = Numeros 1 2 3 ou 9 }
+    { }
+    { -------------------------------------------------------- }
+    { }
+    { Valores possiveis para as rotinas (d) e (g) }
+    { }
+    { A a E = Somente a Letra indicada. }
+    { 0 = B e D }
+    { 1 = C e E }
+    { 2 = A e E }
+    { }
+    { -------------------------------------------------------- }
+    { }
+    { C T F R M P R M P }
+    { A A A O O E O O E }
+    { S M T T D S T D S }
+    { }
+    { a b c d e f g h i jjjjjjjjjjjjjj }
+    { 0000000001111111111222222222233333333 }
+    { 1234567890123456789012345678901234567 }
+
+    if TIPO = 'AC' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 01NNNNNNX.14.00';
+    if TIPO = 'AC' then
+      Tabela_2 := '2.13.0.E.11.02.E.11.01. 01NNNNNNNNNXY.13.14';
+    if TIPO = 'AL' then
+      Tabela_1 := '1.09.0.0.11.01. . . . 24BNNNNNX.14.00';
+    if TIPO = 'AP' then
+      Tabela_1 := '1.09.0.1.11.01. . . . 03NNNNNNX.14.00';
+    if TIPO = 'AP' then
+      Tabela_2 := '2.09.1.1.11.01. . . . 03NNNNNNX.14.00';
+    if TIPO = 'AP' then
+      Tabela_3 := '3.09.0.E.11.01. . . . 03NNNNNNX.14.00';
+    if TIPO = 'AM' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 0CNNNNNNX.14.00';
+    if TIPO = 'BA' then
+      Tabela_1 := '1.08.0.E.10.02.E.10.03. NNNNNNYX.14.13';
+    if TIPO = 'BA' then
+      Tabela_2 := '2.08.0.E.11.02.E.11.03. NNNNNNYX.14.13';
+    if TIPO = 'CE' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 0NNNNNNNX.14.13';
+    if TIPO = 'DF' then
+      Tabela_1 := '1.13.0.E.11.02.E.11.01. 07DNNNNNNNNXY.13.14';
+    if TIPO = 'ES' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 0ENNNNNNX.14.00';
+    if TIPO = 'GO' then
+      Tabela_1 := '1.09.1.E.11.01. . . . 1FNNNNNNX.14.00';
+    if TIPO = 'GO' then
+      Tabela_2 := '2.09.0.E.11.01. . . . 1FNNNNNNX.14.00';
+    if TIPO = 'MA' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 12NNNNNNX.14.00';
+    if TIPO = 'MT' then
+      Tabela_1 := '1.11.0.E.11.01. . . . NNNNNNNNNNX.14.00';
+    if TIPO = 'MS' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 28NNNNNNX.14.00';
+    if TIPO = 'MG' then
+      Tabela_1 := '1.13.0.2.10.10.E.11.11. NNNNNNNNNNNXY.13.14';
+    if TIPO = 'PA' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 15NNNNNNX.14.00';
+    if TIPO = 'PB' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 16NNNNNNX.14.00';
+    if TIPO = 'PR' then
+      Tabela_1 := '1.10.0.E.11.09.E.11.08. NNNNNNNNXY.13.14';
+    if TIPO = 'PE' then
+      Tabela_1 := '1.14.1.E.11.07. . . .18ANNNNNNNNNNX.14.00';
+    if TIPO = 'PI' then
+      Tabela_1 := '1.09.0.E.11.01. . . . 19NNNNNNX.14.00';
+    if TIPO = 'RJ' then
+      Tabela_1 := '1.08.0.E.11.08. . . . GNNNNNNX.14.00';
+    if TIPO = 'RN' then
+      Tabela_1 := '1.09.0.0.11.01. . . . 20HNNNNNX.14.00';
+    if TIPO = 'RS' then
+      Tabela_1 := '1.10.0.E.11.01. . . . INNNNNNNNX.14.00';
+    if TIPO = 'RO' then
+      Tabela_1 := '1.09.1.E.11.04. . . . ANNNNNNNX.14.00';
+    if TIPO = 'RO' then
+      Tabela_2 := '2.14.0.E.11.01. . . .NNNNNNNNNNNNNX.14.00';
+    if TIPO = 'RR' then
+      Tabela_1 := '1.09.0.D.09.05. . . . 24NNNNNNX.14.00';
+    if TIPO = 'SC' then
+      Tabela_1 := '1.09.0.E.11.01. . . . NNNNNNNNX.14.00';
+    if TIPO = 'SP' then
+      Tabela_1 := '1.12.0.D.11.12.D.11.13. NNNNNNNNXNNY.11.14';
+    if TIPO = 'SP' then
+      Tabela_2 := '2.12.0.D.11.12. . . . NNNNNNNNXNNN.11.00';
+    if TIPO = 'SE' then
+      Tabela_1 := '1.09.0.E.11.01. . . . NNNNNNNNX.14.00';
+    if TIPO = 'TO' then
+      Tabela_1 := '1.11.0.E.11.06. . . . 29JKNNNNNNX.14.00';
+
+    if TIPO = 'CNPJ' then
+      Tabela_1 := '1.14.0.E.11.21.E.11.22.NNNNNNNNNNNNXY.13.14';
+    if TIPO = 'CPF' then
+      Tabela_1 := '1.11.0.E.11.31.E.11.32. NNNNNNNNNXY.13.14';
+
+    { Deixa somente os numeros }
+
+    Base_1 := '';
+
+    for CONTADOR := 1 to 30 do
+      if pos(Copy(Inscricao, CONTADOR, 1), '0123456789') <> 0 then
+        Base_1 := Base_1 + Copy(Inscricao, CONTADOR, 1);
+
+    { Repete 3x - 1 para cada caso possivel }
+
+    Casos := 0;
+
+    Erro_1 := 0;
+    Erro_2 := 0;
+    Erro_3 := 0;
+
+    while Casos < 3 do
+    begin
+
+      Casos := Casos + 1;
+
+      if Casos = 1 then
+        Tabela := Tabela_1;
+      if Casos = 2 then
+        Erro_1 := Erro_3;
+      if Casos = 2 then
+        Tabela := Tabela_2;
+      if Casos = 3 then
+        Erro_2 := Erro_3;
+      if Casos = 3 then
+        Tabela := Tabela_3;
+
+      Erro_3 := 0;
+
+      if Copy(Tabela, 1, 1) <> ' ' then
+      begin
+
+        { Verifica o Tamanho }
+
+        if Length(Trim(Base_1)) <> (StrToInt(Copy(Tabela, 3, 2))) then
+          Erro_3 := 1;
+
+        if Erro_3 = 0 then
+        begin
+
+          { Ajusta o Tamanho }
+
+          Base_2 := Copy(' ' + Base_1, Length(' ' + Base_1) - 13, 14);
+
+          { Compara com valores possivel para cada uma da 14 posições }
+
+          CONTADOR := 0;
+
+          while (CONTADOR < 14) and (Erro_3 = 0) do
+          begin
+
+            CONTADOR := CONTADOR + 1;
+
+            Posicao_1 := Copy(Copy(Tabela, 24, 14), CONTADOR, 1);
+            Posicao_2 := Copy(Base_2, CONTADOR, 1);
+
+            if (Posicao_1 = ' ') and (Posicao_2 <> ' ') then
+              Erro_3 := 1;
+            if (Posicao_1 = 'N') and (pos(Posicao_2, '0123456789') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'A') and (pos(Posicao_2, '123456789') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'B') and (pos(Posicao_2, '03578') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'C') and (pos(Posicao_2, '47') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'D') and (pos(Posicao_2, '34') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'E') and (pos(Posicao_2, '08') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'F') and (pos(Posicao_2, '015') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'G') and (pos(Posicao_2, '1789') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'H') and (pos(Posicao_2, '0123') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'I') and (pos(Posicao_2, '01234') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'J') and (pos(Posicao_2, '09') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 = 'K') and (pos(Posicao_2, '1239') = 0) then
+              Erro_3 := 1;
+            if (Posicao_1 <> Posicao_2) and (pos(Posicao_1, '0123456789') > 0) then
+              Erro_3 := 1;
+
+          end;
+
+          { Calcula os Digitos }
+
+          Rotina := ' ';
+          Digitos := 000;
+          Digito := 000;
+
+          while (Digitos < 2) and (Erro_3 = 0) do
+          begin
+
+            Digitos := Digitos + 1;
+
+            { Carrega peso }
+
+            Peso := Copy(Tabela, 5 + (Digitos * 8), 2);
+
+            if Peso <> ' ' then
+            begin
+
+              Rotina := Copy(Tabela, 0 + (Digitos * 8), 1);
+              MODULO := StrToInt(Copy(Tabela, 2 + (Digitos * 8), 2));
+
+              if Peso = '01' then
+                Peso := '06.05.04.03.02.09.08.07.06.05.04.03.02.00';
+              if Peso = '02' then
+                Peso := '05.04.03.02.09.08.07.06.05.04.03.02.00.00';
+              if Peso = '03' then
+                Peso := '06.05.04.03.02.09.08.07.06.05.04.03.00.02';
+              if Peso = '04' then
+                Peso := '00.00.00.00.00.00.00.00.06.05.04.03.02.00';
+              if Peso = '05' then
+                Peso := '00.00.00.00.00.01.02.03.04.05.06.07.08.00';
+              if Peso = '06' then
+                Peso := '00.00.00.09.08.00.00.07.06.05.04.03.02.00';
+              if Peso = '07' then
+                Peso := '05.04.03.02.01.09.08.07.06.05.04.03.02.00';
+              if Peso = '08' then
+                Peso := '08.07.06.05.04.03.02.07.06.05.04.03.02.00';
+              if Peso = '09' then
+                Peso := '07.06.05.04.03.02.07.06.05.04.03.02.00.00';
+              if Peso = '10' then
+                Peso := '00.01.02.01.01.02.01.02.01.02.01.02.00.00';
+              if Peso = '11' then
+                Peso := '00.03.02.11.10.09.08.07.06.05.04.03.02.00';
+              if Peso = '12' then
+                Peso := '00.00.01.03.04.05.06.07.08.10.00.00.00.00';
+              if Peso = '13' then
+                Peso := '00.00.03.02.10.09.08.07.06.05.04.03.02.00';
+              if Peso = '21' then
+                Peso := '05.04.03.02.09.08.07.06.05.04.03.02.00.00';
+              if Peso = '22' then
+                Peso := '06.05.04.03.02.09.08.07.06.05.04.03.02.00';
+              if Peso = '31' then
+                Peso := '00.00.00.10.09.08.07.06.05.04.03.02.00.00';
+              if Peso = '32' then
+                Peso := '00.00.00.11.10.09.08.07.06.05.04.03.02.00';
+
+              { Multiplica }
+
+              Base_3 := Copy(('0000000000000000' + Trim(Base_2)), Length(('0000000000000000' + Trim(Base_2))) - 13, 14);
+
+              Soma_1 := 0;
+              Soma_2 := 0;
+
+              for CONTADOR := 1 to 14 do
+              begin
+
+                Valor_1 := (StrToInt(Copy(Base_3, CONTADOR, 01)) * StrToInt(Copy(Peso, CONTADOR * 3 - 2, 2)));
+
+                Soma_1 := Soma_1 + Valor_1;
+
+                if Valor_1 > 9 then
+                  Valor_1 := Valor_1 - 9;
+
+                Soma_2 := Soma_2 + Valor_1;
+
+              end;
+
+              { Ajusta valor da soma }
+
+              if pos(Rotina, 'A2') > 0 then
+                Soma_1 := Soma_2;
+              if pos(Rotina, 'B0') > 0 then
+                Soma_1 := Soma_1 * 10;
+              if pos(Rotina, 'C1') > 0 then
+                Soma_1 := Soma_1 + (5 + 4 * StrToInt(Copy(Tabela, 6, 1)));
+
+              { Calcula o Digito }
+
+              if pos(Rotina, 'D0') > 0 then
+                Digito := Soma_1 mod MODULO;
+              if pos(Rotina, 'E12') > 0 then
+                Digito := MODULO - (Soma_1 mod MODULO);
+
+              if Digito < 10 then
+                Resultado := IntToStr(Digito);
+              if Digito = 10 then
+                Resultado := '0';
+              if Digito = 11 then
+                Resultado := Copy(Tabela, 6, 1);
+
+              { Verifica o Digito }
+
+              if (Copy(Base_2, StrToInt(Copy(Tabela, 36 + (Digitos * 3), 2)), 1) <> Resultado) then
+                Erro_3 := 1;
+
+            end;
+
+          end;
+
+        end;
+
+      end;
+
+    end;
+
+    { Retorna o resultado da Verificação }
+
+    Retorno := False;
+
+    if (Trim(Tabela_1) <> '') and (Erro_1 = 0) then
+      Retorno := True;
+    if (Trim(Tabela_2) <> '') and (Erro_2 = 0) then
+      Retorno := True;
+    if (Trim(Tabela_3) <> '') and (Erro_3 = 0) then
+      Retorno := True;
+
+    if Trim(Inscricao) = 'ISENTO' then
+      Retorno := True;
+
+    result := Retorno;
+
+  except
+
+    result := False;
+
+  end;
+
+end;
+
+{ Mascara_Inscricao __________________________________ }
+
+function Mascara_Inscricao(Inscricao, ESTADO: string): string;
+var
+
+  Mascara: string;
+
+  Contador_1: Integer;
+  Contador_2: Integer;
+
+begin
+
+  if ESTADO = 'AC' then
+    Mascara := '**.***.***/***-**';
+  if ESTADO = 'AL' then
+    Mascara := '*********';
+  if ESTADO = 'AP' then
+    Mascara := '*********';
+  if ESTADO = 'AM' then
+    Mascara := '**.***.***-*';
+  if ESTADO = 'BA' then
+    Mascara := '******-**';
+  if ESTADO = 'CE' then
+    Mascara := '********-*';
+  if ESTADO = 'DF' then
+    Mascara := '***********-**';
+  if ESTADO = 'ES' then
+    Mascara := '*********';
+  if ESTADO = 'GO' then
+    Mascara := '**.***.***-*';
+  if ESTADO = 'MA' then
+    Mascara := '*********';
+  if ESTADO = 'MT' then
+    Mascara := '**********-*';
+  if ESTADO = 'MS' then
+    Mascara := '*********';
+  if ESTADO = 'MG' then
+    Mascara := '***.***.***/****';
+  if ESTADO = 'PA' then
+    Mascara := '**-******-*';
+  if ESTADO = 'PB' then
+    Mascara := '********-*';
+  if ESTADO = 'PR' then
+    Mascara := '********-**';
+  if ESTADO = 'PE' then
+    Mascara := '**.*.***.*******-*';
+  if ESTADO = 'PI' then
+    Mascara := '*********';
+  if ESTADO = 'RJ' then
+    Mascara := '**.***.**-*';
+  if ESTADO = 'RN' then
+    Mascara := '**.***.***-*';
+  if ESTADO = 'RS' then
+    Mascara := '***/*******';
+  if ESTADO = 'RO' then
+    Mascara := '***.*****-*';
+  if ESTADO = 'RR' then
+    Mascara := '********-*';
+  if ESTADO = 'SC' then
+    Mascara := '***.***.***';
+  if ESTADO = 'SP' then
+    Mascara := '***.***.***.***';
+  if ESTADO = 'SE' then
+    Mascara := '*********-*';
+  if ESTADO = 'TO' then
+    Mascara := '***********';
+
+  Contador_2 := 1;
+
+  result := '';
+
+  Mascara := Mascara + '****';
+
+  for Contador_1 := 1 to Length(Mascara) do
+  begin
+
+    if Copy(Mascara, Contador_1, 1) = '*' then
+      result := result + Copy(Inscricao, Contador_2, 1);
+    if Copy(Mascara, Contador_1, 1) <> '*' then
+      result := result + Copy(Mascara, Contador_1, 1);
+
+    if Copy(Mascara, Contador_1, 1) = '*' then
+      Contador_2 := Contador_2 + 1;
+
+  end;
+
+  result := Trim(result);
+
+end;
+
+function Fun_Data(Texto: string): string;
+begin
+  if Trim(Texto) <> '' then
+  begin
+    if Length(Texto) = 12 then
+      result := Copy(Texto, 1, 2) + '/' + Copy(Texto, 3, 2) + '/' + Copy(Texto, 5, 4) + ' ' +
+        Copy(Texto, 9, 2) + ':' + Copy(Texto, 11, 2)
+    else if Length(Texto) = 8 then
+      result := Copy(Texto, 1, 2) + '/' + Copy(Texto, 3, 2) + '/' + Copy(Texto, 5, 4)
+    else
+      result := Copy(Texto, 1, 2) + '/' + Copy(Texto, 3, 4);
+  end
+  else
+    result := '';
+end;
+
+function PESQUISA(CAMPO, VALOR: string): string;
+var
+  L: TsTringlist;
+  P: string;
+  I: Integer;
+  Resultado: string;
+begin
+  try
+    L := TsTringlist.Create;
+    I := 1;
+    while I <= Length(VALOR) do
+    begin
+      if (VALOR[I] <> ';') then
+      begin
+        P := P + VALOR[I];
+        inc(I);
+      end
+      else
+      begin
+        inc(I);
+        L.Add(Trim(P));
+        P := '';
+      end;
+
+    end;
+    L.Add(P);
+
+    for I := 0 to L.Count - 1 do
+    begin
+      if I >= 1 then
+        L.Strings[I] := '%' + UpperCase(L.Strings[I]) + '%'
+      else
+        L.Strings[I] := UpperCase(L.Strings[I]) + '%';
+    end;
+
+    Resultado := '';
+    for I := 0 to L.Count - 1 do
+    begin
+      if I > 0 then
+        Resultado := Resultado + ' ' + 'AND' + ' ';
+      Resultado := Resultado + ' (Upper(' + CAMPO + ') Like ' + Char(39) + L.Strings[I] + Char(39) + ')';
+    end;
+    result := Resultado;
+  finally
+  end;
+end;
+
+function COMPLETA_ZEROS(NUMERO: string; TAMANHO: Integer): string;
+var
+  TAM, A: Integer;
+  Novo: string;
+begin
+  TAM := Length(IntToStr(StrToInt(NUMERO)));
+  for A := 1 to TAMANHO - TAM do
+  begin
+    Novo := Novo + '0';
+  end;
+  Novo := Novo + IntToStr(StrToInt(NUMERO));
+  result := Novo;
+end;
+
+function ESPACOS(I: Byte): string;
+var
+  Zip: string[255];
+begin
+  ESPACOS := '';
+  if I > 0 then
+  begin
+    FillChar(Zip, I + 1, ' ');
+    Zip[0] := AnsiChar(I);
+    ESPACOS := Zip;
+  end;
+end;
+
+function StrZero(Num: Real; Zeros, Deci: Integer): string;
+var
+  TAM, Z: Integer;
+  res, zer: string;
+begin
+  str(Num: Zeros: Deci, res);
+  res := Alltrim(res);
+  TAM := Length(res);
+  zer := '';
+  for Z := 1 to (Zeros - TAM) do
+    zer := zer + '0';
+  result := zer + res;
+end;
+
+function Alltrim(Text: string): string;
+begin
+  while pos(' ', Text) > 0 do
+    Delete(Text, pos(' ', Text), 1);
+  result := Text;
+end;
+
+function ConvZero(Num: Real; Zeros, Deci: Integer): string;
+var
+  TAM, Z: Integer;
+  res, vlr: string;
+begin
+  str(Num: Zeros: Deci, res);
+  res := Alltrim(res);
+  TAM := Length(res);
+  vlr := '';
+  if TAM > Zeros then
+    TAM := Zeros;
+  for Z := 1 to (TAM + 1) do
+    if SubStrAT(Copy(res, Z, 1), '0123456789') then
+      vlr := vlr + Copy(res, Z, 1);
+  result := Format('%' + IntToStr(Zeros) + '.' + IntToStr(Zeros) + 'd', [StrToInt(vlr)]);
+end;
+
+function SubStrAT(Pesq: string; Local: string): Boolean;
+var
+  I, Tamanho1, Tamanho2: Integer;
+  Achei: Boolean;
+begin
+  Tamanho1 := Length(Pesq);
+  Tamanho2 := Length(Local);
+  Achei := False;;
+  I := 1;
+  while (I <= Tamanho2) and not Achei do
+  begin
+    if Copy(Local, I, Tamanho1) = Pesq then
+      Achei := True
+    else
+      I := I + 1;
+  end;
+  result := Achei;
+end;
+
+procedure GRAVASENHA(SENHA_DESCONTO: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SENHAS.INI');
+  try
+    ArqIni.WriteBool('Informacao', 'SENHA DESCONTO', SENHA_DESCONTO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_CONSULTA(CONSULTA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'CONSULTA.INI');
+  try
+    ArqIni.WriteString('Informacao', 'CONSULTA', CONSULTA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LE_CONSULTA(var CONSULTA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'CONSULTA.INI');
+  try
+    CONSULTA := ArqIni.ReadString('Informacao', 'CONSULTA', CONSULTA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure Grava_Informacoes_Backup(Origem: string; Destino: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'Info_Backup.INI');
+  try
+    ArqIni.WriteString('Informacao', 'Endereço Origem', Origem);
+    ArqIni.WriteString('Informacao', 'Endereço Destino', Destino);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure Le_Informacoes_Backup(var Origem: string; var Destino: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'Info_Backup.INI');
+  try
+    Origem := ArqIni.ReadString('Informacao', 'Endereço Origem', Origem);
+    Destino := ArqIni.ReadString('Informacao', 'Endereço Destino', Destino);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure Grava_Exclui_Caixa_Dois(Exclui_Caixa_Dois: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'Exclui_Caixa_Dois.INI');
+  try
+    ArqIni.WriteString('Informacao', 'Exclui_Caixa_Dois', Exclui_Caixa_Dois);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure Le_Exclui_Caixa_Dois(var Exclui_Caixa_Dois: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'Exclui_Caixa_Dois.INI');
+  try
+    Exclui_Caixa_Dois := ArqIni.ReadString('Informacao', 'Exclui_Caixa_Dois', Exclui_Caixa_Dois);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_SENHA(var SENHA_DESCONTO: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SENHAS.INI');
+  try
+    SENHA_DESCONTO := ArqIni.ReadBool('Informacao', 'SENHA DESCONTO', SENHA_DESCONTO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure ALTERA_FATURAMENTO(var SENHA1: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ALTERA_FATURAMENTO.INI');
+  try
+    SENHA1 := ArqIni.ReadString('Informacao', 'SENHA1', SENHA1);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_TAB_PRECO_PRO(TAB_PRECO: string; COR_ACER_ORCAMENTO: string; SEM_ACER_CAD_PRO: string;
+  COMP_LARG_FORA_DESC_PRO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TAB_PRECO_PRO.INI');
+  try
+    ArqIni.WriteString('Informacao', 'TAB_PRECO', TAB_PRECO);
+    ArqIni.WriteString('Informacao', 'COR_ACER_ORCAMENTO', COR_ACER_ORCAMENTO);
+    ArqIni.WriteString('Informacao', 'SEM_ACER_CAD_PRO', SEM_ACER_CAD_PRO);
+    ArqIni.WriteString('Informacao', 'COMP_LARG_FORA_DESC_PRO', COMP_LARG_FORA_DESC_PRO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_TAB_PRECO_PRO(var TAB_PRECO: string; var COR_ACER_ORCAMENTO: string; var SEM_ACER_CAD_PRO: string;
+  var COMP_LARG_FORA_DESC_PRO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TAB_PRECO_PRO.INI');
+  try
+    TAB_PRECO := ArqIni.ReadString('Informacao', 'TAB_PRECO', TAB_PRECO);
+    COR_ACER_ORCAMENTO := ArqIni.ReadString('Informacao', 'COR_ACER_ORCAMENTO', COR_ACER_ORCAMENTO);
+    SEM_ACER_CAD_PRO := ArqIni.ReadString('Informacao', 'SEM_ACER_CAD_PRO', SEM_ACER_CAD_PRO);
+    COMP_LARG_FORA_DESC_PRO := ArqIni.ReadString('Informacao', 'COMP_LARG_FORA_DESC_PRO', COMP_LARG_FORA_DESC_PRO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_END_BASE_DADOS(CAMINHO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO1: string;
+begin
+  CAMINHO1 := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO1 + 'CONF_END_BASE_DADOS.INI');
+  try
+    ArqIni.WriteString('Informacao', 'CAMINHO', CAMINHO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_END_BASE_DADOS(var CAMINHO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO1: string;
+begin
+  CAMINHO1 := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO1 + 'CONF_END_BASE_DADOS.INI');
+  try
+    CAMINHO := ArqIni.ReadString('Informacao', 'CAMINHO', CAMINHO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_INI_NOTA(COM_ESCOLHA_ITENS_NOTA: string; CONTABILIZAR_CT_PAGAR: string;
+  GERA_PGTO_NOTA: string; GERA_PGTO_NOTA_DUP: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ESCOLHA_ITENSN.INI');
+  try
+    ArqIni.WriteString('Informacao', 'COM_ESCOLHA_ITENS_NOTA', COM_ESCOLHA_ITENS_NOTA);
+    ArqIni.WriteString('Informacao', 'CONTABILIZAR_CT_PAGAR', CONTABILIZAR_CT_PAGAR);
+    ArqIni.WriteString('Informacao', 'GERA_PGTO_NOTA', GERA_PGTO_NOTA);
+    ArqIni.WriteString('Informacao', 'GERA_PGTO_NOTA_DUP', GERA_PGTO_NOTA_DUP);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_NOTA(var COM_ESCOLHA_ITENS_NOTA: string; var CONTABILIZAR_CT_PAGAR: string;
+  var GERA_PGTO_NOTA: string; var GERA_PGTO_NOTA_DUP: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ESCOLHA_ITENSN.INI');
+  try
+    COM_ESCOLHA_ITENS_NOTA := ArqIni.ReadString('Informacao', 'COM_ESCOLHA_ITENS_NOTA', COM_ESCOLHA_ITENS_NOTA);
+    CONTABILIZAR_CT_PAGAR := ArqIni.ReadString('Informacao', 'CONTABILIZAR_CT_PAGAR', CONTABILIZAR_CT_PAGAR);
+    GERA_PGTO_NOTA := ArqIni.ReadString('Informacao', 'GERA_PGTO_NOTA', GERA_PGTO_NOTA);
+    GERA_PGTO_NOTA_DUP := ArqIni.ReadString('Informacao', 'GERA_PGTO_NOTA_DUP', GERA_PGTO_NOTA_DUP);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_TAB_PRECO(PRE_FIN: string; COM_GRUPO_TECIDO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TAB_PRECO_FINANCEIRO.INI');
+  try
+    ArqIni.WriteString('Informacao', 'PRE_FIN', PRE_FIN);
+    ArqIni.WriteString('Informacao', 'COM_GRUPO_TECIDO', COM_GRUPO_TECIDO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_TAB_PRECO(var PRE_FIN: string; var COM_GRUPO_TECIDO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TAB_PRECO_FINANCEIRO.INI');
+  try
+    PRE_FIN := ArqIni.ReadString('Informacao', 'PRE_FIN', PRE_FIN);
+    COM_GRUPO_TECIDO := ArqIni.ReadString('Informacao', 'COM_GRUPO_TECIDO', COM_GRUPO_TECIDO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_ETIQUETA_MD(PRODUTO_MD: string; NUMERO_MD: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ETIQUETA_MD.INI');
+  try
+    ArqIni.WriteString('Informacao', 'PRODUTO_MD', PRODUTO_MD);
+    ArqIni.WriteString('Informacao', 'NUMERO_MD', NUMERO_MD);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_ETIQUETA_MD(var PRODUTO_MD: string; var NUMERO_MD: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ETIQUETA_MD.INI');
+  try
+    PRODUTO_MD := ArqIni.ReadString('Informacao', 'PRODUTO_MD', PRODUTO_MD);
+    NUMERO_MD := ArqIni.ReadString('Informacao', 'NUMERO_MD', NUMERO_MD);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+
+
+
+// RESOLUÇÂO DE VIDEO
+
+// RESOLUÇÂO DE VIDEO
+
+procedure GRAVA_RESOLUCAO_VIDEO(RESOLUCAO: string; WIN_CLASSICO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'RESOLUCAO_VIDEO.INI');
+  try
+    ArqIni.WriteString('Informacao', 'RESOLUCAO', RESOLUCAO);
+    ArqIni.WriteString('Informacao', 'WIN_CLASSICO', WIN_CLASSICO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_RESOLUCAO_VIDEO(var RESOLUCAO: string; var WIN_CLASSICO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'RESOLUCAO_VIDEO.INI');
+  try
+    RESOLUCAO := ArqIni.ReadString('Informacao', 'RESOLUCAO', RESOLUCAO);
+    WIN_CLASSICO := ArqIni.ReadString('Informacao', 'WIN_CLASSICO', WIN_CLASSICO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_SERVIDOR_CLIENTE(SERVIDOR: string; CLIENTE: string; MAQUINA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SERVIDOR_CLIENTE.INI');
+  try
+    ArqIni.WriteString('Informacao', 'SERVIDOR', SERVIDOR);
+    ArqIni.WriteString('Informacao', 'CLIENTE', CLIENTE);
+    ArqIni.WriteString('Informacao', 'MAQUINA', MAQUINA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_SERVIDOR_CLIENTE(var SERVIDOR: string; var CLIENTE: string; var MAQUINA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SERVIDOR_CLIENTE.INI');
+  try
+    SERVIDOR := ArqIni.ReadString('Informacao', 'SERVIDOR', SERVIDOR);
+    CLIENTE := ArqIni.ReadString('Informacao', 'CLIENTE', CLIENTE);
+    MAQUINA := ArqIni.ReadString('Informacao', 'MAQUINA', MAQUINA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_SICIC3_0(var NOME_SERVIDOR: string; var SO_SERVIDOR: string;
+  var CAMINHO_BASE_DADOS: string; var DIRETORIO_SERVIDOR: string; var DIRETORIO_SERVIDOR_EXEC: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SICIC3_0.INI');
+  try
+    NOME_SERVIDOR := ArqIni.ReadString('SICIC3.0.FDB', 'NOME_SERVIDOR', '');
+    SO_SERVIDOR := ArqIni.ReadString('SICIC3.0.FDB', 'SO_SERVIDOR', '');
+    CAMINHO_BASE_DADOS := ArqIni.ReadString('SICIC3.0.FDB', 'CAMINHO_BASE_DADOS', '');
+    DIRETORIO_SERVIDOR := ArqIni.ReadString('SICIC3.0.FDB', 'DIRETORIO_SERVIDOR', '');
+    DIRETORIO_SERVIDOR_EXEC := ArqIni.ReadString('SICIC3.0.FDB', 'DIRETORIO_SERVIDOR_EXEC', '');
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_FILTRO_CLIENTE(POR_COD_CLI: string; COMECA_COM: string; CONTEM: string; CNPJ: string;
+  IE: string; FONE: string; ENDERECO: string; CIDADE: string; BAIRRO: string; CEP: string; COD_REP: string;
+  ESTADO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'FILTRO_PESQ_CLIENTE.INI');
+  try
+    ArqIni.WriteString('Informacao', 'POR_COD_CLI', POR_COD_CLI);
+    ArqIni.WriteString('Informacao', 'COMECA_COM', COMECA_COM);
+    ArqIni.WriteString('Informacao', 'CONTEM', CONTEM);
+    ArqIni.WriteString('Informacao', 'CNPJ', CNPJ);
+    ArqIni.WriteString('Informacao', 'IE', IE);
+    ArqIni.WriteString('Informacao', 'FONE', FONE);
+    ArqIni.WriteString('Informacao', 'ENDERECO', ENDERECO);
+    ArqIni.WriteString('Informacao', 'CIDADE', CIDADE);
+    ArqIni.WriteString('Informacao', 'BAIRRO', BAIRRO);
+    ArqIni.WriteString('Informacao', 'CEP', CEP);
+    ArqIni.WriteString('Informacao', 'COD_REP', COD_REP);
+    ArqIni.WriteString('Informacao', 'ESTADO', ESTADO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_FILTRO_CLIENTE(var POR_COD_CLI: string; var COMECA_COM: string; var CONTEM: string; var CNPJ: string;
+  var IE: string; var FONE: string; var ENDERECO: string; var CIDADE: string; var BAIRRO: string; var CEP: string; var COD_REP: string;
+  var ESTADO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'FILTRO_PESQ_CLIENTE.INI');
+  try
+    POR_COD_CLI := ArqIni.ReadString('Informacao', 'POR_COD_CLI', POR_COD_CLI);
+    COMECA_COM := ArqIni.ReadString('Informacao', 'COMECA_COM', COMECA_COM);
+    CONTEM := ArqIni.ReadString('Informacao', 'CONTEM', CONTEM);
+    CNPJ := ArqIni.ReadString('Informacao', 'CNPJ', CNPJ);
+    IE := ArqIni.ReadString('Informacao', 'IE', IE);
+    FONE := ArqIni.ReadString('Informacao', 'FONE', FONE);
+    ENDERECO := ArqIni.ReadString('Informacao', 'ENDERECO', ENDERECO);
+    CIDADE := ArqIni.ReadString('Informacao', 'CIDADE', CIDADE);
+    BAIRRO := ArqIni.ReadString('Informacao', 'BAIRRO', BAIRRO);
+    CEP := ArqIni.ReadString('Informacao', 'CEP', CEP);
+    COD_REP := ArqIni.ReadString('Informacao', 'COD_REP', COD_REP);
+    ESTADO := ArqIni.ReadString('Informacao', 'ESTADO', ESTADO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_FILTRO_PRODUTO(POR_COD_BARRA: string; COMECA_COM: string; CONTEM: string; CORES: string;
+  ACESSORIOS: string; MARCA: string; UN: string; COD_GRUPO: string; COD_FORN: string; TIPO: string; ATIVO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'FILTRO_PESQ_PRODUTO.INI');
+  try
+    ArqIni.WriteString('Informacao', 'POR_COD_BARRA', POR_COD_BARRA);
+    ArqIni.WriteString('Informacao', 'COMECA_COM', COMECA_COM);
+    ArqIni.WriteString('Informacao', 'CONTEM', CONTEM);
+    ArqIni.WriteString('Informacao', 'CORES', CORES);
+    ArqIni.WriteString('Informacao', 'ACESSORIOS', ACESSORIOS);
+    ArqIni.WriteString('Informacao', 'MARCA', MARCA);
+    ArqIni.WriteString('Informacao', 'UN', UN);
+    ArqIni.WriteString('Informacao', 'COD_GRUPO', COD_GRUPO);
+    ArqIni.WriteString('Informacao', 'COD_FORN', COD_FORN);
+    ArqIni.WriteString('Informacao', 'TIPO', TIPO);
+    ArqIni.WriteString('Informacao', 'ATIVO', ATIVO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_FILTRO_PRODUTO(var POR_COD_BARRA: string; var COMECA_COM: string; var CONTEM: string; var CORES: string;
+  var ACESSORIOS: string; var MARCA: string; var UN: string; var COD_GRUPO: string; var COD_FORN: string;
+  var TIPO: string; var ATIVO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'FILTRO_PESQ_PRODUTO.INI');
+  try
+    POR_COD_BARRA := ArqIni.ReadString('Informacao', 'POR_COD_BARRA', POR_COD_BARRA);
+    COMECA_COM := ArqIni.ReadString('Informacao', 'COMECA_COM', COMECA_COM);
+    CONTEM := ArqIni.ReadString('Informacao', 'CONTEM', CONTEM);
+    CORES := ArqIni.ReadString('Informacao', 'CORES', CORES);
+    ACESSORIOS := ArqIni.ReadString('Informacao', 'ACESSORIOS', ACESSORIOS);
+    MARCA := ArqIni.ReadString('Informacao', 'MARCA', MARCA);
+    UN := ArqIni.ReadString('Informacao', 'UN', UN);
+    COD_GRUPO := ArqIni.ReadString('Informacao', 'COD_GRUPO', COD_GRUPO);
+    COD_FORN := ArqIni.ReadString('Informacao', 'COD_FORN', COD_FORN);
+    TIPO := ArqIni.ReadString('Informacao', 'TIPO', TIPO);
+    ATIVO := ArqIni.ReadString('Informacao', 'ATIVO', ATIVO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_GRUPO(CLI_GRUPO: string; TIPO_PRO: string; TRANSP_CLI: string; DT_ENTREGA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'GRAVA_GRUPO.INI');
+  try
+    ArqIni.WriteString('Informacao', 'CLI_GRUPO', CLI_GRUPO);
+    ArqIni.WriteString('Informacao', 'TIPO_PRO', TIPO_PRO);
+    ArqIni.WriteString('Informacao', 'TRANSP_CLI', TRANSP_CLI);
+    ArqIni.WriteString('Informacao', 'DT_ENTREGA', DT_ENTREGA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_GRUPO(var CLI_GRUPO: string; var TIPO_PRO: string; var TRANSP_CLI: string; var DT_ENTREGA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'GRAVA_GRUPO.INI');
+  try
+    CLI_GRUPO := ArqIni.ReadString('Informacao', 'CLI_GRUPO', CLI_GRUPO);
+    TIPO_PRO := ArqIni.ReadString('Informacao', 'TIPO_PRO', TIPO_PRO);
+    TRANSP_CLI := ArqIni.ReadString('Informacao', 'TRANSP_CLI', TRANSP_CLI);
+    DT_ENTREGA := ArqIni.ReadString('Informacao', 'DT_ENTREGA', DT_ENTREGA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_MOV_ESTOQUE(POR_CODIGO: string; POR_DESCRICAO: string; POR_DATA: string;
+  PRODUTOS: string; MAT_PRIMA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'MOV_EST_PRO_MAT_PRIMA.INI');
+  try
+    ArqIni.WriteString('Informacao', 'POR_CODIGO', POR_CODIGO);
+    ArqIni.WriteString('Informacao', 'POR_DESCRICAO', POR_DESCRICAO);
+    ArqIni.WriteString('Informacao', 'POR_DATA', POR_DATA);
+    ArqIni.WriteString('Informacao', 'PRODUTOS', PRODUTOS);
+    ArqIni.WriteString('Informacao', 'MAT_PRIMA', MAT_PRIMA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_MOV_ESTOQUE(var POR_CODIGO: string; var POR_DESCRICAO: string; var POR_DATA: string;
+  var PRODUTOS: string; var MAT_PRIMA: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'MOV_EST_PRO_MAT_PRIMA.INI');
+  try
+    POR_CODIGO := ArqIni.ReadString('Informacao', 'POR_CODIGO', POR_CODIGO);
+    POR_DESCRICAO := ArqIni.ReadString('Informacao', 'POR_DESCRICAO', POR_DESCRICAO);
+    POR_DATA := ArqIni.ReadString('Informacao', 'POR_DATA', POR_DATA);
+    PRODUTOS := ArqIni.ReadString('Informacao', 'PRODUTOS', PRODUTOS);
+    MAT_PRIMA := ArqIni.ReadString('Informacao', 'MAT_PRIMA', MAT_PRIMA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_SISCOMERC_CNPJ_CPF(SISTEMA_COMERCIAL: string; VERIFICA_CNPJ_CPF: string; CARGA_PEDIDO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SISCOMERC_CNPJ_CPF.INI');
+  try
+    ArqIni.WriteString('Informacao', 'SISTEMA COMERCIAL', SISTEMA_COMERCIAL);
+    ArqIni.WriteString('Informacao', 'VERIFICA CNPJ_CPF', VERIFICA_CNPJ_CPF);
+    ArqIni.WriteString('Informacao', 'MONTA CARGA NO PEDIDO', CARGA_PEDIDO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_SISCOMERC_CPNJ_CPF(var SISTEMA_COMERCIAL: string; var VERIFICA_CNPJ_CPF: string; var CARGA_PEDIDO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SISCOMERC_CNPJ_CPF.INI');
+  try
+    SISTEMA_COMERCIAL := ArqIni.ReadString('Informacao', 'SISTEMA COMERCIAL', SISTEMA_COMERCIAL);
+    VERIFICA_CNPJ_CPF := ArqIni.ReadString('Informacao', 'VERIFICA CNPJ_CPF', VERIFICA_CNPJ_CPF);
+    CARGA_PEDIDO := ArqIni.ReadString('Informacao', 'MONTA CARGA NO PEDIDO', CARGA_PEDIDO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_RAMO_ATIVIDADE(ORDEM_PRODUCAO: Boolean; SOMA_PESO: Boolean;
+  COMISSAO_PRO: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'RAMO_ATIVIDADE.INI');
+  try
+    ArqIni.WriteBool('Informacao', 'ORDEM PRODUCAO', ORDEM_PRODUCAO);
+    ArqIni.WriteBool('Informacao', 'SOMA PESO', SOMA_PESO);
+    ArqIni.WriteBool('Informacao', 'COMISSAO PRODUTO', COMISSAO_PRO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_RAMO_ATIVIDADE(var ORDEM_PRODUCAO: Boolean; var SOMA_PESO: Boolean;
+  var COMISSAO_PRO: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'RAMO_ATIVIDADE.INI');
+  try
+    ORDEM_PRODUCAO := ArqIni.ReadBool('Informacao', 'ORDEM PRODUCAO', ORDEM_PRODUCAO);
+    SOMA_PESO := ArqIni.ReadBool('Informacao', 'SOMA PESO', SOMA_PESO);
+    COMISSAO_PRO := ArqIni.ReadBool('Informacao', 'COMISSAO PRODUTO', COMISSAO_PRO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_MEIA_PAGINA(NUMERO: Longint; INTEIRA: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'CONF_PAGINA.INI');
+  try
+    ArqIni.WriteInteger('Informacao', 'NUMERO', NUMERO);
+    ArqIni.WriteBool('Informacao', 'INTEIRA', INTEIRA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_MEIA_PAGINA(var NUMERO: Longint; var INTEIRA: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'CONF_PAGINA.INI');
+  try
+    NUMERO := ArqIni.ReadInteger('Informacao', 'NUMERO', NUMERO);
+    INTEIRA := ArqIni.ReadBool('Informacao', 'INTEIRA', INTEIRA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_IMPRESSAO(PAGINA: Longint; Texto: string; P: Boolean; Z: Boolean; R: Boolean; LASER: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'LL.Ini');
+  try
+    ArqIni.WriteInteger('Informacao', 'PAGINA', PAGINA);
+    ArqIni.WriteString('Informacao', 'TEXTO', Texto);
+    ArqIni.WriteBool('Informacao', 'P', P);
+    ArqIni.WriteBool('Informacao', 'Z', Z);
+    ArqIni.WriteBool('Informacao', 'R', R);
+    ArqIni.WriteString('Informacao', 'LASER', LASER);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_IMPRESSAO(var PAGINA: Longint; var Texto: string; var P: Boolean;
+  var Z: Boolean; var R: Boolean; var LASER: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'LL.Ini');
+  try
+    PAGINA := ArqIni.ReadInteger('Informacao', 'PAGINA', PAGINA);
+    Texto := ArqIni.ReadString('Informacao', 'TEXTO', Texto);
+    P := ArqIni.ReadBool('Informacao', 'P', P);
+    Z := ArqIni.ReadBool('Informacao', 'Z', Z);
+    R := ArqIni.ReadBool('Informacao', 'R', R);
+    LASER := ArqIni.ReadString('Informacao', 'LASER', LASER);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVA_INI_ALT_PGTO(PCARGA: Boolean; PPED: Boolean; PCLI: Boolean;
+  NCLI: Boolean; CCLI: Boolean; CCidade: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'FILTRO_ALT_TP_PGTO.Ini');
+  try
+    ArqIni.WriteBool('Informacao', 'PCARGA', PCARGA);
+    ArqIni.WriteBool('Informacao', 'PPED', PPED);
+    ArqIni.WriteBool('Informacao', 'PCLI', PCLI);
+    ArqIni.WriteBool('Informacao', 'NCLI', NCLI);
+    ArqIni.WriteBool('Informacao', 'CCLI', CCLI);
+    ArqIni.WriteBool('Informacao', 'CCIDADE', CCidade);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LE_INI_ALT_PGTO(var PCARGA: Boolean; var PPED: Boolean; var PCLI: Boolean;
+  var NCLI: Boolean; var CCLI: Boolean; var CCidade: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'FILTRO_ALT_TP_PGTO.Ini');
+  try
+    PCARGA := ArqIni.ReadBool('Informacao', 'PCARGA', PCARGA);
+    PPED := ArqIni.ReadBool('Informacao', 'PPED', PPED);
+    PCLI := ArqIni.ReadBool('Informacao', 'PCLI', PCLI);
+    NCLI := ArqIni.ReadBool('Informacao', 'NCLI', NCLI);
+    CCLI := ArqIni.ReadBool('Informacao', 'CCLI', CCLI);
+    CCidade := ArqIni.ReadBool('Informacao', 'CCIDADE', CCidade);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_REL_PEDIDO(FATURADO: Boolean; FATURAR: Boolean; CARTEIRA: Boolean;
+  TODOS: Boolean; DESCONTO: Boolean; CLIENTE: Boolean; REPRES: Boolean;
+  data: Boolean; SIMPLES: Boolean; ARQUIVO: Boolean; RISCO: Boolean; PROD_REL: Boolean;
+  REL_EMP: Boolean; REL_CIDADE: Boolean; REL_JUNCOES: Boolean; REL_ESTADO: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'REL_PEDIDO.Ini');
+  try
+    ArqIni.WriteBool('Informacao', 'FATURADO', FATURADO);
+    ArqIni.WriteBool('Informacao', 'FATURAR', FATURAR);
+    ArqIni.WriteBool('Informacao', 'CARTEIRA', CARTEIRA);
+    ArqIni.WriteBool('Informacao', 'TODOS', TODOS);
+    ArqIni.WriteBool('Informacao', 'DESCONTO', DESCONTO);
+    ArqIni.WriteBool('Informacao', 'CLIENTE', CLIENTE);
+    ArqIni.WriteBool('Informacao', 'REPRES', REPRES);
+    ArqIni.WriteBool('Informacao', 'DATA', data);
+    ArqIni.WriteBool('Informacao', 'SIMPLES', SIMPLES);
+    ArqIni.WriteBool('Informacao', 'ARQUIVO', ARQUIVO);
+    ArqIni.WriteBool('Informacao', 'RISCO', RISCO);
+    ArqIni.WriteBool('Informacao', 'PROD_REL', PROD_REL);
+    ArqIni.WriteBool('Informacao', 'REL_EMP', REL_EMP);
+    ArqIni.WriteBool('Informacao', 'REL_CIDADE', REL_CIDADE);
+    ArqIni.WriteBool('Informacao', 'REL_JUNCOES', REL_JUNCOES);
+    ArqIni.WriteBool('Informacao', 'REL_ESTADO', REL_ESTADO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_REL_PPEDIDO(var FATURADO: Boolean; var FATURAR: Boolean; var CARTEIRA: Boolean;
+  var TODOS: Boolean; var DESCONTO: Boolean; var CLIENTE: Boolean; var REPRES: Boolean;
+  var data: Boolean; var SIMPLES: Boolean; var ARQUIVO: Boolean; var RISCO: Boolean;
+  var PROD_REL: Boolean; var REL_EMP: Boolean; var REL_CIDADE: Boolean; var REL_JUNCOES: Boolean;
+  var REL_ESTADO: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'REL_PEDIDO.Ini');
+  try
+    FATURADO := ArqIni.ReadBool('Informacao', 'FATURADO', FATURADO);
+    FATURAR := ArqIni.ReadBool('Informacao', 'FATURAR', FATURAR);
+    CARTEIRA := ArqIni.ReadBool('Informacao', 'CARTEIRA', CARTEIRA);
+    TODOS := ArqIni.ReadBool('Informacao', 'TODOS', TODOS);
+    DESCONTO := ArqIni.ReadBool('Informacao', 'DESCONTO', DESCONTO);
+    CLIENTE := ArqIni.ReadBool('Informacao', 'CLIENTE', CLIENTE);
+    REPRES := ArqIni.ReadBool('Informacao', 'REPRES', REPRES);
+    data := ArqIni.ReadBool('Informacao', 'DATA', data);
+    SIMPLES := ArqIni.ReadBool('Informacao', 'SIMPLES', SIMPLES);
+    ARQUIVO := ArqIni.ReadBool('Informacao', 'ARQUIVO', ARQUIVO);
+    RISCO := ArqIni.ReadBool('Informacao', 'RISCO', RISCO);
+    PROD_REL := ArqIni.ReadBool('Informacao', 'PROD_REL', PROD_REL);
+    REL_EMP := ArqIni.ReadBool('Informacao', 'REL_EMP', REL_EMP);
+    REL_CIDADE := ArqIni.ReadBool('Informacao', 'REL_CIDADE', REL_CIDADE);
+    REL_JUNCOES := ArqIni.ReadBool('Informacao', 'REL_JUNCOES', REL_JUNCOES);
+    REL_ESTADO := ArqIni.ReadBool('Informacao', 'REL_ESTADO', REL_ESTADO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_MASTER(NUMERO_EMPRESA: Longint; ITEM: Boolean; MODULO: Boolean;
+  EMPRESAS: Boolean; PRODUTO: Boolean; PGTO: string; COMISSAO: Boolean;
+  FATURA_AUTOMATICA: Boolean; MAT_PRIMA_PROD_IND: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'LLMASTER.Ini');
+  try
+    ArqIni.WriteInteger('Informacao', 'NUMERO_EMPRESA', NUMERO_EMPRESA);
+    ArqIni.WriteBool('Informacao', 'ITEM', ITEM);
+    ArqIni.WriteBool('Informacao', 'MODULO', MODULO);
+    ArqIni.WriteBool('Informacao', 'EMPRESAS', EMPRESAS);
+    ArqIni.WriteBool('Informacao', 'PRODUTO', PRODUTO);
+    ArqIni.WriteString('Informacao', 'PGTO', PGTO);
+    ArqIni.WriteBool('Informacao', 'COMISSAO', COMISSAO);
+    ArqIni.WriteBool('Informacao', 'FATURA AUTOMATICA', FATURA_AUTOMATICA);
+    ArqIni.WriteBool('Informacao', 'MAT_PRIMA_PROD_IND', MAT_PRIMA_PROD_IND);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_MASTER(var NUMERO_EMPRESA: Longint; var ITEM: Boolean; var MODULO: Boolean;
+  var EMPRESAS: Boolean; var PRODUTO: Boolean; var PGTO: string; var COMISSAO: Boolean;
+  var FATURA_AUTOMATICA: Boolean; var MAT_PRIMA_PROD_IND: Boolean);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'LLMASTER.Ini');
+  try
+    NUMERO_EMPRESA := ArqIni.ReadInteger('Informacao', 'NUMERO_EMPRESA', NUMERO_EMPRESA);
+    ITEM := ArqIni.ReadBool('Informacao', 'ITEM', ITEM);
+    MODULO := ArqIni.ReadBool('Informacao', 'MODULO', MODULO);
+    EMPRESAS := ArqIni.ReadBool('Informacao', 'EMPRESAS', EMPRESAS);
+    PRODUTO := ArqIni.ReadBool('Informacao', 'PRODUTO', PRODUTO);
+    PGTO := ArqIni.ReadString('Informacao', 'PGTO', PGTO);
+    COMISSAO := ArqIni.ReadBool('Informacao', 'COMISSAO', COMISSAO);
+    FATURA_AUTOMATICA := ArqIni.ReadBool('Informacao', 'FATURA AUTOMATICA', FATURA_AUTOMATICA);
+    MAT_PRIMA_PROD_IND := ArqIni.ReadBool('Informacao', 'MAT_PRIMA_PROD_IND', MAT_PRIMA_PROD_IND);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_MODULOS(FATURAMENTO: string; FINANCEIRO: string; ESTOQUE: string;
+  COMPRAS: string; CUSTO: string; PPCP: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'MODULOS.Ini');
+  try
+    ArqIni.WriteString('Informacao', 'FATURAMENTO', FATURAMENTO);
+    ArqIni.WriteString('Informacao', 'FINANCEIRO', FINANCEIRO);
+    ArqIni.WriteString('Informacao', 'ESTOQUE', ESTOQUE);
+    ArqIni.WriteString('Informacao', 'COMPRAS', COMPRAS);
+    ArqIni.WriteString('Informacao', 'CUSTO', CUSTO);
+    ArqIni.WriteString('Informacao', 'PPCP', PPCP);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_MODULOS(var FATURAMENTO: string; var FINANCEIRO: string; var ESTOQUE: string;
+  var COMPRAS: string; var CUSTO: string; var PPCP: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'MODULOS.Ini');
+  try
+    FATURAMENTO := ArqIni.ReadString('Informacao', 'FATURAMENTO', FATURAMENTO);
+    FINANCEIRO := ArqIni.ReadString('Informacao', 'FINANCEIRO', FINANCEIRO);
+    ESTOQUE := ArqIni.ReadString('Informacao', 'ESTOQUE', ESTOQUE);
+    COMPRAS := ArqIni.ReadString('Informacao', 'COMPRAS', COMPRAS);
+    CUSTO := ArqIni.ReadString('Informacao', 'CUSTO', CUSTO);
+    PPCP := ArqIni.ReadString('Informacao', 'PPCP', PPCP);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_TIPO_SISTEMA(TP_SISTEMA: string; IMP_FRETE_NOTA: string;
+  IMP_PGTO_RODAPE: string; IMP_PED_COM_DESCONTO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TIPO_SISTEMA.Ini');
+  try
+    ArqIni.WriteString('Informacao', 'TP_SISTEMA', TP_SISTEMA);
+    ArqIni.WriteString('Informacao', 'IMP_FRETE_NOTA', IMP_FRETE_NOTA);
+    ArqIni.WriteString('Informacao', 'IMP_PGTO_RODAPE_PEDIDO', IMP_PGTO_RODAPE);
+    ArqIni.WriteString('Informacao', 'IMP_PED_COM_DESCONTO', IMP_PED_COM_DESCONTO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_TIPO_SISTEMA(var TP_SISTEMA: string; var IMP_FRETE_NOTA: string;
+  var IMP_PGTO_RODAPE: string; var IMP_PED_COM_DESCONTO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TIPO_SISTEMA.Ini');
+  try
+    TP_SISTEMA := ArqIni.ReadString('Informacao', 'TP_SISTEMA', TP_SISTEMA);
+    IMP_FRETE_NOTA := ArqIni.ReadString('Informacao', 'IMP_FRETE_NOTA', IMP_FRETE_NOTA);
+    IMP_PGTO_RODAPE := ArqIni.ReadString('Informacao', 'IMP_PGTO_RODAPE_PEDIDO', IMP_PGTO_RODAPE);
+    IMP_PED_COM_DESCONTO := ArqIni.ReadString('Informacao', 'IMP_PED_COM_DESCONTO', IMP_PED_COM_DESCONTO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_TIPO_PEDIDO(TP_PEDIDO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TIPO_PEDIDO.Ini');
+  try
+    ArqIni.WriteString('Informacao', 'TP_PEDIDO', TP_PEDIDO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_TIPO_PEDIDO(var TP_PEDIDO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TIPO_PEDIDO.Ini');
+  try
+    TP_PEDIDO := ArqIni.ReadString('Informacao', 'TP_PEDIDO', TP_PEDIDO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_EMPRESA(CODEMPRESA: string; NOME: string; USUARIO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'LLEMPRESA.Ini');
+  try
+    ArqIni.WriteString('Informacao', 'CODEMPRESA', CODEMPRESA);
+    ArqIni.WriteString('Informacao', 'NOME', NOME);
+    ArqIni.WriteString('Informacao', 'USUARIO', USUARIO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_EMPRESA(var CODEMPRESA: string; var NOME: string; var USUARIO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'LLEMPRESA.Ini');
+  try
+    CODEMPRESA := ArqIni.ReadString('Informacao', 'CODEMPRESA', CODEMPRESA);
+    NOME := ArqIni.ReadString('Informacao', 'NOME', NOME);
+    USUARIO := ArqIni.ReadString('Informacao', 'USUARIO', USUARIO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_ESTOQUE(INSUMO: string; COR_AC_SEPARADO: string; EST_PED_IND: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ESTOQUE.Ini');
+  try
+    ArqIni.WriteString('Informacao', 'INSUMO', INSUMO);
+    ArqIni.WriteString('Informacao', 'COR_AC_SEPARADO', COR_AC_SEPARADO);
+    ArqIni.WriteString('Informacao', 'EST_PED_IND', EST_PED_IND);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_ESTOQUE(var INSUMO: string; var COR_AC_SEPARADO: string; var EST_PED_IND: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ESTOQUE.Ini');
+  try
+    INSUMO := ArqIni.ReadString('Informacao', 'INSUMO', INSUMO);
+    COR_AC_SEPARADO := ArqIni.ReadString('Informacao', 'COR_AC_SEPARADO', COR_AC_SEPARADO);
+    EST_PED_IND := ArqIni.ReadString('Informacao', 'EST_PED_IND', EST_PED_IND);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_EST_MAT_PRIMA(TIRA_EST_ORDEM_SERVICO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ESTOQUE_MAT_PRIMA.INI');
+  try
+    ArqIni.WriteString('Informacao', 'TIRA_EST_ORDEM_SERVICO', TIRA_EST_ORDEM_SERVICO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_EST_MAT_PRIMA(var TIRA_EST_ORDEM_SERVICO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'ESTOQUE_MAT_PRIMA.INI');
+  try
+    TIRA_EST_ORDEM_SERVICO := ArqIni.ReadString('Informacao', 'TIRA_EST_ORDEM_SERVICO', TIRA_EST_ORDEM_SERVICO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure GRAVAINI_TELE_VENDAS(TELE_VENDAS: string; DESC_PED_DINHEIRO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TELE_VENDAS.INI');
+  try
+    ArqIni.WriteString('Informacao', 'TELE_VENDAS', TELE_VENDAS);
+    ArqIni.WriteString('Informacao', 'DESC_PED_DINHEIRO', DESC_PED_DINHEIRO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+procedure LEINI_TELE_VENDAS(var TELE_VENDAS: string; var DESC_PED_DINHEIRO: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'TELE_VENDAS.INI');
+  try
+    TELE_VENDAS := ArqIni.ReadString('Informacao', 'TELE_VENDAS', TELE_VENDAS);
+    DESC_PED_DINHEIRO := ArqIni.ReadString('Informacao', 'DESC_PED_DINHEIRO', DESC_PED_DINHEIRO);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+function TRATAR_ERRO(Msg: string): Boolean;
+begin
+  result := False;
+
+  if pos('FK_', UpperCase(Msg)) > 0 then
+  begin
+    Application.MessageBox
+      ('Atenção!!! '#13#13'Existem Registros que dependem do Registro'#13#13'Que você está Tentado excluir...'#13#13'A Operação será cancelada.',
+      'Erro', mb_IconError);
+    result := True;
+  end;
+
+  if (pos('UNIQUE INDEX', UpperCase(Msg)) > 0) or (pos('PK_', UpperCase(Msg)) > 0) then
+  begin
+    Application.MessageBox('Atenção!!! '#13#13'Violação de Chave Primária! Registro já Existe...'#13#13'A Operação será cancelada.', 'Erro',
+      mb_IconError);
+    result := True;
+  end;
+
+  if pos('MUST HAVE A VALUE', UpperCase(Msg)) > 0 then
+  begin
+    Application.MessageBox('Atenção!!! '#13#13'Campo de Preencimento Obrigatório!!!'#13#13'Favor Informar um Valor', 'Erro', mb_IconError);
+    result := True;
+  end;
+
+  if not result then
+  begin
+    Application.MessageBox(PChar(Msg), 'Erro', mb_IconError);
+    result := True;
+  end;
+end;
+
+procedure FECHA_TABELAS(X: TDataModule);
+var
+  K: Integer;
+begin
+  // Fechando todas tabelas
+  for K := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[K] is TClientDataSet then
+      TClientDataSet(X.Components[K]).Active := False;
+
+    if X.Components[K] is TSQLDataSet then
+      TSQLDataSet(X.Components[K]).Active := False;
+
+    if X.Components[K] is TSQLQuery then
+      TSQLQuery(X.Components[K]).Active := False;
+  end;
+end;
+
+procedure CANCELA_TABELAS(X: TDataModule);
+var
+  K: Integer;
+begin
+  // Fechando todas tabelas
+  for K := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[K] is TClientDataSet then
+      TClientDataSet(X.Components[K]).Cancel;
+    if X.Components[K] is TSQLDataSet then
+      TSQLDataSet(X.Components[K]).Cancel;
+    if X.Components[K] is TSQLQuery then
+      TSQLQuery(X.Components[K]).Cancel;
+  end;
+end;
+
+procedure FILTRO(X: TDataModule);
+var
+  K: Integer;
+begin
+  // Fechando todas tabelas
+  for K := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[K] is TClientDataSet then
+    begin
+      TClientDataSet(X.Components[K]).Filtered := False;
+    end;
+  end;
+end;
+
+procedure ATUALIZA_DATA(D: Tform);
+var
+  I: Integer;
+  Dia: string;
+begin
+  for I := 0 to D.ComponentCount - 1 do
+  begin
+    // DELPHI
+    if D.Components[I] is TDateTimePicker then
+    begin
+      if (TDateTimePicker(D.Components[I]).name = 'DATA_INICIAL') then
+      begin
+        Dia := '01/' + FormatDateTime('MM', Now) + '/' + FormatDateTime('YYYY', Now);
+        TDateTimePicker(D.Components[I]).DateTime := StrToDate(Dia);
+      end;
+
+      if (TDateTimePicker(D.Components[I]).name = 'DT_Inicial') then
+      begin
+        Dia := '01/' + FormatDateTime('MM', Now) + '/' + FormatDateTime('YYYY', Now);
+        TDateTimePicker(D.Components[I]).DateTime := StrToDate(Dia);
+      end;
+
+      if (TDateTimePicker(D.Components[I]).name = 'dtInifio') then
+      begin
+        Dia := '01/' + FormatDateTime('MM', Now) + '/' + FormatDateTime('YYYY', Now);
+        TDateTimePicker(D.Components[I]).DateTime := StrToDate(Dia);
+      end;
+
+      if (TDateTimePicker(D.Components[I]).name = 'dtinicial') then
+      begin
+        Dia := '01/' + FormatDateTime('MM', Now) + '/' + FormatDateTime('YYYY', Now);
+        TDateTimePicker(D.Components[I]).DateTime := StrToDate(Dia);
+      end;
+
+      if (TDateTimePicker(D.Components[I]).name = 'DATA_FINAL') then
+        TDateTimePicker(D.Components[I]).DateTime := Now;
+
+      if (TDateTimePicker(D.Components[I]).name = 'Dt_Final') then
+        TDateTimePicker(D.Components[I]).DateTime := Now;
+
+      if (TDateTimePicker(D.Components[I]).name = 'dtFim') then
+        TDateTimePicker(D.Components[I]).DateTime := Now;
+
+      if (TDateTimePicker(D.Components[I]).name = 'dtfinal') then
+        TDateTimePicker(D.Components[I]).DateTime := Now;
+
+    end;
+
+  end;
+end;
+
+procedure CURSOR_PROJETO(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[I] is TLabel then
+      TLabel(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TPanel then
+      TPanel(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is Tform then
+      Tform(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TDBGrid then
+      TDBGrid(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is Tform then
+      Tform(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TSpeedButton then
+      TSpeedButton(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TSpeedButton then
+      TSpeedButton(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TImage then
+      TImage(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TStatusBar then
+      TStatusBar(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TSpeedButton then
+      TSpeedButton(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TBitBtn then
+      TBitBtn(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TNotebook then
+      TNotebook(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TGauge then
+      TGauge(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TGroupBox then
+      TGroupBox(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TDBMemo then
+      TDBMemo(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TDBEdit then
+      TDBEdit(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TDateTimePicker then
+      TDateTimePicker(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TPanel then
+      TPanel(X.Components[I]).Cursor := crDefault;
+
+    if X.Components[I] is TBevel then
+      TBevel(X.Components[I]).Cursor := crDefault;
+  end;
+end;
+
+procedure ENABLADE_FALSE(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[I] is TDBEdit then
+      TDBEdit(X.Components[I]).Enabled := False;
+
+    if X.Components[I] is TComboBox then
+      TComboBox(X.Components[I]).Enabled := False;
+
+    if X.Components[I] is TDBMemo then
+      TDBMemo(X.Components[I]).Enabled := False;
+  end;
+end;
+
+procedure ENABLADE_TRUE(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+    if X.Components[I] is TDBEdit then
+    begin
+      if (TDBEdit(X.Components[I]).name = 'DBId_Fornec') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBCfop') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBNNfe') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBModelo_Nota') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBSerie') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBDt_Emissao') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBDt_Entrada') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBId_Departamento') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBId_Pgto') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Frete') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Seguro') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Outros') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Desconto') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBRed_Subs') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Isenta') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_NTributado') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBCod_Mp') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Unitario') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBQtde') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBBase_Icms') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBAliq_Icms') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBBase_Red_Icms') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBAliq_Red_ICms') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBVL_Outros') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBBase_Ipi') then
+        TDBEdit(X.Components[I]).Enabled := True;
+
+      if (TDBEdit(X.Components[I]).name = 'DBAliq_Ipi') then
+        TDBEdit(X.Components[I]).Enabled := True;
+    end;
+
+    if X.Components[I] is TDBMemo then
+    begin
+      if (TDBMemo(X.Components[I]).name = 'DBMemo1') then
+        TDBMemo(X.Components[I]).Enabled := True;
+    end;
+
+    if X.Components[I] is TComboBox then
+      TComboBox(X.Components[I]).Enabled := True;
+  end;
+end;
+
+procedure CARREGABOTAO_ABERTURA(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    // PRINCIPAL
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBFATURAMENTO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBFINANCEIRO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBEstoque') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(9, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCompras') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(10, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCusto') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(12, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBSPpcp') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(14, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      // CONFIGURACOES
+
+      if (TSpeedButton(X.Components[I]).name = 'SBIMPRESSAO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCONFIGURAR') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBUSUARIOS') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      // WINDOWS
+      if (TSpeedButton(X.Components[I]).name = 'SBWORD') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(7, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBEXCEL') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(8, TSpeedButton(X.Components[I]).Glyph);
+      end;
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO_PCP(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+    // PRINCIPAL
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBSub_Gruypo_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGABERTURA.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCad_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCad_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO_FATURAMENTO(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    // CADASTROS
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_CLIENTE') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_PRODUTO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_REPRES') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_TRANSP') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_GRUPO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_PGTO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(7, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_ESTADO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(8, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      // MOVIMENTO
+      if (TSpeedButton(X.Components[I]).name = 'SBPEDIDO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(9, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SPGera_Nfe') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(15, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBNF') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(10, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      // DEVOLUÇÃO DE NOTAS FISCAIS
+      if (TSpeedButton(X.Components[I]).name = 'SBDev_Nota') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(14, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBIMPRES_DOC') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(11, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMONTA_CARGA') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(12, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBOrdem_Producao') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(13, TSpeedButton(X.Components[I]).Glyph);
+      end;
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO_FINANCEIRO(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    // CADASTROS
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_CLIENTE') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_FORNEC') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_PGTO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_BANCO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBClasse_Contas') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_GRUPO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      // MOVIMENTO
+      if (TSpeedButton(X.Components[I]).name = 'SBCONTASREC') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(7, TSpeedButton(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'SBCONTASPGR') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(8, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBTRANSFER') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(9, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCOMISSAO') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(10, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMOV_REP') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(11, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCheque') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(12, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBImp_Duplicatas') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFINANCEIRO.GetBitmap(14, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO_ESTOQUE(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    // CADASTROS
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_FORNEC') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBProdutos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      // MOVIMENTO
+      if (TSpeedButton(X.Components[I]).name = 'SBEntrada_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(14, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBEntrada_Produtos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(13, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBSaida_Produtos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(18, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBTRANSFER') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(9, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBFicha_Tecnica') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(10, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMOV_REP') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(11, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBSaida_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(12, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBEnt_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(15, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBInsumo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(16, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBOrdem_Servico') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(17, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBImp_Estoque') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(19, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCad_Setor') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGESTOQUE.GetBitmap(20, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO_COMPRAS(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    // CADASTROS
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_FORNEC') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBProdutos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      // MOVIMENTO
+      if (TSpeedButton(X.Components[I]).name = 'SBPed_Compras') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(14, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBEntrada_Produtos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(13, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBSaida_Produtos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(18, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBTRANSFER') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(9, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBFicha_Tecnica') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(10, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMOV_REP') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(11, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBSaida_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(12, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBEnt_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(15, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBInsumo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(16, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBOrdem_Servico') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(17, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBImp_Estoque') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCOMPRAS.GetBitmap(19, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO_CUSTO(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGFATURAMENTO.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    if X.Components[I] is TBitBtn then
+    begin
+      // MENU - FECHAR
+      if (TSpeedButton(X.Components[I]).name = 'BBMENU') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+      if (TSpeedButton(X.Components[I]).name = 'BBFECHAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+    // CADASTROS
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBCAD_FORNEC') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(2, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCad_Produtos') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(3, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCad_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(4, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBGrupo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(5, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCad_Grupo_Pro') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(6, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBFicha_Tecnica') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(10, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMarkup_Custo') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(13, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCalculo_Custo') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(14, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBMat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(15, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBDesp_Custo') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(12, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBCores') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(20, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBInsumo_Mat_Prima') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(16, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBImp_Estoque') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMGCUSTO.GetBitmap(19, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+    end;
+  end;
+end;
+
+procedure CARREGABOTAO(X: Tform);
+var
+  I: Integer;
+begin
+  for I := 0 to X.ComponentCount - 1 do
+  begin
+
+    if X.Components[I] is TBitBtn then
+    begin
+      if (TBitBtn(X.Components[I]).name = 'BBObs_Pedido') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(0, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // BOTÃO INSERIR
+      if (TBitBtn(X.Components[I]).name = 'BBINCLUI') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(1, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // BOTAO ALTERAR OU BAIXA
+      if ((TBitBtn(X.Components[I]).name = 'BBALTERA') or (TBitBtn(X.Components[I]).name = 'BBBaixa')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(2, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // BOTAO EXCLUIR
+      if (TBitBtn(X.Components[I]).name = 'BBEXCLUI') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(3, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if ((TBitBtn(X.Components[I]).name = 'BBConfirma') or (TBitBtn(X.Components[I]).name = 'BBCONFIRMA')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(4, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // BOTAO LOCOLIZA
+      if ((TBitBtn(X.Components[I]).name = 'BBLOCALIZA') or (TBitBtn(X.Components[I]).name = 'BBPesquisa')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(5, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // BOTAO FECHAR
+      if ((TBitBtn(X.Components[I]).name = 'BBFECHAR') or (TBitBtn(X.Components[I]).name = 'BBSair')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(6, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBPRIMEIRO') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(7, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBVOLTA') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(8, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBPROXIMO') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(9, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBULTIMO') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(10, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if ((TBitBtn(X.Components[I]).name = 'BBIMPRIMIR') or (TBitBtn(X.Components[I]).name = 'BBImprimir') or
+        (TBitBtn(X.Components[I]).name = 'bbImprime')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(12, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if ((TBitBtn(X.Components[I]).name = 'BBREFAZ') or (TBitBtn(X.Components[I]).name = 'BBVolta_Baixa')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(13, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if ((TBitBtn(X.Components[I]).name = 'BBDESFAZ') or (TBitBtn(X.Components[I]).name = 'BBGerar_Ordem_Servico')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(14, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if ((TBitBtn(X.Components[I]).name = 'BBProducao') or (TBitBtn(X.Components[I]).name = 'BBVerifica')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(15, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if ((TBitBtn(X.Components[I]).name = 'BBCancela_Item') or (TBitBtn(X.Components[I]).name = 'BBCancela_Altera') or
+        (TBitBtn(X.Components[I]).name = 'BBCancela') or (TBitBtn(X.Components[I]).name = 'BBCANCELA')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(17, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBAlt_Pagto') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(18, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBBAIXAR') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(19, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      if (TBitBtn(X.Components[I]).name = 'BBVoltar') then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(20, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // BOTAO GRAVAR
+      if ((TBitBtn(X.Components[I]).name = 'BBGRAVA') or (TBitBtn(X.Components[I]).name = 'BBGrava')) then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(22, TBitBtn(X.Components[I]).Glyph);
+      end;
+
+      // Botão exclui
+      if TBitBtn(X.Components[I]).name = 'bbExclui' then
+      begin
+        TBitBtn(X.Components[I]).Glyph := nil;
+        dmPrincipal.IMG.GetBitmap(3, TBitBtn(X.Components[I]).Glyph);
+      end;
+    end;
+
+    // SpeedButton
+    if X.Components[I] is TSpeedButton then
+    begin
+      if (TSpeedButton(X.Components[I]).name = 'SBChama') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.ISpeedButton.GetBitmap(0, TSpeedButton(X.Components[I]).Glyph);
+      end;
+
+      if (TSpeedButton(X.Components[I]).name = 'SBChama1') then
+      begin
+        TSpeedButton(X.Components[I]).Glyph := nil;
+        dmPrincipal.ISpeedButton.GetBitmap(0, TSpeedButton(X.Components[I]).Glyph);
+      end;
+    end;
+
+  end;
+end;
+
+function UltimoDiaMes(Text: string): string;
+begin
+  if SubStrAT(Copy(Text, 4, 2), '01-03-05-07-08-10-12') = True then
+    Text := '31'
+  else if SubStrAT(Copy(Text, 4, 2), '04-06-09-11') = True then
+    Text := '30'
+  else if (Copy(Text, 4, 2) = '02') then
+  begin
+    if AnoBissexto(StrToInt(Copy(Text, 7, 4))) = True then
+      Text := '29'
+    else
+      Text := '28';
+  end;
+  result := Text;
+end;
+
+function AnoBissexto(Ano: Integer): Boolean;
+begin
+  if ((Ano mod 4 = 0) and ((Ano mod 100 <> 0) or (Ano mod 400 = 0))) then
+    result := True
+  else
+    result := False;
+end;
+
+end.

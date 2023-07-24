@@ -1,0 +1,31 @@
+unit uRecalcularCusto;
+
+interface
+
+uses udmPrincipal;
+
+Type
+  TRecalcularCusto = class
+    Function CalcularFreteProducaoMaoObra(
+      aValorGasto,
+      aAliquotaFrete: Currency;
+      aQtdeProducao: Integer): Currency;
+  end;
+
+implementation
+
+{ TRecalcularCusto }
+
+function TRecalcularCusto.CalcularFreteProducaoMaoObra(
+  aValorGasto,
+  aAliquotaFrete: Currency;
+  aQtdeProducao: Integer): Currency;
+begin
+  Result := 0;
+  if aAliquotaFrete > 0 then
+    Result := (aValorGasto / aQtdeProducao * aAliquotaFrete / 100)
+  else
+    Result := 0;
+end;
+
+end.

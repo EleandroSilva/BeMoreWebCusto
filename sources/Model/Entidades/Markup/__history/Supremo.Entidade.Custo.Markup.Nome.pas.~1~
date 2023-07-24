@@ -1,0 +1,18 @@
+unit Supremo.Entidade.Markup.Custo.Nome;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TMarkup
+
+implementation
+
+end.

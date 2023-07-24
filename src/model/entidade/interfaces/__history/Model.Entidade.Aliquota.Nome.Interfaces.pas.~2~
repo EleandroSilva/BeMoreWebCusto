@@ -1,0 +1,30 @@
+unit Model.Entidade.Aliquota.Nome.Interfaces;
+
+interface
+
+type
+  iAliquotaNome<T> = interface
+    ['{AED7EF63-D89B-4010-9C52-4A812B817DCD}']
+    function Id(Value : Integer)               : iAliquotaNome<T>; overload;
+    function Id : Integer;                                         overload;
+    function Status(Value : Integer)           : iAliquotaNome<T>; overload;
+    function Status : Integer;                                     overload;
+    function Descricao(Value : String)         : iAliquotaNome<T>; overload;
+    function Descricao : String;                                   overload;
+    function Aliquota(Value : Currency)        : iAliquotaNome<T>; overload;
+    function Aliquota : Currency;                                  overload;
+    function Operador(Value : String)          : iAliquotaNome<T>; overload;
+    function Operador : String;                                    overload;
+    function DataLancamento(Value : TDateTime) : iAliquotaNome<T>; overload;
+    function DataLancamento : TDateTime;                           overload;
+    function Financeiro(Value : Integer)       : iAliquotaNome<T>; overload;
+    function Financeiro : Integer;                                 overload;
+    function Ativo(Value : Integer)            : iAliquotaNome<T>; overload;
+    function Ativo : Integer;                                      overload;
+
+    function &End : T;
+  end;
+
+implementation
+
+end.

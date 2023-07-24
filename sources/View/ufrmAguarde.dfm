@@ -1,0 +1,39 @@
+object frmAguarde: TfrmAguarde
+  Left = 0
+  Top = 0
+  AutoSize = True
+  BorderStyle = bsNone
+  Caption = 'Aguarde... atualizando'
+  ClientHeight = 57
+  ClientWidth = 608
+  Color = clBtnText
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWhite
+  Font.Height = -21
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 25
+  object Label2: TLabel
+    Left = 0
+    Top = 32
+    Width = 608
+    Height = 25
+    Align = alBottom
+    Alignment = taRightJustify
+    Caption = 'Be More Web (17)98169-5336 WhatsApp - www.bemoreweb.com.br'
+    ExplicitLeft = 296
+    ExplicitTop = 39
+  end
+  object lTextoAguarde: TLabel
+    Left = 0
+    Top = 0
+    Width = 608
+    Height = 25
+    Align = alTop
+    Caption = 'Aguarde... atualizando'
+    ExplicitWidth = 210
+  end
+end

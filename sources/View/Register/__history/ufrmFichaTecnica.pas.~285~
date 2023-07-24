@@ -1,0 +1,946 @@
+unit ufrmFichaTecnica;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+
+  Data.DB,
+
+  ufrmModelodbEdit,
+
+  udmPrincipal,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller,
+  udmEntidade.Relatorios,
+  Entidade.Recalcular.Ficha.Tecnica;
+
+type
+  TfrmFichaTecnica = class(TfrmModelodbEdit)
+    Label1: TLabel;
+    Label8: TLabel;
+    edtQtdeProducao: TDBEdit;
+    pProduct: TPanel;
+    Label10: TLabel;
+    Label12: TLabel;
+    Panel3: TPanel;
+    Panel5: TPanel;
+    Label18: TLabel;
+    Label20: TLabel;
+    Label17: TLabel;
+    Panel7: TPanel;
+    Panel10: TPanel;
+    Label14: TLabel;
+    Label13: TLabel;
+    Label16: TLabel;
+    Label19: TLabel;
+    btnConfirmaMateriaPrima: TBitBtn;
+    btnCancelaMateriaPrima: TBitBtn;
+    edtIdMateriaPrima: TDBEdit;
+    edtValorUnitario: TDBEdit;
+    edtQtde: TDBEdit;
+    edtPerda: TDBEdit;
+    dsAuxiliar: TDataSource;
+    pFichaTecnicaItem: TPanel;
+    dbgFichaTecnicaItem: TDBGrid;
+    dbgFichaTecnica: TDBGrid;
+    Panel11: TPanel;
+    btnAlterarMateriaPrima: TBitBtn;
+    btnExcluirMateriaPrima: TBitBtn;
+    dbnFichaTecnicaItem: TDBNavigator;
+    btnInsereNovoItem: TBitBtn;
+    lNomeMateriaPrima: TDBText;
+    lUnidade: TDBText;
+    lSubTotal: TDBText;
+    lValorPerda: TDBText;
+    lValorFinal: TDBText;
+    Panel13: TPanel;
+    lAlteraFichaTecnicaItem: TLabel;
+    LInsert: TLabel;
+    Label3: TLabel;
+    lModel: TDBText;
+    Label2: TLabel;
+    dbtValorPerda: TDBText;
+    Label4: TLabel;
+    dbtValorFinal: TDBText;
+    btnRecalcularFichaTecnica: TBitBtn;
+    procedure edtDescricaoExit(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edtDescriptionKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtDescriptionKeyPress(Sender: TObject; var Key: Char);
+    procedure edtQtdeProducaoExit(Sender: TObject);
+    procedure edtQtdeProducaoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtIdMateriaPrimaExit(Sender: TObject);
+    procedure edtValorUnitarioExit(Sender: TObject);
+    procedure edtValorUnitarioKeyPress(Sender: TObject; var Key: Char);
+    procedure edtIdMateriaPrimaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtIdMateriaPrimaKeyPress(Sender: TObject; var Key: Char);
+    procedure edtQtdeExit(Sender: TObject);
+    procedure edtQtdeKeyPress(Sender: TObject; var Key: Char);
+    procedure edtPerdaExit(Sender: TObject);
+    procedure edtPerdaKeyPress(Sender: TObject; var Key: Char);
+    procedure btnNewClick(Sender: TObject);
+    procedure btnConfirmaMateriaPrimaClick(Sender: TObject);
+    procedure dbgFichaTecnicaItemDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnSalveClick(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
+    procedure dbgFichaTecnicaDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnUpdateClick(Sender: TObject);
+    procedure btnInsereNovoItemClick(Sender: TObject);
+    procedure btnAlterarMateriaPrimaClick(Sender: TObject);
+    procedure btnExcluirMateriaPrimaClick(Sender: TObject);
+    procedure btnImprimirClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure btnRecalcularFichaTecnicaClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure pgMainChange(Sender: TObject);
+  private
+    FController: iController;
+    FRecalcularFichaTecnica: TRecalcularFichaTecnica;
+
+    lSoma1, lSoma2, lSoma3: Currency;
+    vSubTotal, vValorPerda, vSoma: Currency;
+
+    function BuscarFichaTecnicaItem(aValue: String): Boolean;
+    function ListaFichaTecnica(aValue: String): Boolean;
+
+    procedure LimparColunasPai;
+    procedure LimparColunasItens;
+    procedure InserirFichaTecnica;
+    procedure InserirFichaTecnicaItem;
+
+    function BuscarFichaTecnica(aValue: String): Boolean;
+    procedure PreencherFichaTecnicaItem;
+    function Somar(aValueA, aValueB: Currency; Tipo: Integer): Currency;
+
+    procedure FecharQuery;
+    function SomaFichaTecnicaCabecalho(aValorPerda, aValorFinal: Currency): Currency;
+
+    procedure LoopFichaTecnica;
+
+    { Private declarations }
+  public
+
+    { Public declarations }
+  end;
+
+var
+  frmFichaTecnica: TfrmFichaTecnica;
+
+implementation
+
+{$R *.dfm}
+
+
+uses ufrmSearchModel, ufrmSearchMateriaPrima;
+
+function TfrmFichaTecnica.SomaFichaTecnicaCabecalho(aValorPerda, aValorFinal: Currency): Currency;
+begin
+  lSoma1 := lSoma1 + aValorPerda;
+  lSoma2 := lSoma2 + aValorFinal;
+
+  Result := lSoma1 + lSoma2;
+  dmPrincipal.cdsFichaTecnica.FieldByName('ValorPerda').AsCurrency := lSoma1;
+  dmPrincipal.cdsFichaTecnica.FieldByName('ValorFinal').AsCurrency := lSoma2;
+end;
+
+procedure TfrmFichaTecnica.FecharQuery;
+begin
+  dmPrincipal.sqlProducao.Active := False;
+  dmPrincipal.cdsProducao.Active := False;
+  dmPrincipal.sqlProducaoItem.Active := False;
+  dmPrincipal.cdsProducaoItem.Active := False;
+  dmPrincipal.sqlSetorLocal.Active := False;
+  dmPrincipal.sqlModelo.Active := False;
+  dmPrincipal.cdsSetorLocal.Active := False;
+  dmPrincipal.cdsModelo.Active := False;
+  dmPrincipal.sqlFichaTecnica.Active := False;
+  dmPrincipal.cdsFichaTecnica.Active := False;
+  dmPrincipal.sqlFichaTecnicaItem.Active := False;
+  dmPrincipal.cdsFichaTecnicaItem.Active := False;
+end;
+
+procedure TfrmFichaTecnica.LimparColunasPai;
+begin
+  // cabeçalho
+  editId.Clear;
+  MedtReleaseDate.Clear;
+  lModel.Caption := '...';
+  edtDescription.Clear;
+  edtQtdeProducao.Clear;
+end;
+
+function TfrmFichaTecnica.ListaFichaTecnica(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+  lOrdem := '';
+
+  lSQL := ('select ' +
+    'ft.idmodelo, ' +
+    'm.descricao Modelo, ' +
+    'fti.id, ' +
+    'fti.idfichatecnica, ' +
+    'fti.idmateriaprima, ' +
+    'mp.descricao, ' +
+    'mp.un, ' +
+    'fti.valorunitario, ' +
+    'fti.qtde, ' +
+    'fti.perda, ' +
+    'fti.subtotal, ' +
+    'fti.valorperda, ' +
+    'fti.valorfinal, ' +
+
+    ' ( ' +
+    '  Select ' +
+    '    Count(*) QtdeRegistro ' +
+    '  from FichaTecnicaItem fti1 ' +
+    ' inner join FichaTecnica ft1 on ft1.id = fti1.idfichatecnica ' +
+    '  inner join Modelo        m1 on m1.id  = ft1.idmodelo ' +
+    ' where ft1.id = ft.id ' +
+    ' and m1.id = m.id ' +
+    ') ' +
+    ', ' +
+
+    ' ( ' +
+    '  Select ' +
+    '    coalesce(cast(sum(fti1.valorperda) as Numeric(10,2)),0) ValorMateriaPerdaModelo ' +
+    '  from FichaTecnicaItem fti1 ' +
+    '  inner join FichaTecnica ft1 on ft1.id = fti1.idfichatecnica ' +
+    '  inner join Modelo        m1 on m1.id  = ft1.idmodelo ' +
+    '   where ft1.id = ft.id ' +
+    '   and m1.id = m.id ' +
+    '  ) ' +
+    '  , ' +
+
+    '  ( ' +
+    '   Select ' +
+    '     coalesce(cast(sum(fti1.valorfinal) as Numeric(10,2)),0) ValorMateriaPrimaModelo ' +
+    '   from FichaTecnicaItem fti1 ' +
+    '   inner join FichaTecnica ft1 on ft1.id = fti1.idfichatecnica ' +
+    '   inner join Modelo        m1 on m1.id  = ft1.idmodelo ' +
+    '   where ft1.id = ft.id ' +
+    '   and m1.id = m.id ' +
+    '  ) ' +
+
+    'from FichaTecnicaItem fti ' +
+    'inner join FichaTecnica ft on  ft.id   = fti.idfichatecnica ' +
+    'inner join Modelo        m on m.id     = ft.idmodelo ' +
+    'inner join cad_gmp      mp on mp.id_mp = fti.idmateriaprima ');
+
+  if aValue <> '' then
+    lWhere := ('where fti.idfichatecnica=' + aValue + '');
+
+  lOrdem := ('order by fti.idfichatecnica asc, m.descricao, mp.descricao ');
+
+  dmPrincipal.sqlListaFichaTecnica.Active := False;
+  dmPrincipal.sqlListaFichaTecnica.CommandText := (lSQL + lWhere + lOrdem);
+  dmPrincipal.cdsListaFichaTecnica.Active := False;
+  dmPrincipal.cdsListaFichaTecnica.Active := True;
+
+  if dmPrincipal.cdsListaFichaTecnica.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+procedure TfrmFichaTecnica.LimparColunasItens;
+begin
+  edtIdMateriaPrima.Clear;
+  lNomeMateriaPrima.Caption := '...';
+  lUnidade.Caption := '...';
+  edtValorUnitario.Clear;
+  edtQtde.Clear;
+  edtPerda.Clear;
+  lSubTotal.Caption := '...';
+  lValorPerda.Caption := '...';
+  lValorFinal.Caption := '...';
+end;
+
+function TfrmFichaTecnica.Somar(aValueA, aValueB: Currency; Tipo: Integer): Currency;
+var
+  LSoma: Currency;
+begin
+  Result := 0;
+  LSoma := 0;
+  case Tipo of
+    0:
+      Result := aValueA * aValueB;
+    1:
+      Result := aValueA * aValueB / 100;
+    2:
+      begin
+        LSoma := aValueA * aValueB;
+        Result := LSoma * aValueB / 100;
+        LSoma := LSoma + Result;
+        Result := LSoma;
+      end;
+  end;
+end;
+
+procedure TfrmFichaTecnica.PreencherFichaTecnicaItem;
+begin
+  vSubTotal := 0;
+  vValorPerda := 0;
+  vSoma := 0;
+  lSubTotal.Caption := FormatFloat('0.00', frmFichaTecnica.Somar(StrToFloat(edtValorUnitario.Text), StrToFloat(edtQtde.Text), 0));
+  vSubTotal := StrToFloat(lSubTotal.Caption);
+  lValorPerda.Caption := FormatFloat('0.00', frmFichaTecnica.Somar(StrToFloat(lSubTotal.Caption), StrToFloat(edtPerda.Text), 1));
+  vValorPerda := StrToFloat(lValorPerda.Caption);
+  vSoma := vSubTotal + vValorPerda;
+  lValorFinal.Caption := FormatFloat('0.00', vSoma);
+
+  dmPrincipal.cdsFichaTecnicaItem.FieldByName('SubTotal').AsCurrency := vSubTotal;
+  dmPrincipal.cdsFichaTecnicaItem.FieldByName('ValorPerda').AsCurrency := vValorPerda;
+  dmPrincipal.cdsFichaTecnicaItem.FieldByName('ValorFinal').AsCurrency := vSoma;
+  // edtIdMateriaPrima.SetFocus;
+end;
+
+procedure TfrmFichaTecnica.LoopFichaTecnica;
+begin
+  dmPrincipal.cdsFichaTecnica.First;
+  dmPrincipal.cdsFichaTecnica.DisableControls;
+  while not dmPrincipal.cdsFichaTecnica.Eof do
+  begin
+    FRecalcularFichaTecnica.PesquisaFichaTecnicaItem(dmPrincipal.cdsFichaTecnica.FieldByName('ID').AsString);
+
+    FRecalcularFichaTecnica.SomaCabecalho(dmPrincipal.cdsFichaTecnica.FieldByName('ID').AsString);
+
+    dmPrincipal.cdsFichaTecnica.Next;
+  end;
+  btnSearch.Click;
+end;
+
+procedure TfrmFichaTecnica.pgMainChange(Sender: TObject);
+begin
+  if not dmPrincipal.cdsFichaTecnica.IsEmpty then
+  if edtSearch.Text = '' then
+    frmFichaTecnica.BuscarFichaTecnica(dbgSearch.Fields[0].AsString)
+  else
+    frmFichaTecnica.BuscarFichaTecnica(edtSearch.Text);
+end;
+
+procedure TfrmFichaTecnica.btnAlterarMateriaPrimaClick(Sender: TObject);
+begin
+  if dmPrincipal.cdsFichaTecnica.State in [dsEdit] then
+  begin
+    dmPrincipal.cdsFichaTecnicaItem.Edit;
+    edtIdMateriaPrima.SetFocus;
+  end;
+end;
+
+procedure TfrmFichaTecnica.btnConfirmaMateriaPrimaClick(Sender: TObject);
+begin
+  if Not dmPrincipal.Alterar then
+  begin
+    InserirFichaTecnicaItem;
+    if edtIdMateriaPrima.Text <> '0' then
+      edtIdMateriaPrima.SetFocus
+    else
+      if edtIdMateriaPrima.Text = '0' then
+      btnSalve.SetFocus;
+  end
+
+  else
+    // UpdateFichaTecnicaItem;
+end;
+
+procedure TfrmFichaTecnica.btnDeleteClick(Sender: TObject);
+begin
+  if Not dmPrincipal.cdsFichaTecnica.IsEmpty then
+  begin
+    if Application.MessageBox('Deseja realmente excluir este registro?', 'Confirmação', mb_Yesno) = IDYES then
+    begin
+      dmPrincipal.queryAuxiliar.Active := False;
+      dmPrincipal.queryAuxiliar.SQL.Clear;
+      dmPrincipal.queryAuxiliar.SQL.Text := ('Delete from FichaTecnica ' +
+        'where ID=' + dmPrincipal.cdsFichaTecnica.FieldByName('ID').AsString + ' ');
+      dmPrincipal.queryAuxiliar.ExecSQL;
+      dmPrincipal.queryAuxiliar.Active := False;
+      ShowMessage(dmPrincipal.cMSFExcluirSim);
+      btnSearch.Click;
+      btnCancel.Click;
+    end
+    else
+      raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado);
+  end
+  else
+    raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado);
+end;
+
+procedure TfrmFichaTecnica.btnExcluirMateriaPrimaClick(Sender: TObject);
+begin
+  dmPrincipal.cdsFichaTecnicaItem.Delete;
+end;
+
+procedure TfrmFichaTecnica.btnImprimirClick(Sender: TObject);
+begin
+  if not dmPrincipal.cdsFichaTecnica.IsEmpty then
+    if ListaFichaTecnica(edtSearch.Text) then
+      dmEntidadeRelatorios.pprListaFichaTecnica.Print
+    else
+      raise Exception.Create(dmPrincipal.cMSGImpressao);
+end;
+
+procedure TfrmFichaTecnica.btnInsereNovoItemClick(Sender: TObject);
+begin
+  dmPrincipal.cdsFichaTecnicaItem.Append;
+  dmPrincipal.cdsFichaTecnicaItem.FieldByName('Id').AsInteger := 0;
+  dmPrincipal.cdsFichaTecnicaItem.FieldByName('IdFichaTecnica').AsInteger := dmPrincipal.cdsFichaTecnica.FieldByName('ID').AsInteger;
+  edtIdMateriaPrima.SetFocus;
+end;
+
+procedure TfrmFichaTecnica.btnNewClick(Sender: TObject);
+begin
+  dmPrincipal.Alterar := False;
+  InserirFichaTecnica;
+  inherited;
+end;
+
+procedure TfrmFichaTecnica.btnRecalcularFichaTecnicaClick(Sender: TObject);
+begin
+  if dmPrincipal.cdsFichaTecnica.IsEmpty then
+    raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado)
+  else
+    frmFichaTecnica.LoopFichaTecnica;
+end;
+
+procedure TfrmFichaTecnica.btnSalveClick(Sender: TObject);
+var
+  Erros: Integer;
+  aIdFichaTecnica: Integer;
+begin
+  if trim(edtDescription.Text) = '' then
+  begin
+    edtDescription.SetFocus;
+    raise Exception.Create('Campo Qtde de Produção não pode ser vazio');
+  end;
+
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', mb_Yesno) = IDYES then
+  begin
+    lSoma1 := 0;
+    lSoma2 := 0;
+    lSoma3 := 0;
+
+    if dmPrincipal.cdsFichaTecnica.State in [dsEdit] then
+      aIdFichaTecnica := dmPrincipal.cdsFichaTecnica.FieldByName('ID').AsInteger;
+
+    dmPrincipal.cdsFichaTecnicaItem.First;
+    while not dmPrincipal.cdsFichaTecnicaItem.Eof do
+    begin
+      if dmPrincipal.cdsFichaTecnica.State in [dsEdit] then
+      begin
+        if dmPrincipal.cdsFichaTecnicaItem.FieldByName('IdFichaTecnica').AsInteger = 0 then
+        begin
+          dmPrincipal.cdsFichaTecnicaItem.Edit;
+          dmPrincipal.cdsFichaTecnicaItem.FieldByName('IdFichaTecnica').AsInteger := aIdFichaTecnica;
+        end;
+      end;
+
+      SomaFichaTecnicaCabecalho(
+        dmPrincipal.cdsFichaTecnicaItem.FieldByName('ValorPerda').AsCurrency,
+        dmPrincipal.cdsFichaTecnicaItem.FieldByName('ValorFinal').AsCurrency);
+
+      dmPrincipal.cdsFichaTecnicaItem.Next;
+    end;
+
+    dmPrincipal.cdsFichaTecnica.Edit;
+
+    if dmPrincipal.cdsFichaTecnicaItem.State in [dsInsert, dsEdit] then
+      dmPrincipal.cdsFichaTecnicaItem.Post;
+
+    if dmPrincipal.cdsFichaTecnica.State in [dsInsert, dsEdit] then
+      dmPrincipal.cdsFichaTecnica.Post;
+
+    dmPrincipal.sqlconexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsFichaTecnica.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsFichaTecnica.ApplyUpdates(0);
+
+    if dmPrincipal.cdsFichaTecnicaItem.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsFichaTecnicaItem.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.sqlconexao.Commit(TD);
+      ShowMessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      FecharQuery;
+    end
+    else
+    begin
+      dmPrincipal.sqlconexao.Rollback(TD);
+      ShowMessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+      FecharQuery;
+    end;
+    inherited;
+    btnCancel.Click;
+  end
+  else
+    Abort;
+
+  inherited;
+end;
+
+procedure TfrmFichaTecnica.btnSearchClick(Sender: TObject);
+begin
+  if not frmFichaTecnica.BuscarFichaTecnica(edtSearch.Text) then
+    dbgFichaTecnica.Visible := True
+  else
+    dbgFichaTecnica.Visible := False;
+
+  inherited;
+end;
+
+procedure TfrmFichaTecnica.btnUpdateClick(Sender: TObject);
+begin
+  if edtSearch.Text = '' then
+    frmFichaTecnica.BuscarFichaTecnica(dbgSearch.Fields[0].AsString)
+  else
+    frmFichaTecnica.BuscarFichaTecnica(edtSearch.Text);
+
+  inherited;
+
+  dmPrincipal.Alterar := True;
+
+  dmPrincipal.cdsFichaTecnica.Edit;
+  dmPrincipal.cdsFichaTecnicaItem.Edit;
+end;
+
+function TfrmFichaTecnica.BuscarFichaTecnica(aValue: String): Boolean;
+const
+  cSQL = ('select ' +
+    'ft.Id, ' +
+    'ft.IdModelo, ' +
+    'm.descricao, ' +
+    'ft.ValorPerda, ' +
+    'ft.ValorFinal, ' +
+    'ft.QtdeProducao, ' +
+    'ft.Operador, ' +
+    'ft.DataLancamento, ' +
+    'ft.Status, ' +
+    'ft.Ativo ' +
+    'from FichaTecnica ft ' +
+    'inner join Modelo m on m.id = ft.idmodelo ');
+var
+  lWhere: String;
+begin
+  lWhere := '';
+
+  lWhere := ('where ft.Ativo=' + IntToStr(rgActive.ItemIndex) + ' ');
+
+  if trim(aValue) <> '' then
+    case rgChoice.ItemIndex of
+      0: lWhere := lWhere + ('and ft.Id=' + aValue + ' ');
+      1: lWhere := lWhere + ('and ft.IdModelo=' + aValue + ' ');
+      2: lWhere := lWhere + ('and m.Descricao CONTAINING ''' + aValue + ''' ');
+      3: lWhere := lWhere + ('and ft.Operador CONTAINING ''' + aValue + ''' ');
+    end;
+
+  Result := False;
+  dmPrincipal.sqlFichaTecnica.Active := False;
+  dmPrincipal.sqlFichaTecnica.CommandText := (cSQL + lWhere);
+  dmPrincipal.cdsFichaTecnica.Active := False;
+  dmPrincipal.cdsFichaTecnica.Active := True;
+
+  if dmPrincipal.cdsFichaTecnica.IsEmpty then
+  begin
+    raise Exception.Create('Registro não encontrado, favor tentar outro filtro!');
+  end
+  else
+  begin
+    Result := True;
+    BuscarFichaTecnicaItem(DataSource1.DataSet.FieldByName('Id').AsString);
+  end;
+end;
+
+function TfrmFichaTecnica.BuscarFichaTecnicaItem(aValue: String): Boolean;
+begin
+  dmPrincipal.sqlFichaTecnicaItem.Active := False;
+  dmPrincipal.sqlFichaTecnicaItem.CommandText := ('select ' +
+    'fti.id, ' +
+    'fti.idfichatecnica, ' +
+    'fti.idmateriaprima, ' +
+    'mp.descricao, ' +
+    'mp.un, ' +
+    'fti.valorunitario, ' +
+    'fti.qtde, ' +
+    'fti.perda, ' +
+    'fti.subtotal, ' +
+    'fti.valorperda, ' +
+    'fti.valorfinal ' +
+    'from FichaTecnicaItem fti ' +
+    'inner join cad_gmp mp on mp.id_mp = fti.idmateriaprima ' +
+    'where fti.IdFichaTecnica=' + aValue + '');
+  dmPrincipal.cdsFichaTecnicaItem.Active := False;
+  dmPrincipal.cdsFichaTecnicaItem.Active := True;
+end;
+
+procedure TfrmFichaTecnica.DataSource1DataChange(Sender: TObject;
+  Field: TField);
+begin
+  // BuscarFichaTecnicaItem(DataSource1.DataSet.FieldByName('Id').AsString);
+end;
+
+procedure TfrmFichaTecnica.dbgFichaTecnicaDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DataSource.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := clActiveCaption
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := clInfoBk;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmFichaTecnica.dbgFichaTecnicaItemDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DataSource.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := clActiveCaption
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := clInfoBk;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmFichaTecnica.edtDescricaoExit(Sender: TObject);
+begin
+  if edtDescription.Text = '' then
+    raise Exception.Create('Atenção... ' + edtOperator.Text + ' Favor informar Id Modelo!');
+
+  FController
+    .Entidades
+    .Model
+    .DataSet(dmPrincipal.dsModelo)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(0)
+    .TextoFiltro(edtDescription.Text)
+    .Buscar(edtDescription.Text);
+
+  if not dmPrincipal.dsModelo.DataSet.IsEmpty then
+  begin
+    lModel.Caption := dmPrincipal.dsModelo.DataSet.FieldByName('Descricao').AsString;
+    DataSource1.DataSet.FieldByName('QtdeProducao').AsInteger := dmPrincipal.dsModelo.DataSet.FieldByName('QtdeProducao').AsInteger;
+    edtQtdeProducao.SetFocus;
+  end
+  else
+  begin
+    lModel.Caption := '...';
+    raise Exception.Create('Registro não encontrado!');
+  end;
+end;
+
+procedure TfrmFichaTecnica.edtDescriptionKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_F1:
+      begin
+        Application.CreateForm(TfrmSearchModel, frmSearchModel);
+        frmSearchModel.lfrmExecutando.Caption := 'frmFichaTecnica';
+        frmSearchModel.ShowModal;
+      end;
+  end;
+end;
+
+procedure TfrmFichaTecnica.edtDescriptionKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+    Key := #0;
+end;
+
+procedure TfrmFichaTecnica.edtIdMateriaPrimaExit(Sender: TObject);
+begin
+  if edtIdMateriaPrima.Text = '' then
+    raise Exception.Create('Atenção... ' + edtOperator.Text + ' Favor informar Id Modelo!');
+
+  if ((not dmPrincipal.dsFichaTecnicaItem.DataSet.IsEmpty) and (edtIdMateriaPrima.Text = '0')) then
+  begin
+    btnSalve.Enabled := True;
+    btnSalve.SetFocus;
+
+    Exit;
+  end;
+
+  FController
+    .Entidades
+    .MateriaPrima
+    .DataSet(dsAuxiliar)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(0)
+    .TextoFiltro(edtIdMateriaPrima.Text)
+    .Buscar(edtIdMateriaPrima.Text);
+
+  if not dsAuxiliar.DataSet.IsEmpty then
+  begin
+    dmPrincipal.cdsFichaTecnicaItem.FieldByName('IdFichaTecnica').AsInteger := 0;
+    dmPrincipal.cdsFichaTecnicaItem.FieldByName('Descricao').AsString := dsAuxiliar.DataSet.FieldByName('Descricao').AsString;
+    dmPrincipal.cdsFichaTecnicaItem.FieldByName('Un').AsString := dsAuxiliar.DataSet.FieldByName('UN').AsString;
+    dmPrincipal.cdsFichaTecnicaItem.FieldByName('ValorUnitario').AsCurrency := dsAuxiliar.DataSet.FieldByName('Vl_Unitario').AsCurrency;
+
+    edtValorUnitario.SetFocus;
+  end
+  else
+  begin
+    lModel.Caption := '...';
+    raise Exception.Create('Registro não encontrado!');
+  end;
+end;
+
+procedure TfrmFichaTecnica.edtIdMateriaPrimaKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  case Key of
+    VK_F1:
+      begin
+        Application.CreateForm(TfrmSearchMaterial, frmSearchMaterial);
+        frmSearchMaterial.lfrmExecutando.Caption := 'frmFichaTecnica';
+        frmSearchMaterial.ShowModal;
+      end;
+  end;
+end;
+
+procedure TfrmFichaTecnica.edtIdMateriaPrimaKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+    Key := #0;
+end;
+
+procedure TfrmFichaTecnica.edtPerdaExit(Sender: TObject);
+var
+  TextOnEdit: UnicodeString;
+  Value: Currency;
+begin
+  TextOnEdit := edtPerda.Text;
+
+  if TryStrToCurr(TextOnEdit, Value) then
+    edtPerda.Text := FormatFloat('0.00', Value)
+  else
+    edtPerda.Text := '0'; // se caso não conseguiu converter o valor digitado em número, mostra 0
+
+  Value := StrToFloat(edtPerda.Text);
+
+  PreencherFichaTecnicaItem;
+  btnConfirmaMateriaPrima.Enabled := True;
+  btnConfirmaMateriaPrima.SetFocus;
+
+end;
+
+procedure TfrmFichaTecnica.edtPerdaKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not(Key in ['0' .. '9', ',', #8]) then
+    Key := #0;
+end;
+
+procedure TfrmFichaTecnica.edtQtdeExit(Sender: TObject);
+begin
+  if dmPrincipal.cdsFichaTecnicaItem.FieldByName('Qtde').IsNull then
+  begin
+    edtQtde.SetFocus;
+    raise Exception.Create('Favor preencher Qtde!');
+  end;
+
+  if dmPrincipal.cdsFichaTecnicaItem.FieldByName('Qtde').AsCurrency <= 0 then
+    raise Exception.Create('Favor preencher Qtde!');
+end;
+
+procedure TfrmFichaTecnica.edtQtdeKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not(Key in ['0' .. '9', ',', #8]) then
+    Key := #0;
+end;
+
+procedure TfrmFichaTecnica.edtQtdeProducaoExit(Sender: TObject);
+var
+  TextOnEdit: UnicodeString;
+  Value: Currency;
+begin
+  TextOnEdit := edtQtdeProducao.Text;
+
+  if TryStrToCurr(TextOnEdit, Value) then
+    edtQtdeProducao.Text := FormatFloat('0', Value)
+  else
+    edtQtdeProducao.Text := '0'; // se caso não conseguiu converter o valor digitado em número, mostra 0
+
+  Value := StrToFloat(edtQtdeProducao.Text);
+  if Value <= 0 then
+    raise Exception.Create('Favor preencher produção mensal!');
+
+  InserirFichaTecnicaItem;
+  edtIdMateriaPrima.SetFocus;
+end;
+
+procedure TfrmFichaTecnica.edtQtdeProducaoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+    Key := #0;
+end;
+
+procedure TfrmFichaTecnica.edtValorUnitarioExit(Sender: TObject);
+var
+  TextOnEdit: UnicodeString;
+  Value: Currency;
+begin
+  TextOnEdit := edtValorUnitario.Text;
+
+  if TryStrToCurr(TextOnEdit, Value) then
+    edtValorUnitario.Text := FormatFloat('0.0000', Value)
+  else
+    edtValorUnitario.Text := '0'; // se caso não conseguiu converter o valor digitado em número, mostra 0
+
+  Value := StrToFloat(edtValorUnitario.Text);
+  if Value <= 0 then
+    raise Exception.Create('Favor preencher valor unitário!');
+end;
+
+procedure TfrmFichaTecnica.edtValorUnitarioKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if not(Key in ['0' .. '9', ',', #8]) then
+    Key := #0;
+end;
+
+procedure TfrmFichaTecnica.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  dmPrincipal.FecharQuery;
+  frmFichaTecnica := nil;
+  Action := caFree;
+end;
+
+procedure TfrmFichaTecnica.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FController := TController.New;
+  FRecalcularFichaTecnica := TRecalcularFichaTecnica.Create;
+end;
+
+procedure TfrmFichaTecnica.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FRecalcularFichaTecnica);
+end;
+
+procedure TfrmFichaTecnica.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Ficha Técnica Modelo';
+  rgChoice.ItemIndex := 0;
+end;
+
+procedure TfrmFichaTecnica.InserirFichaTecnica;
+begin
+  dmPrincipal.sqlFichaTecnica.Active := False;
+  dmPrincipal.sqlFichaTecnica.CommandText := ('select ' +
+    'ft.Id, ' +
+    'ft.IdModelo, ' +
+    'm.descricao, ' +
+    'ft.ValorPerda, ' +
+    'ft.ValorFinal, ' +
+    'ft.QtdeProducao, ' +
+    'ft.Operador, ' +
+    'ft.DataLancamento, ' +
+    'ft.Status, ' +
+    'ft.Ativo ' +
+    'from FichaTecnica ft ' +
+    'inner join Modelo m on m.id = ft.idmodelo ' +
+    'where ft.ID=:ID ');
+  dmPrincipal.sqlFichaTecnica.Params.ParamByName('ID').DataType := ftInteger;
+  dmPrincipal.sqlFichaTecnica.Params.ParamValues['ID'] := 0;
+
+  dmPrincipal.cdsFichaTecnica.Active := True;
+  dmPrincipal.cdsFichaTecnica.Append;
+
+  dmPrincipal.cdsFichaTecnica.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsFichaTecnica.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+
+  dmPrincipal.cdsFichaTecnica.FieldByName('DataLancamento').AsDateTime := Now;
+  dmPrincipal.cdsFichaTecnica.FieldByName('Status').AsInteger := 1;
+  dmPrincipal.cdsFichaTecnica.FieldByName('Ativo').AsInteger := 1;
+end;
+
+procedure TfrmFichaTecnica.InserirFichaTecnicaItem;
+begin
+  if not dmPrincipal.cdsFichaTecnicaItem.Active then
+  begin
+    dmPrincipal.sqlFichaTecnicaItem.Active := False;
+    dmPrincipal.sqlFichaTecnicaItem.CommandText := ('select ' +
+      'fti.id, ' +
+      'fti.idfichatecnica, ' +
+      'fti.idmateriaprima, ' +
+      'mp.descricao, ' +
+      'mp.un, ' +
+      'fti.valorunitario, ' +
+      'fti.qtde, ' +
+      'fti.perda, ' +
+      'fti.subtotal, ' +
+      'fti.valorperda, ' +
+      'fti.valorfinal ' +
+      'from FichaTecnicaItem fti ' +
+      'inner join cad_gmp mp on mp.id_mp = fti.idmateriaprima ' +
+      'where fti.Id=0 ');
+    dmPrincipal.cdsFichaTecnicaItem.Active := False;
+    dmPrincipal.cdsFichaTecnicaItem.Active := True;
+  end;
+
+  if not dmPrincipal.Alterar then
+  begin
+    dmPrincipal.cdsFichaTecnicaItem.Append;
+    dmPrincipal.cdsFichaTecnicaItem.FieldByName('ID').AsInteger := 0;
+  end;
+
+  if dmPrincipal.cdsFichaTecnica.State in [dsEdit] then
+  begin
+    // dmPrincipal.sqlProducaoItem.Params.ParamValues['ID'] := dmPrincipal.cdsProducao.FieldByName('ID').AsInteger;
+    // dmPrincipal.cdsProducaoItem.FieldByName('ID').AsInteger := dmPrincipal.cdsProducao.FieldByName('ID').AsInteger;
+  end;
+end;
+
+end.

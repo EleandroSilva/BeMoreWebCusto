@@ -1,0 +1,18 @@
+unit Model.Factory.Entidade.Interfaces;
+
+interface
+
+uses
+  Model.Entidade.Aliquota.Markup.Interfaces;
+
+type
+  iFactoryEntidade<T> = interface
+    ['{DD4DB681-A424-4AD5-BB0F-FB97062A6BB6}']
+    function AliquotaMarkup : iAliquotaMarkup<T>;
+
+    function &End : T;
+  end;
+
+implementation
+
+end.

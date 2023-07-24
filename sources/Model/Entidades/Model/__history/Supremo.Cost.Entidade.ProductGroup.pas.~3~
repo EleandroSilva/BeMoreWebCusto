@@ -1,0 +1,18 @@
+unit Supremo.Cost.Entidade.ProductGroup;
+
+interface
+
+uses
+  Whorkshop.Model.Conexao.Interfaces;
+
+type
+  TProductGroup = class(TInterfacedObject, iModelQuery)
+  private
+
+  public
+
+  end;
+
+implementation
+
+end.

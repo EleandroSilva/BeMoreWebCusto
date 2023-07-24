@@ -1,0 +1,31 @@
+unit Model.Entidade.Aliquota.Markup.Interfaces;
+
+interface
+
+type
+  iAliquotaMarkup<T> = interface
+    ['{EB0E1BBF-B252-4D72-AF07-C23980C15B0C}']
+    function Id(value : Integer)                 : iAliquotaMarkup<T>; overload;
+    function Id : Integer;                                             overload;
+    function NomeMarkup(Value : String)          : iAliquotaMarkup<T>; overload;
+    function NomeMarkup : String;                                      overload;
+    function ValorVendaAvista(Value : Currency)  : iAliquotaMarkup<T>; overload;
+    function ValorVendaaVista : Currency;                              overload;
+    function ValorFichaTecnica(Value : Currency) : iAliquotaMarkup<T>; overload;
+    function ValorFichaTecnica : Currency;                             overload;
+    function AliquotaMarkup(Value : Currency)    : iAliquotaMarkup<T>; overload;
+    function AliquotaMarkup : Currency;                                overload;
+    function ValorAliquota(Value : Currency)     : iAliquotaMarkup<T>; overload;
+    function ValorAliquota : Currency;                                 overload;
+    function ValorSomaMarkup(Value : Currency)   : iAliquotaMarkup<T>; overload;
+    function ValorSomaMarkup : Currency;                               overload;
+    function ValorFichatecnicaMarkup(Value : Currency) : iAliquotaMarkup<T>; overload;
+    function ValorFichatecnicaMarkup : Currency;                             overload;
+
+    function &End : T;
+  end;
+
+
+implementation
+
+end.

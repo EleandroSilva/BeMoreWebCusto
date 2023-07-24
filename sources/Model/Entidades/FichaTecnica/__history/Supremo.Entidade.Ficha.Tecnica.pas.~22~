@@ -1,0 +1,385 @@
+unit Supremo.Entidade.Ficha.Tecnica;
+
+interface
+
+uses
+  Data.DB,
+
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TFichaTecnica = class (TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData : Integer;
+    FEscolhaTipoLancamento : Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus : Integer;
+
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo : String;
+    FIdProduto : String;
+    FIdParametro1: String;
+    FIdParametro2 : String;
+    FValorLancamento1 : Currency;
+    FValorLancamento2 : Currency;
+    FValorLancamento3 : Currency;
+    FValorLancamento4 : Currency;
+    FQtdeInteger : Integer;
+    FQtdeCurrency : Currency;
+    FAliquota1 : Currency;
+    FAliquota2 : Currency;
+    FAliquota3 : Currency;
+    FAliquota4 : Currency;
+    FPrazoMedio : Currency;
+    FInicioPeriodo : TDateTime;
+    FFimPeriodo : TDateTime;
+
+    FGenId : Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue : Integer) : iModelEntidade;
+    function EscolhaTipoLancamento(aValue : Integer) : iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue : Integer) :iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro1(aValue : String) : iModelEntidade;
+    function IdParametro2(aValue : String) : iModelEntidade;
+    function ValorLancamento1(aValue : Currency) : iModelEntidade;
+    function ValorLancamento2(aValue : Currency) : iModelEntidade;
+    function ValorLancamento3(aValue : Currency) : iModelEntidade;
+    function ValorLancamento4(aValue : Currency) : iModelEntidade;
+    function Qtde(aValue : Integer) : iModelEntidade; overload;
+    function Qtde(aValue : Currency) : iModelEntidade; overload;
+    function Aliquota(aValue : Currency) : iModelEntidade;
+    function PrazoMedio(aValue : Currency) : iModelEntidade;
+    function InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+    function FimPeriodo(aValue : TDateTime) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade; overload;
+    function Buscar(aValue: Integer): iModelEntidade; overload;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Append : iModelEntidade;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+{ TFichaTecnica }
+
+constructor TFichaTecnica.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TFichaTecnica.Destroy;
+begin
+  inherited;
+end;
+
+class function TFichaTecnica.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TFichaTecnica.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TFichaTecnica.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TFichaTecnica.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TFichaTecnica.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TFichaTecnica.EscolhaTipoLancamento(aValue : Integer) : iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoLancamento := aValue;
+end;
+
+function TFichaTecnica.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TFichaTecnica.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TFichaTecnica.Status(aValue : Integer) :iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+function TFichaTecnica.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TFichaTecnica.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TFichaTecnica.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TFichaTecnica.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TFichaTecnica.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TFichaTecnica.IdParametro1(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro1 := aValue;
+end;
+
+function TFichaTecnica.IdParametro2(aValue : String) : iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro2 := aValue;
+end;
+
+function TFichaTecnica.ValorLancamento1(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento1 := aValue;
+end;
+
+function TFichaTecnica.ValorLancamento2(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento2 := aValue;
+end;
+
+function TFichaTecnica.ValorLancamento3(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento3 := aValue;
+end;
+
+function TFichaTecnica.ValorLancamento4(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento4 := aValue;
+end;
+
+function TFichaTecnica.Qtde(aValue : Integer) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeInteger := aValue;
+end;
+
+function TFichaTecnica.Qtde(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeCurrency := aValue;
+end;
+
+function TFichaTecnica.Aliquota(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota := aValue;
+end;
+
+function TFichaTecnica.PrazoMedio(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FPrazoMedio := aValue;
+end;
+
+function TFichaTecnica.InicioPeriodo(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FInicioPeriodo := aValue;
+end;
+
+function TFichaTecnica.FimPeriodo(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FFimPeriodo := aValue;
+end;
+
+function TFichaTecnica.Buscar(aValue: String): iModelEntidade;
+const
+  cSQL =(
+         'select '+
+         'ft.id, '+
+         'ft.idmodelo, '+
+         'ft.Operador, '+
+         'ft.DataLancamento, '+
+         'ft.Ativo, '+
+         'm.descricao ModeloNome, '+
+         'ft.qtdeproducao, '+
+         'fti.idmateriaprima, '+
+         'mp.descricao, '+
+         'mp.un Unidade, '+
+         'fti.valorunitario, '+
+         'fti.qtde, '+
+         'fti.subtotal, '+
+         'fti.Perda, '+
+         'fti.valorperda, '+
+         'fti.valorfinal, '+
+         '( '+
+         'select '+
+         '  coalesce(cast(sum(fti1.valorfinal) as numeric(10,4)),0) ValorFichaTecnica '+
+         'from fichatecnicaitem fti1 '+
+         'where fti1.idfichatecnica = ft.id '+
+         ') '+
+         'from fichatecnica ft '+
+         'inner join modelo             m on m.id               = ft.idmodelo '+
+         'inner join fichatecnicaitem fti on fti.idfichatecnica = ft.id '+
+         'inner join cad_gmp           mp on mp.id              = fti.idmateriaprima '
+        );
+var
+  lWhere: String;
+begin
+  Result := Self;
+  lWhere := '';
+
+  lWhere := ('where ft.Ativo=' + IntToStr(FAtivo) + ' ');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere:=('Where ft.Id=' + aValue + ' ');
+      1: lWhere:=('Where ft.IdModelo=' + aValue + ' ');
+      3: lWhere:=('Where m.Descricao CONTAINING ''' + aValue + ''' ');
+      5: lWhere:=('Where ft.Operador CONTAINING ''' + aValue + ''' ');
+    end;
+
+  FQuery.Open(cSQL + lWhere);
+end;
+
+function TFichaTecnica.Buscar(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TFichaTecnica.Insert: iModelEntidade;
+const
+  cInsert = (
+             'insert into fichatecnica ' +
+             '( ' +
+             'IdModelo, ' +
+             'QtdeProducao, '+
+             'Operador, ' +
+             'DataLancamento, ' +
+             'Status, '+
+             'Ativo ' +
+             ') '
+             );
+var
+  lInsert: String;
+begin
+  Result := Self;
+  lInsert := '';
+
+  lInsert := cInsert +
+    'values ' +
+    '( ' +
+    ''+FIdModelo+', '+//
+    IntToStr(FQtdeInteger)+', '+//Qtde Produção vem da tabela modelo
+    '''' + FOperador + ''',' +
+    '''' + FormatDateTime('dd.mm.yyyy', FDataLancamento) + ''',' +
+    IntToStr(1)+', '+//Status
+    IntToStr(1)+' '+//Ativo 0->Inativo  - 1 Ativo
+    ') ';
+  FQuery.ExecSQL(lInsert);
+end;
+
+function TFichaTecnica.Insert(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar insert quando precisar
+end;
+
+function TFichaTecnica.Append : iModelEntidade;
+begin
+  Result := Self;
+  FQuery.Append('');
+end;
+
+function TFichaTecnica.Update(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar update quando precisar
+end;
+
+function TFichaTecnica.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TFichaTecnica.PegarGenId: Integer;
+begin
+  Result := 0;
+end;
+
+function TFichaTecnica.Get(const aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Json quando precisar
+end;
+
+end.
+

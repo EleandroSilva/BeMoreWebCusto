@@ -1,0 +1,7 @@
+unit Model.Entidade.Soma.Aliquota.Interfaces;
+
+interface
+
+implementation
+
+end.

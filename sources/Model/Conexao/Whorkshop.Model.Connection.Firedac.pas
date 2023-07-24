@@ -1,0 +1,88 @@
+unit Whorkshop.Model.Connection.Firedac;
+
+interface
+
+uses
+  System.SysUtils,
+
+  Firedac.Stan.Intf,
+  Firedac.Stan.Option,
+  Firedac.Stan.Error,
+  Firedac.UI.Intf,
+  Firedac.Phys.Intf,
+  Firedac.Stan.Def,
+  Firedac.Stan.Pool,
+  Firedac.Stan.Async,
+  Firedac.Phys,
+  Firedac.VCLUI.Wait,
+  Firedac.Stan.ExprFuncs,
+  Firedac.Phys.SQLiteDef,
+  Firedac.Phys.SQLite,
+  Firedac.Comp.UI,
+  Firedac.Comp.Client,
+  Firedac.Phys.FBDef,
+  Firedac.Phys.IBBase,
+  Firedac.Phys.FB,
+  Firedac.Phys.MySQL,
+
+  Data.DB,
+
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Config;
+
+type
+  TModelConnectionFiredac = class(TInterfacedObject, iModelConnection)
+  private
+    FConnection: TFDConnection;
+    FDPhysMySQLDriverLink: TFDPhysMySQLDriverLink;
+    FDriver: TFDPhysFBDriverLink;
+    FConfig: iModelConnectionConfig;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelConnection;
+
+    function Connection: TCustomConnection;
+  end;
+
+implementation
+
+{ TModelConnectionFiredac }
+
+function TModelConnectionFiredac.Connection: TCustomConnection;
+begin
+  Result := FConnection;
+end;
+
+constructor TModelConnectionFiredac.Create;
+begin
+  FConfig := TModelConnectionConfig.New;
+  FConnection := TFDConnection.Create(nil);
+
+  FDriver := TFDPhysFBDriverLink.Create(nil);
+  FDPhysMySQLDriverLink := TFDPhysMySQLDriverLink.Create(nil);
+
+  FConnection.Params.Values['DriverID'] := FConfig.DriverName;
+  FConnection.Params.Values['Database'] := FConfig.Database;
+  FConnection.Params.Values['User_Name'] := FConfig.UserName;
+  FConnection.Params.Values['Password'] := FConfig.Password;
+  FConnection.Params.Values['Server'] := FConfig.Server;
+  FConnection.Params.Values['VendoLiber'] := FConfig.VendorLib;
+  FConnection.Connected := False;
+  FConnection.Connected := True;
+end;
+
+destructor TModelConnectionFiredac.Destroy;
+begin
+  FreeAndNil(FConnection);
+  FreeAndnil(FDriver);
+  FreeAndNil(FDPhysMySQLDriverLink);
+  inherited;
+end;
+
+class function TModelConnectionFiredac.New: iModelConnection;
+begin
+  Result := Self.Create;
+end;
+
+end.

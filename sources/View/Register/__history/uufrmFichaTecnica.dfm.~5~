@@ -1,0 +1,489 @@
+inherited ufrmFichaTecnica: TufrmFichaTecnica
+  Caption = 'Ficha T'#233'cnica'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited pSite: TPanel
+      inherited lSite: TLabel
+        Width = 218
+      end
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+  end
+  inherited pCabecalho: TPanel
+    inherited lTextoEmpresa: TLabel
+      Width = 814
+      Height = 41
+    end
+    inherited pOperator: TPanel
+      inherited lOperator: TLabel
+        Width = 120
+      end
+    end
+  end
+  inherited pgMain: TPageControl
+    inherited tsRegister: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pGrid: TPanel
+        inherited pEdit: TPanel
+          inherited pCabecalhoEdt: TPanel
+            inherited lDescricao: TLabel
+              Width = 51
+              Caption = 'Id Modelo:'
+              ExplicitWidth = 51
+            end
+            object Label1: TLabel [3]
+              Left = 255
+              Top = 6
+              Width = 68
+              Height = 13
+              Caption = 'Nome Modelo:'
+            end
+            object lModel: TLabel [4]
+              Left = 255
+              Top = 29
+              Width = 12
+              Height = 13
+              Caption = '...'
+            end
+            object Label8: TLabel [5]
+              Left = 595
+              Top = 6
+              Width = 112
+              Height = 13
+              BiDiMode = bdRightToLeft
+              Caption = 'Qtde Produ'#231#227'o Mensal:'
+              ParentBiDiMode = False
+            end
+            inherited MedtReleaseDate: TDBEdit
+              DataField = 'DATALANCAMENTO'
+              DataSource = DataSource1
+            end
+            inherited edtDescricao: TDBEdit
+              Width = 51
+              DataField = 'IDMODELO'
+              ExplicitWidth = 51
+            end
+            object edtQtdeProducao: TDBEdit
+              Left = 595
+              Top = 24
+              Width = 112
+              Height = 21
+              BiDiMode = bdRightToLeft
+              Color = 5898239
+              DataField = 'QTDEPRODUCAO'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 3
+            end
+          end
+        end
+        inherited pGridCadastro: TPanel
+          object pProduct: TPanel
+            Left = 0
+            Top = 0
+            Width = 924
+            Height = 80
+            Align = alTop
+            BevelOuter = bvNone
+            Color = 10768721
+            ParentBackground = False
+            TabOrder = 0
+            ExplicitTop = 8
+            object Label10: TLabel
+              Left = 12
+              Top = 6
+              Width = 55
+              Height = 13
+              Caption = 'Id M.Prima:'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
+            end
+            object lNomeMateriaPrima: TLabel
+              Left = 70
+              Top = 29
+              Width = 12
+              Height = 13
+              Caption = '...'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label12: TLabel
+              Left = 70
+              Top = 6
+              Width = 99
+              Height = 13
+              Caption = 'Nome Mat'#233'ria Prima:'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
+            end
+            object rgFiltroMateriaPrima: TRadioGroup
+              Left = 525
+              Top = 0
+              Width = 123
+              Height = 80
+              Align = alRight
+              Caption = 'Filtro Mat'#233'ria Prima'
+              Color = 10768721
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWhite
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ItemIndex = 1
+              Items.Strings = (
+                'Id'
+                'Descri'#231#227'o')
+              ParentBackground = False
+              ParentColor = False
+              ParentFont = False
+              TabOrder = 0
+            end
+            object Panel3: TPanel
+              Left = 648
+              Top = 0
+              Width = 276
+              Height = 80
+              Align = alRight
+              BevelOuter = bvNone
+              TabOrder = 1
+              object Panel8: TPanel
+                Left = 0
+                Top = 0
+                Width = 276
+                Height = 80
+                Align = alClient
+                BevelOuter = bvNone
+                Color = 10768721
+                ParentBackground = False
+                TabOrder = 0
+                object Label9: TLabel
+                  Left = 0
+                  Top = 41
+                  Width = 276
+                  Height = 18
+                  Align = alBottom
+                  Caption = 'Digite conforme escolha:'
+                  Color = 5483007
+                  Font.Charset = ANSI_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -16
+                  Font.Name = 'Berlin Sans FB'
+                  Font.Style = []
+                  ParentColor = False
+                  ParentFont = False
+                  ExplicitWidth = 158
+                end
+                object edtFiltroMateriaPrima: TEdit
+                  Left = 0
+                  Top = 59
+                  Width = 276
+                  Height = 21
+                  Align = alBottom
+                  TabOrder = 0
+                end
+                object btnBuscarMateriaPrima: TBitBtn
+                  Left = 0
+                  Top = 0
+                  Width = 113
+                  Height = 41
+                  Align = alLeft
+                  Caption = 'Buscar Mat'#233'ria Prima'
+                  TabOrder = 1
+                end
+                object dbnMateriaPrima: TDBNavigator
+                  Left = 113
+                  Top = 0
+                  Width = 163
+                  Height = 41
+                  VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+                  Align = alClient
+                  TabOrder = 2
+                end
+              end
+            end
+            object Panel5: TPanel
+              Left = 166
+              Top = 0
+              Width = 359
+              Height = 80
+              Align = alRight
+              BevelOuter = bvNone
+              TabOrder = 2
+              object Label18: TLabel
+                Left = 157
+                Top = 61
+                Width = 59
+                Height = 13
+                Caption = 'Valor Perda:'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object lValorPerda: TLabel
+                Left = 232
+                Top = 61
+                Width = 12
+                Height = 13
+                Alignment = taRightJustify
+                Caption = '...'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label20: TLabel
+                Left = 252
+                Top = 61
+                Width = 53
+                Height = 13
+                Caption = 'Valor Final:'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object lValorFinal: TLabel
+                Left = 346
+                Top = 61
+                Width = 12
+                Height = 13
+                Alignment = taRightJustify
+                Caption = '...'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label17: TLabel
+                Left = 58
+                Top = 61
+                Width = 49
+                Height = 13
+                Caption = 'Sub Total:'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object lSubTotal: TLabel
+                Left = 141
+                Top = 61
+                Width = 12
+                Height = 13
+                Alignment = taRightJustify
+                Caption = '...'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label15: TLabel
+                Left = 3
+                Top = 61
+                Width = 52
+                Height = 13
+                Alignment = taRightJustify
+                Caption = 'Resultado:'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                ParentFont = False
+              end
+              object Panel7: TPanel
+                Left = 0
+                Top = 0
+                Width = 359
+                Height = 45
+                Align = alTop
+                BevelOuter = bvNone
+                TabOrder = 0
+                object lUnidade: TLabel
+                  Left = 107
+                  Top = 22
+                  Width = 12
+                  Height = 13
+                  Alignment = taRightJustify
+                  Caption = '...'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -11
+                  Font.Name = 'Tahoma'
+                  Font.Style = []
+                  ParentFont = False
+                end
+                object edtPerda: TEdit
+                  Left = 305
+                  Top = 19
+                  Width = 54
+                  Height = 26
+                  Align = alRight
+                  Alignment = taRightJustify
+                  TabOrder = 0
+                  ExplicitHeight = 21
+                end
+                object Panel10: TPanel
+                  Left = 0
+                  Top = 0
+                  Width = 359
+                  Height = 19
+                  Align = alTop
+                  BevelOuter = bvNone
+                  TabOrder = 1
+                  object Label14: TLabel
+                    Left = 311
+                    Top = 3
+                    Width = 46
+                    Height = 13
+                    Alignment = taRightJustify
+                    Caption = '% Perda:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -11
+                    Font.Name = 'Tahoma'
+                    Font.Style = []
+                    ParentFont = False
+                  end
+                  object Label13: TLabel
+                    Left = 274
+                    Top = 3
+                    Width = 28
+                    Height = 13
+                    Alignment = taRightJustify
+                    Caption = 'Qtde:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -11
+                    Font.Name = 'Tahoma'
+                    Font.Style = []
+                    ParentFont = False
+                  end
+                  object Label16: TLabel
+                    Left = 160
+                    Top = 3
+                    Width = 68
+                    Height = 13
+                    Alignment = taRightJustify
+                    Caption = 'Valor Unit'#225'rio:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -11
+                    Font.Name = 'Tahoma'
+                    Font.Style = []
+                    ParentFont = False
+                  end
+                  object Label19: TLabel
+                    Left = 77
+                    Top = 3
+                    Width = 43
+                    Height = 13
+                    Alignment = taRightJustify
+                    Caption = 'Unidade:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -11
+                    Font.Name = 'Tahoma'
+                    Font.Style = []
+                    ParentFont = False
+                  end
+                end
+                object edtQtde: TDBEdit
+                  Left = 231
+                  Top = 22
+                  Width = 70
+                  Height = 21
+                  DataField = 'QTDE'
+                  DataSource = dmPrincipal.dsFichaTecnicaItem
+                  TabOrder = 2
+                end
+              end
+              object edtValorUnitario: TDBEdit
+                Left = 141
+                Top = 22
+                Width = 84
+                Height = 21
+                DataField = 'VALORUNITARIO'
+                DataSource = dmPrincipal.dsFichaTecnicaItem
+                TabOrder = 1
+              end
+            end
+            object btnConfirmaMateriaPrima: TBitBtn
+              Left = 0
+              Top = 52
+              Width = 122
+              Height = 25
+              Caption = 'Confirma Mat'#233'ria Prima'
+              TabOrder = 3
+            end
+            object btnCancelaMateriaPrima: TBitBtn
+              Left = 121
+              Top = 52
+              Width = 122
+              Height = 25
+              Caption = 'Cancela Materia Prima'
+              TabOrder = 4
+            end
+            object edtIdMateriaPrima: TDBEdit
+              Left = 11
+              Top = 24
+              Width = 56
+              Height = 21
+              DataField = 'IDMATERIAPRIMA'
+              DataSource = dmPrincipal.dsFichaTecnicaItem
+              TabOrder = 5
+            end
+          end
+        end
+      end
+    end
+    inherited tsSearch: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pSearch: TPanel
+        inherited pFiltro: TPanel
+          inherited lDigiteConformeEscolha: TLabel
+            Width = 501
+          end
+        end
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    DataSet = dmPrincipal.cdsFichaTecnica
+  end
+end

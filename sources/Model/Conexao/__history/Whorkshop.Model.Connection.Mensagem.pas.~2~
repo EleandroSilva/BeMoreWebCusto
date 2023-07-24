@@ -1,0 +1,52 @@
+unit Whorkshop.Model.Connection.Mensagem;
+
+interface
+
+uses
+  Whorkshop.Model.Connection.Interfaces;
+
+type
+  TMensagem = class (TInterfacedObject, iModelMSG)
+    private
+    FTipoMSG : Integer;
+    FMSG : iModelMSG;
+    public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iModelMSG;
+
+    function TipoMSG(aValue : Integer) : iModelMSG;
+    function MSG(aValue : Integer) : String;
+
+  end;
+
+implementation
+
+{ TMensagem }
+
+constructor TMensagem.Create;
+begin
+ //
+end;
+
+destructor TMensagem.Destroy;
+begin
+  inherited;
+end;
+
+function TMensagem.MSG(aValue: Integer): String;
+begin
+
+end;
+
+class function TMensagem.New: iModelMSG;
+begin
+  Result := Self.Create;
+end;
+
+function TMensagem.TipoMSG(aValue: Integer): iModelMSG;
+begin
+
+end;
+
+end.

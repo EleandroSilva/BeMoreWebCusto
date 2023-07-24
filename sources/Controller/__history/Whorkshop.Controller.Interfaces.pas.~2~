@@ -1,0 +1,18 @@
+unit Whorkshop.Controller.Interfaces;
+
+interface
+
+uses
+  //Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Entidades.RedeInfocon.Interfaces;
+
+type
+
+  iController = interface
+    ['{98311B51-7289-4FDB-8221-2AF54B789AF3}']
+    //function Entidades : iModelEntidadeFactory;
+    function EntidadesRedeInfocon : iModelEntidadeRedeInfoconFactory;
+  end;
+implementation
+
+end.

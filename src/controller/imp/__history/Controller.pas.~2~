@@ -1,0 +1,20 @@
+unit Controller;
+
+interface
+
+uses
+  Controller.Interfaces;
+
+type
+  TController = class(TInterfacedObject, iController)
+    private
+      FController : iController;
+    public
+      constructor Create;
+      destructor Destroy; override;
+      class function New : iController;
+  end;
+
+implementation
+
+end.

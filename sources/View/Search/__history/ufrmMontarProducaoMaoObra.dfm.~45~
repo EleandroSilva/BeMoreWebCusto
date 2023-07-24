@@ -1,0 +1,562 @@
+inherited frmMontarProducaoMaoObra: TfrmMontarProducaoMaoObra
+  Caption = 'Montar Produ'#231#227'o M'#227'o de Obra'
+  ClientWidth = 992
+  ExplicitWidth = 1008
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    Width = 992
+    ExplicitTop = 560
+    ExplicitWidth = 992
+    inherited pSite: TPanel
+      Left = 774
+      ExplicitLeft = 774
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+        OnClick = NavigatorClick
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 218
+      end
+    end
+    inherited btnSalve: TBitBtn
+      OnClick = btnSalveClick
+    end
+    inherited rgActive: TRadioGroup
+      Left = 710
+      ExplicitLeft = 710
+    end
+  end
+  inherited pCabecalho: TPanel
+    Width = 992
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 992
+    inherited lTextoEmpresa: TLabel
+      Width = 872
+    end
+    inherited pOperator: TPanel
+      Left = 872
+      ExplicitLeft = 872
+      inherited edtOperator: TDBEdit
+        ExplicitTop = 20
+        ExplicitWidth = 120
+      end
+    end
+  end
+  inherited pgMain: TPageControl
+    Width = 992
+    ExplicitLeft = 0
+    ExplicitTop = 41
+    ExplicitWidth = 992
+    ExplicitHeight = 519
+    inherited tsRegister: TTabSheet
+      ExplicitWidth = 984
+      ExplicitHeight = 491
+      inherited pGrid: TPanel
+        Width = 984
+        ExplicitWidth = 984
+        ExplicitHeight = 491
+        inherited pEdit: TPanel
+          Width = 982
+          Height = 136
+          ExplicitWidth = 982
+          ExplicitHeight = 136
+          inherited pCabecalhoEdt: TPanel
+            Top = 17
+            Width = 982
+            ExplicitTop = 10
+            ExplicitWidth = 982
+            inherited LId: TLabel
+              Left = 9
+              Width = 62
+              Caption = 'Id Produ'#231#227'o:'
+              ExplicitLeft = 9
+              ExplicitWidth = 62
+            end
+            inherited lDescricao: TLabel
+              Left = 376
+              Width = 76
+              Caption = 'Qtde Produ'#231#227'o:'
+              ExplicitLeft = 376
+              ExplicitWidth = 76
+            end
+            object lValorFrete: TLabel [3]
+              Left = 463
+              Top = 6
+              Width = 57
+              Height = 13
+              Caption = 'Valor Frete:'
+            end
+            object Label4: TLabel [4]
+              Left = 550
+              Top = 6
+              Width = 78
+              Height = 13
+              Caption = 'Valor M'#227'o Obra:'
+            end
+            object Label3: TLabel [5]
+              Left = 638
+              Top = 6
+              Width = 143
+              Height = 13
+              Caption = 'Valor Custo Frete+M'#227'o Obra:'
+            end
+            object Label2: TLabel [6]
+              Left = 184
+              Top = 6
+              Width = 38
+              Height = 13
+              Caption = 'Modelo:'
+            end
+            inherited MedtReleaseDate: TDBEdit
+              DataField = 'DATALANCAMENTO'
+              DataSource = DataSource1
+            end
+            inherited edtDescricao: TDBEdit
+              Left = 376
+              Width = 81
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'QTDEPRODUCAO'
+              ParentBiDiMode = False
+              ReadOnly = True
+              ExplicitLeft = 376
+              ExplicitWidth = 81
+            end
+            object edtValorFrete: TDBEdit
+              Left = 463
+              Top = 25
+              Width = 81
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'VALORFRETE'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 3
+            end
+            object edtValorMaoObra: TDBEdit
+              Left = 550
+              Top = 25
+              Width = 81
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'VALORMAOOBRA'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 4
+            end
+            object edtValorCusto: TDBEdit
+              Left = 637
+              Top = 25
+              Width = 144
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'VALORCUSTO'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 5
+            end
+            object dblkModelo: TDBLookupComboBox
+              Left = 184
+              Top = 25
+              Width = 186
+              Height = 21
+              DataField = 'IDMODELO'
+              DataSource = dmPrincipal.dsProducaoMaoObraItem
+              KeyField = 'ID'
+              ListField = 'DESCRICAO'
+              ListSource = dmPrincipal.dsModelo
+              TabOrder = 6
+              OnEnter = dblkModeloEnter
+            end
+          end
+          object pProducaoCabecalho: TPanel
+            Left = 0
+            Top = 0
+            Width = 982
+            Height = 17
+            Align = alTop
+            BevelOuter = bvNone
+            Caption = 'Produ'#231#227'o Cabe'#231'alho'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 1
+          end
+          object pProducaoSetorLocal: TPanel
+            Left = 0
+            Top = 66
+            Width = 982
+            Height = 15
+            Align = alTop
+            BevelOuter = bvNone
+            Caption = 'Produ'#231#227'o Setor/Local'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 2
+          end
+          object Panel1: TPanel
+            Left = 0
+            Top = 81
+            Width = 982
+            Height = 53
+            Align = alTop
+            BevelOuter = bvNone
+            TabOrder = 3
+            object Label1: TLabel
+              Left = 8
+              Top = 9
+              Width = 58
+              Height = 13
+              Caption = 'Setor/Local:'
+            end
+            object Label5: TLabel
+              Left = 197
+              Top = 9
+              Width = 76
+              Height = 13
+              Caption = 'Qtde Produ'#231#227'o:'
+            end
+            object Label6: TLabel
+              Left = 284
+              Top = 9
+              Width = 57
+              Height = 13
+              Caption = 'Valor Frete:'
+            end
+            object Label7: TLabel
+              Left = 371
+              Top = 9
+              Width = 78
+              Height = 13
+              Caption = 'Valor M'#227'o Obra:'
+            end
+            object Label8: TLabel
+              Left = 459
+              Top = 9
+              Width = 143
+              Height = 13
+              Caption = 'Valor Custo Frete+M'#227'o Obra:'
+            end
+            object dblkSetorLocal: TDBLookupComboBox
+              Left = 8
+              Top = 28
+              Width = 184
+              Height = 21
+              DataField = 'IDSETORLOCAL'
+              DataSource = dmPrincipal.dsProducaoMaoObraItem
+              KeyField = 'ID'
+              ListField = 'DESCRICAO'
+              ListSource = dmPrincipal.dsSetorLocal
+              TabOrder = 0
+              OnEnter = dblkSetorLocalEnter
+            end
+            object edtQtdeProducaoItem: TDBEdit
+              Left = 197
+              Top = 28
+              Width = 81
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              DataField = 'QTDEPRODUCAO'
+              DataSource = dmPrincipal.dsProducaoMaoObraItem
+              ParentBiDiMode = False
+              TabOrder = 1
+              OnExit = edtQtdeProducaoItemExit
+            end
+            object edtValorFreteProducaoItem: TDBEdit
+              Left = 284
+              Top = 28
+              Width = 81
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'VALORFRETE'
+              DataSource = dmPrincipal.dsProducaoMaoObraItem
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 2
+            end
+            object edtValorMaoObraProducaoItem: TDBEdit
+              Left = 371
+              Top = 28
+              Width = 81
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'VALORMAOOBRA'
+              DataSource = dmPrincipal.dsProducaoMaoObraItem
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 3
+            end
+            object edtValorCustoProducaoItem: TDBEdit
+              Left = 458
+              Top = 28
+              Width = 144
+              Height = 21
+              BiDiMode = bdRightToLeftNoAlign
+              Color = 8224125
+              DataField = 'VALORCUSTO'
+              DataSource = dmPrincipal.dsProducaoMaoObraItem
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 4
+            end
+            object btnInserirOutraProducao: TBitBtn
+              Left = 637
+              Top = 24
+              Width = 144
+              Height = 25
+              Caption = 'Inserir Outra Produ'#231#227'o'
+              Enabled = False
+              TabOrder = 5
+              OnClick = btnInserirOutraProducaoClick
+            end
+          end
+        end
+        inherited pGridCadastro: TPanel
+          Top = 137
+          Width = 982
+          Height = 353
+          ExplicitTop = 72
+          ExplicitWidth = 982
+          ExplicitHeight = 418
+          object dbgCadastro: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 982
+            Height = 353
+            Align = alClient
+            DataSource = DataSource1
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+            OnDrawColumnCell = dbgCadastroDrawColumnCell
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'ID'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'ID:'
+                Width = 38
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IDMODELO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Id Modelo:'
+                Width = 74
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IDSETORLOCAL'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Id Setor/Local:'
+                Width = 77
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTDEPRODUCAO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Qtde Produ'#231#227'o:'
+                Width = 88
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VALORFRETE'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Valor Frete:'
+                Width = 71
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VALORMAOOBRA'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Valor M'#227'o de Obra:'
+                Width = 106
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VALORCUSTO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Valor Custo:'
+                Width = 94
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'DATALANCAMENTO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Data Lan'#231'amento:'
+                Width = 102
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERADOR'
+                Title.Caption = 'Operador:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'STATUS'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Status:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'ATIVO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Ativo:'
+                Visible = True
+              end>
+          end
+        end
+      end
+    end
+    inherited tsSearch: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 984
+      ExplicitHeight = 491
+      inherited pSearch: TPanel
+        Width = 984
+        ExplicitWidth = 984
+        inherited pFiltro: TPanel
+          Width = 559
+          ExplicitWidth = 559
+          inherited lDigiteConformeEscolha: TLabel
+            Width = 559
+            ExplicitLeft = 0
+            ExplicitTop = 28
+          end
+          inherited edtSearch: TEdit
+            Width = 559
+            OnKeyPress = nil
+            ExplicitLeft = 0
+            ExplicitTop = 46
+            ExplicitWidth = 559
+          end
+        end
+      end
+      inherited dbgSearch: TDBGrid
+        Width = 984
+        DataSource = DataSource1
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'ID'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'ID:'
+            Width = 38
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IDMODELO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Id Modelo:'
+            Width = 74
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IDSETORLOCAL'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Id Setor/Local:'
+            Width = 77
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTDEPRODUCAO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Qtde Produ'#231#227'o:'
+            Width = 88
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VALORFRETE'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Valor Frete:'
+            Width = 71
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VALORMAOOBRA'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Valor M'#227'o de Obra:'
+            Width = 106
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VALORCUSTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Valor Custo:'
+            Width = 94
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'DATALANCAMENTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Data Lan'#231'amento:'
+            Width = 102
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'OPERADOR'
+            Title.Caption = 'Operador:'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'STATUS'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Status:'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ATIVO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Ativo:'
+            Visible = True
+          end>
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    DataSet = dmPrincipal.cdsProducaoMaoObra
+  end
+end

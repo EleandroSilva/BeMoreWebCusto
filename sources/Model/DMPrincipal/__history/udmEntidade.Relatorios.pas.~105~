@@ -1,0 +1,805 @@
+unit udmEntidade.Relatorios;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Classes,
+
+  ppComm,
+  ppRelatv,
+  ppProd,
+  ppClass, ppReport,
+  ppDB, ppDBPipe, Data.FMTBcd, Data.DB, Datasnap.DBClient, Datasnap.Provider,
+  Data.SqlExpr, ppDesignLayer, ppParameter, udmPrincipal, ppVar, ppCtrls,
+  ppPrnabl, ppBands, ppCache, Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller;
+
+type
+  TdmEntidadeRelatorios = class(TDataModule)
+    ppdbModelo: TppDBPipeline;
+    pprModelo: TppReport;
+    ppDesignLayers2: TppDesignLayers;
+    ppDesignLayer2: TppDesignLayer;
+    ppParameterList2: TppParameterList;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppShape1: TppShape;
+    ppLabel1: TppLabel;
+    ppLabel2: TppLabel;
+    ppLabel3: TppLabel;
+    ppLabel4: TppLabel;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppLine1: TppLine;
+    ppSystemVariable1: TppSystemVariable;
+    ppSystemVariable2: TppSystemVariable;
+    pplEmpresa: TppLabel;
+    ppDBText4: TppDBText;
+    ppLabel5: TppLabel;
+    ppLine2: TppLine;
+    pplDesenvolvidopor: TppLabel;
+    pplSiteEmpresa: TppLabel;
+    pprModeloProduto: TppReport;
+    ppParameterList3: TppParameterList;
+    ppDesignLayers3: TppDesignLayers;
+    ppDesignLayer3: TppDesignLayer;
+    ppHeaderBand3: TppHeaderBand;
+    ppDetailBand3: TppDetailBand;
+    ppFooterBand3: TppFooterBand;
+    ppShape3: TppShape;
+    ppSystemVariable5: TppSystemVariable;
+    lNomeEmpresa: TppLabel;
+    ppLabel9: TppLabel;
+    ppSystemVariable6: TppSystemVariable;
+    ppdbIdModelo: TppDBText;
+    ppdbNomeModelo: TppDBText;
+    ppGroup2: TppGroup;
+    ppGroupHeaderBand2: TppGroupHeaderBand;
+    ppGroupFooterBand2: TppGroupFooterBand;
+    ppDBText9: TppDBText;
+    ppDBText10: TppDBText;
+    ppLine8: TppLine;
+    ppLabel16: TppLabel;
+    ppLabel17: TppLabel;
+    ppLabel18: TppLabel;
+    ppLine9: TppLine;
+    lSiteEmpresa: TppLabel;
+    ppLabel8: TppLabel;
+    ppLabel6: TppLabel;
+    ppDBText5: TppDBText;
+    ppLabel7: TppLabel;
+    ppDBText6: TppDBText;
+    ppDBText7: TppDBText;
+    ppdbListaModeloProduto: TppDBPipeline;
+    pprMarkupNome: TppReport;
+    ppHeaderBand2: TppHeaderBand;
+    ppShape2: TppShape;
+    ppSystemVariable3: TppSystemVariable;
+    ppLabel10: TppLabel;
+    ppLabel11: TppLabel;
+    ppSystemVariable4: TppSystemVariable;
+    ppLine4: TppLine;
+    ppDetailBand2: TppDetailBand;
+    ppFooterBand2: TppFooterBand;
+    ppLabel12: TppLabel;
+    ppLabel13: TppLabel;
+    ppLine3: TppLine;
+    ppLabel14: TppLabel;
+    ppDesignLayers1: TppDesignLayers;
+    ppDesignLayer1: TppDesignLayer;
+    ppParameterList1: TppParameterList;
+    ppdbMarkupNome: TppDBPipeline;
+    ppLabel15: TppLabel;
+    ppLabel19: TppLabel;
+    ppLabel20: TppLabel;
+    ppLabel21: TppLabel;
+    ppLabel22: TppLabel;
+    ppLabel23: TppLabel;
+    ppLine5: TppLine;
+    ppDBText8: TppDBText;
+    ppDBText11: TppDBText;
+    ppDBText12: TppDBText;
+    ppDBText13: TppDBText;
+    ppDBText14: TppDBText;
+    ppDBText15: TppDBText;
+    ppLine6: TppLine;
+    ppDBText16: TppDBText;
+    ppdbAliquotaNome: TppDBPipeline;
+    pprAliquotaNome: TppReport;
+    ppHeaderBand5: TppHeaderBand;
+    ppShape4: TppShape;
+    ppSystemVariable7: TppSystemVariable;
+    ppLabel24: TppLabel;
+    ppLabel25: TppLabel;
+    ppSystemVariable8: TppSystemVariable;
+    ppLine7: TppLine;
+    ppDetailBand5: TppDetailBand;
+    ppFooterBand5: TppFooterBand;
+    ppLabel26: TppLabel;
+    ppLabel27: TppLabel;
+    ppLine10: TppLine;
+    ppLabel28: TppLabel;
+    ppDesignLayers5: TppDesignLayers;
+    ppDesignLayer5: TppDesignLayer;
+    ppParameterList5: TppParameterList;
+    ppLabel29: TppLabel;
+    ppLabel30: TppLabel;
+    ppLabel31: TppLabel;
+    ppLabel32: TppLabel;
+    ppLabel33: TppLabel;
+    ppLabel34: TppLabel;
+    ppLine11: TppLine;
+    ppDBText17: TppDBText;
+    ppDBText18: TppDBText;
+    ppDBText19: TppDBText;
+    ppDBText20: TppDBText;
+    ppDBText21: TppDBText;
+    ppDBText22: TppDBText;
+    ppLine12: TppLine;
+    ppDBText23: TppDBText;
+    pprAliquotaGrupo: TppReport;
+    ppHeaderBand4: TppHeaderBand;
+    ppShape5: TppShape;
+    ppSystemVariable9: TppSystemVariable;
+    ppLabel35: TppLabel;
+    ppLabel36: TppLabel;
+    ppSystemVariable10: TppSystemVariable;
+    ppLine13: TppLine;
+    ppDetailBand4: TppDetailBand;
+    ppFooterBand4: TppFooterBand;
+    ppLabel37: TppLabel;
+    ppLabel38: TppLabel;
+    ppLine14: TppLine;
+    ppLabel39: TppLabel;
+    ppDesignLayers4: TppDesignLayers;
+    ppDesignLayer4: TppDesignLayer;
+    ppParameterList4: TppParameterList;
+    ppdbAliquotaGrupo: TppDBPipeline;
+    ppdbIdMarkupNome: TppDBText;
+    ppdbIdAliquotaNome: TppDBText;
+    ppDBText24: TppDBText;
+    ppDBText25: TppDBText;
+    ppDBText26: TppDBText;
+    ppGroup1: TppGroup;
+    ppGroupHeaderBand1: TppGroupHeaderBand;
+    ppGroupFooterBand1: TppGroupFooterBand;
+    ppLine15: TppLine;
+    ppLabel40: TppLabel;
+    ppLabel41: TppLabel;
+    ppLabel42: TppLabel;
+    ppLabel43: TppLabel;
+    ppLine16: TppLine;
+    ppDBText27: TppDBText;
+    ppLabel44: TppLabel;
+    ppDBText28: TppDBText;
+    ppLabel45: TppLabel;
+    ppDBText29: TppDBText;
+    ppLine17: TppLine;
+    ppDBText30: TppDBText;
+    pprSetor: TppReport;
+    ppHeaderBand6: TppHeaderBand;
+    ppShape6: TppShape;
+    ppSystemVariable11: TppSystemVariable;
+    ppLabel46: TppLabel;
+    ppLabel47: TppLabel;
+    ppSystemVariable12: TppSystemVariable;
+    ppLine18: TppLine;
+    ppDetailBand6: TppDetailBand;
+    ppFooterBand6: TppFooterBand;
+    ppLabel48: TppLabel;
+    ppLabel49: TppLabel;
+    ppLine19: TppLine;
+    ppLabel50: TppLabel;
+    ppDesignLayers6: TppDesignLayers;
+    ppDesignLayer6: TppDesignLayer;
+    ppParameterList6: TppParameterList;
+    ppdbSetor: TppDBPipeline;
+    ppLabel51: TppLabel;
+    ppLabel52: TppLabel;
+    ppLabel53: TppLabel;
+    ppLabel54: TppLabel;
+    ppLabel55: TppLabel;
+    ppLabel56: TppLabel;
+    ppLine20: TppLine;
+    ppdbIdSetor: TppDBText;
+    ppDBText32: TppDBText;
+    ppDBText33: TppDBText;
+    ppDBText34: TppDBText;
+    ppDBText35: TppDBText;
+    ppDBText36: TppDBText;
+    ppLine21: TppLine;
+    ppvQtdeRegistroSetor: TppVariable;
+    pprLocal: TppReport;
+    ppHeaderBand7: TppHeaderBand;
+    ppShape7: TppShape;
+    ppSystemVariable13: TppSystemVariable;
+    ppLabel57: TppLabel;
+    ppLabel58: TppLabel;
+    ppSystemVariable14: TppSystemVariable;
+    ppLine22: TppLine;
+    ppLabel59: TppLabel;
+    ppLabel60: TppLabel;
+    ppLabel63: TppLabel;
+    ppLabel64: TppLabel;
+    ppLine23: TppLine;
+    ppDetailBand7: TppDetailBand;
+    ppDBText31: TppDBText;
+    ppDBText37: TppDBText;
+    ppDBText40: TppDBText;
+    ppDBText41: TppDBText;
+    ppLine24: TppLine;
+    ppFooterBand7: TppFooterBand;
+    ppLabel65: TppLabel;
+    ppLabel66: TppLabel;
+    ppLine25: TppLine;
+    ppLabel67: TppLabel;
+    ppvQtdeRegistroLocal: TppVariable;
+    ppDesignLayers7: TppDesignLayers;
+    ppDesignLayer7: TppDesignLayer;
+    ppParameterList7: TppParameterList;
+    ppdbLocal: TppDBPipeline;
+    pprSetorLocal: TppReport;
+    ppHeaderBand8: TppHeaderBand;
+    ppShape8: TppShape;
+    ppSystemVariable15: TppSystemVariable;
+    ppListaSetorLocal: TppLabel;
+    pplEmpresaSetorLocal: TppLabel;
+    ppSystemVariable16: TppSystemVariable;
+    ppLine26: TppLine;
+    ppLabel68: TppLabel;
+    ppLabel69: TppLabel;
+    ppLine27: TppLine;
+    ppLabel72: TppLabel;
+    ppLabel73: TppLabel;
+    ppDetailBand8: TppDetailBand;
+    ppFooterBand8: TppFooterBand;
+    ppLabel74: TppLabel;
+    ppSiteSetorLocal: TppLabel;
+    ppLine28: TppLine;
+    ppLabel76: TppLabel;
+    ppDesignLayers8: TppDesignLayers;
+    ppDesignLayer8: TppDesignLayer;
+    ppParameterList8: TppParameterList;
+    ppDBText38: TppDBText;
+    ppdbSetorLocal: TppDBPipeline;
+    ppDBText42: TppDBText;
+    ppDBText39: TppDBText;
+    ppDBText43: TppDBText;
+    ppLine29: TppLine;
+    pprListaProducao: TppReport;
+    ppHeaderBand9: TppHeaderBand;
+    ppShape9: TppShape;
+    ppSystemVariable17: TppSystemVariable;
+    ppListagemProducao: TppLabel;
+    ppEmpresaProducao: TppLabel;
+    ppSystemVariable18: TppSystemVariable;
+    ppLine30: TppLine;
+    ppLabel70: TppLabel;
+    ppLabel71: TppLabel;
+    ppLine31: TppLine;
+    ppLabel75: TppLabel;
+    ppLabel77: TppLabel;
+    ppLabel78: TppLabel;
+    ppLabel79: TppLabel;
+    ppDetailBand9: TppDetailBand;
+    ppFooterBand9: TppFooterBand;
+    ppLabel80: TppLabel;
+    ppSiteProcucao: TppLabel;
+    ppLine32: TppLine;
+    ppLabel82: TppLabel;
+    ppDesignLayers9: TppDesignLayers;
+    ppDesignLayer9: TppDesignLayer;
+    ppParameterList9: TppParameterList;
+    ppdbIdModeloProducao: TppDBText;
+    ppDBText46: TppDBText;
+    ppDBText47: TppDBText;
+    ppDBText48: TppDBText;
+    ppGroup3: TppGroup;
+    ppGroupHeaderBand3: TppGroupHeaderBand;
+    ppGroupFooterBand3: TppGroupFooterBand;
+    ppDBText44: TppDBText;
+    ppDBText45: TppDBText;
+    ppDBText49: TppDBText;
+    ppDBText50: TppDBText;
+    ppLabel83: TppLabel;
+    ppLine33: TppLine;
+    ppLine34: TppLine;
+    ppdbListaProducao: TppDBPipeline;
+    ppLabel84: TppLabel;
+    ppDBText51: TppDBText;
+    ppDBText52: TppDBText;
+    ppDBText53: TppDBText;
+    ppDBText54: TppDBText;
+    ppDBText55: TppDBText;
+    ppLine35: TppLine;
+    ppdbListaFichaTecnica: TppDBPipeline;
+    pprListaFichaTecnica: TppReport;
+    ppHeaderBand10: TppHeaderBand;
+    ppShape10: TppShape;
+    ppSystemVariable19: TppSystemVariable;
+    ppListagemFichaTecnica: TppLabel;
+    ppEmpresaFichaTecnica: TppLabel;
+    ppSystemVariable20: TppSystemVariable;
+    ppLine36: TppLine;
+    ppLabel81: TppLabel;
+    ppLabel85: TppLabel;
+    ppLine37: TppLine;
+    ppLabel86: TppLabel;
+    ppLabel87: TppLabel;
+    ppLabel88: TppLabel;
+    ppLabel89: TppLabel;
+    ppDetailBand10: TppDetailBand;
+    ppFooterBand10: TppFooterBand;
+    ppLabel90: TppLabel;
+    ppSiteFichaTecnica: TppLabel;
+    ppLine38: TppLine;
+    ppLabel92: TppLabel;
+    ppDesignLayers10: TppDesignLayers;
+    ppDesignLayer10: TppDesignLayer;
+    ppParameterList10: TppParameterList;
+    ppdbIdModeloFichaTecnica: TppDBText;
+    ppdbNomeModeloFichaTecnica: TppDBText;
+    ppGroup4: TppGroup;
+    ppGroupHeaderBand4: TppGroupHeaderBand;
+    ppGroupFooterBand4: TppGroupFooterBand;
+    ppLabel61: TppLabel;
+    ppLine39: TppLine;
+    ppdbIdPrincipal: TppDBText;
+    ppDBText56: TppDBText;
+    ppDBText57: TppDBText;
+    ppDBText58: TppDBText;
+    ppDBText59: TppDBText;
+    ppDBText60: TppDBText;
+    ppDBText61: TppDBText;
+    ppDBText62: TppDBText;
+    ppDBText63: TppDBText;
+    ppDBText64: TppDBText;
+    ppLine40: TppLine;
+    ppGroup5: TppGroup;
+    ppGroupHeaderBand5: TppGroupHeaderBand;
+    ppGroupFooterBand5: TppGroupFooterBand;
+    ppLabel62: TppLabel;
+    ppLabel91: TppLabel;
+    ppLabel93: TppLabel;
+    ppLabel94: TppLabel;
+    ppLabel95: TppLabel;
+    ppDBText65: TppDBText;
+    ppDBText66: TppDBText;
+    ppDBText68: TppDBText;
+    ppLine41: TppLine;
+    ppDBText67: TppDBText;
+    ppLabel96: TppLabel;
+    ppDBText69: TppDBText;
+    ppDBText70: TppDBText;
+    pprDespesaFixa: TppReport;
+    ppHeaderBand11: TppHeaderBand;
+    ppShape11: TppShape;
+    ppSystemVariable21: TppSystemVariable;
+    pplListagemDespesaFixa: TppLabel;
+    pplEmpresaDespesaFixa: TppLabel;
+    ppSystemVariable22: TppSystemVariable;
+    ppLine42: TppLine;
+    ppLabel99: TppLabel;
+    ppLine43: TppLine;
+    ppLabel101: TppLabel;
+    ppLabel103: TppLabel;
+    ppLabel104: TppLabel;
+    ppDetailBand11: TppDetailBand;
+    ppFooterBand11: TppFooterBand;
+    ppLabel105: TppLabel;
+    pplSiteDespesaFixa: TppLabel;
+    ppLine44: TppLine;
+    ppLabel107: TppLabel;
+    ppDesignLayers11: TppDesignLayers;
+    ppDesignLayer11: TppDesignLayer;
+    ppParameterList11: TppParameterList;
+    ppdbDespesaFixa: TppDBPipeline;
+    ppDBText71: TppDBText;
+    ppDBText73: TppDBText;
+    ppDBText74: TppDBText;
+    ppDBText75: TppDBText;
+    ppdbIdClasseContas: TppDBText;
+    ppdbDescricaoClasseContas: TppDBText;
+    ppdbOrigem: TppDBText;
+    ppGroup6: TppGroup;
+    ppGroupHeaderBand6: TppGroupHeaderBand;
+    ppGroupFooterBand6: TppGroupFooterBand;
+    ppLabel97: TppLabel;
+    ppLine45: TppLine;
+    ppLabel102: TppLabel;
+    ppLine46: TppLine;
+    ppDBText72: TppDBText;
+    ppLabel98: TppLabel;
+    ppDBText76: TppDBText;
+    ppLine47: TppLine;
+    ppDBText77: TppDBText;
+    ppLabel100: TppLabel;
+    ppDBText78: TppDBText;
+    pprListaMontarCusto: TppReport;
+    ppHeaderBand12: TppHeaderBand;
+    ppShape12: TppShape;
+    ppSystemVariable23: TppSystemVariable;
+    pplListagemMontarCusto: TppLabel;
+    pplEmpresaMontarCusto: TppLabel;
+    ppSystemVariable24: TppSystemVariable;
+    ppLine48: TppLine;
+    ppLabel109: TppLabel;
+    ppLabel110: TppLabel;
+    ppLine49: TppLine;
+    ppLabel111: TppLabel;
+    ppLabel112: TppLabel;
+    ppLabel113: TppLabel;
+    ppLabel114: TppLabel;
+    ppDetailBand12: TppDetailBand;
+    ppFooterBand12: TppFooterBand;
+    ppLabel115: TppLabel;
+    pplSiteMontarCusto: TppLabel;
+    ppLine50: TppLine;
+    ppLabel117: TppLabel;
+    ppDesignLayers12: TppDesignLayers;
+    ppDesignLayer12: TppDesignLayer;
+    ppParameterList12: TppParameterList;
+    ppdbListaMontarCusto: TppDBPipeline;
+    ppDBText79: TppDBText;
+    ppDBText80: TppDBText;
+    ppDBText81: TppDBText;
+    ppDBText82: TppDBText;
+    ppDBText83: TppDBText;
+    ppDBText84: TppDBText;
+    ppLabel118: TppLabel;
+    ppLabel119: TppLabel;
+    ppDBText85: TppDBText;
+    ppLabel120: TppLabel;
+    ppDBText86: TppDBText;
+    ppLabel121: TppLabel;
+    ppDBText87: TppDBText;
+    ppLabel122: TppLabel;
+    ppDBText88: TppDBText;
+    ppLabel123: TppLabel;
+    ppDBText89: TppDBText;
+    ppLabel124: TppLabel;
+    ppDBText90: TppDBText;
+    ppLabel125: TppLabel;
+    ppDBText91: TppDBText;
+    ppLabel126: TppLabel;
+    ppDBText92: TppDBText;
+    ppLabel127: TppLabel;
+    ppDBText93: TppDBText;
+    ppLabel128: TppLabel;
+    ppDBText94: TppDBText;
+    ppLabel129: TppLabel;
+    ppLabel130: TppLabel;
+    ppDBText95: TppDBText;
+    ppLabel131: TppLabel;
+    ppDBText96: TppDBText;
+    ppDBText97: TppDBText;
+    ppDBText98: TppDBText;
+    ppLine51: TppLine;
+    pprTabelaPrazoMedio: TppReport;
+    ppHeaderBand13: TppHeaderBand;
+    ppShape13: TppShape;
+    ppSystemVariable25: TppSystemVariable;
+    pplListagemTabelaPrazoMedio: TppLabel;
+    pplEmpresaListagemPrazoMedio: TppLabel;
+    ppSystemVariable26: TppSystemVariable;
+    ppLine52: TppLine;
+    ppLine53: TppLine;
+    ppLabel133: TppLabel;
+    ppDetailBand13: TppDetailBand;
+    ppFooterBand13: TppFooterBand;
+    ppLabel137: TppLabel;
+    pplSiteListagemPrazoMedio: TppLabel;
+    ppLine54: TppLine;
+    ppLabel139: TppLabel;
+    ppDesignLayers13: TppDesignLayers;
+    ppDesignLayer13: TppDesignLayer;
+    ppParameterList13: TppParameterList;
+    ppdbTabelaPrazoMedio: TppDBPipeline;
+    ppDBText100: TppDBText;
+    ppDBText101: TppDBText;
+    ppDBText102: TppDBText;
+    ppDBText103: TppDBText;
+    ppDBText104: TppDBText;
+    ppLabel135: TppLabel;
+    ppLabel136: TppLabel;
+    ppLine55: TppLine;
+    ppGroup7: TppGroup;
+    ppGroupHeaderBand7: TppGroupHeaderBand;
+    ppGroupFooterBand7: TppGroupFooterBand;
+    ppGroup8: TppGroup;
+    ppGroupHeaderBand8: TppGroupHeaderBand;
+    ppGroupFooterBand8: TppGroupFooterBand;
+    ppLabel106: TppLabel;
+    ppLine56: TppLine;
+    ppLabel108: TppLabel;
+    ppLine57: TppLine;
+    procedure pprModeloBeforePrint(Sender: TObject);
+    procedure DataModuleCreate(Sender: TObject);
+    procedure pprModeloProdutoBeforePrint(Sender: TObject);
+    procedure pprMarkupNomeBeforePrint(Sender: TObject);
+    procedure pprAliquotaNomeBeforePrint(Sender: TObject);
+    procedure pprAliquotaGrupoBeforePrint(Sender: TObject);
+    procedure pprLocalBeforePrint(Sender: TObject);
+    procedure pprSetorBeforePrint(Sender: TObject);
+    procedure pprSetorLocalBeforePrint(Sender: TObject);
+    procedure pprListaProducaoBeforePrint(Sender: TObject);
+    procedure pprListaFichaTecnicaBeforePrint(Sender: TObject);
+    procedure pprDespesaFixaBeforePrint(Sender: TObject);
+    procedure pprListaMontarCustoBeforePrint(Sender: TObject);
+    procedure pprTabelaPrazoMedioBeforePrint(Sender: TObject);
+  private
+    FController: iController;
+
+    procedure FiltraEmpresa(aValue: String);
+
+    { Private declarations }
+  public
+
+    { Public declarations }
+  end;
+
+var
+  dmEntidadeRelatorios: TdmEntidadeRelatorios;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+
+procedure TdmEntidadeRelatorios.DataModuleCreate(Sender: TObject);
+begin
+  FController := TController.New;
+end;
+
+procedure TdmEntidadeRelatorios.FiltraEmpresa(aValue: String);
+begin
+  dmPrincipal.sqlEmpresa.Active := False;
+  dmPrincipal.sqlEmpresa.CommandText := ('select ' +
+    'emp.id_emp, ' +
+    'case ' +
+    '  when emp.nome is null then emp.razao_social ' +
+    '  else emp.nome ' +
+    ' end NomeEmpresa, ' +
+    'emp.fone ' +
+    'from cad_razao_social emp ' +
+    'where emp.Id_Emp=' + aValue + ' ');
+  dmPrincipal.cdsEmpresa.Active := False;
+  dmPrincipal.cdsEmpresa.Active := True;
+end;
+
+procedure TdmEntidadeRelatorios.pprAliquotaGrupoBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsAliquotaGrupo.IsEmpty then
+  begin
+    ppLabel35.Caption := 'Conjunto Markup com Alíquota';
+
+    ppLabel36.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppLabel38.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprAliquotaNomeBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsAliquotaNome.IsEmpty then
+  begin
+    ppLabel24.Caption := 'Listagem Nome Alíquota';
+
+    ppLabel25.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppLabel27.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprDespesaFixaBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsDespesaFixa.IsEmpty then
+  begin
+    pplListagemDespesaFixa.Caption := 'Listagem Despesa Fixa';
+    pplEmpresaDespesaFixa.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    pplSiteDespesaFixa.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprListaFichaTecnicaBeforePrint(
+  Sender: TObject);
+begin
+  if not dmPrincipal.cdsListaFichaTecnica.IsEmpty then
+  begin
+    ppListagemFichaTecnica.Caption := 'Listagem Ficha Técnica';
+
+    ppEmpresaFichaTecnica.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppSiteFichaTecnica.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprListaMontarCustoBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsListaMontarCusto.IsEmpty then
+  begin
+    pplListagemMontarCusto.Caption := 'Listagem Custo Pronto';
+
+    pplEmpresaMontarCusto.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    pplSiteMontarCusto.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprListaProducaoBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsListaProducao.IsEmpty then
+  begin
+    ppListagemProducao.Caption := 'Listagem Produção';
+
+    ppEmpresaProducao.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppSiteProcucao.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprLocalBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsLocal.IsEmpty then
+  begin
+    ppLabel57.Caption := 'Listagem Local';
+    ppLabel58.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppLabel66.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+
+  ppvQtdeRegistroLocal.AsInteger := 0;
+end;
+
+procedure TdmEntidadeRelatorios.pprMarkupNomeBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsMarkupNome.IsEmpty then
+  begin
+    ppLabel10.Caption := 'Listagem Nome Markup';
+    ppLabel11.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppLabel13.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprModeloBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsModelo.IsEmpty then
+  begin
+    pplEmpresa.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    pplSiteEmpresa.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprModeloProdutoBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsModeloProduto.IsEmpty then
+  begin
+    lNomeEmpresa.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    lSiteEmpresa.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprSetorBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsSetor.IsEmpty then
+  begin
+    ppLabel46.Caption := 'Listagem de Setor(es)';
+
+    ppLabel47.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppLabel49.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+
+end;
+
+procedure TdmEntidadeRelatorios.pprSetorLocalBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsSetorLocal.IsEmpty then
+  begin
+    ppListaSetorLocal.Caption := 'Listagem Setor/Local';
+    pplEmpresaSetorLocal.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    ppSiteSetorLocal.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprTabelaPrazoMedioBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsListaTabelaPrazoMedio.IsEmpty then
+  begin
+    pplListagemTabelaPrazoMedio.Caption := 'Listagem Tabela Preço Prazo Médio';
+
+    pplEmpresaListagemPrazoMedio.Caption := FController
+      .EntidadesEmpresaLogada
+      .DadosEmpresaLogada
+      .NomeEmpresa;
+
+    pplSiteListagemPrazoMedio.Caption := FController
+      .EntidadesRedeInfocon
+      .DadosRedeInfocon
+      .Site;
+  end;
+end;
+
+end.

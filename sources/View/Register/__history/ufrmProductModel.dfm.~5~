@@ -1,0 +1,42 @@
+inherited frmProductModel: TfrmProductModel
+  Caption = 'Modelo/Produto'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      ExplicitLeft = 720
+      ExplicitTop = 0
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 218
+      end
+    end
+    inherited btnClose: TBitBtn
+      ExplicitLeft = 540
+      ExplicitTop = 0
+    end
+    inherited rgActive: TRadioGroup
+      ExplicitLeft = 640
+      ExplicitTop = 0
+    end
+  end
+  inherited Panel1: TPanel
+    inherited pgMain: TPageControl
+      inherited tsSearch: TTabSheet
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
+        inherited pSearch: TPanel
+          inherited Panel6: TPanel
+            inherited Label1: TLabel
+              Width = 158
+            end
+          end
+        end
+      end
+    end
+  end
+end

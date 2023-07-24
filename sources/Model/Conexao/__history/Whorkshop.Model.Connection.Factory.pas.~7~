@@ -1,0 +1,26 @@
+unit Whorkshop.Model.Connection.Factory;
+
+interface
+
+uses
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Firedac,
+  Whorkshop.Model.Connection.Firedac.Query;
+
+type
+  TModelConnectionFactory = class(TInterfacedObject, iModelConnectionFactory)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelConnection;
+
+    function Connection: iModelConnection;
+    function Query: iModelQuery;
+  end;
+
+implementation
+
+
+
+end.

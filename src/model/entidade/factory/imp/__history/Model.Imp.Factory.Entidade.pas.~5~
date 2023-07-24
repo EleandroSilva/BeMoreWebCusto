@@ -1,0 +1,58 @@
+unit Model.Imp.Factory.Entidade;
+
+interface
+
+uses
+  Model.Factory.Entidade.Interfaces,
+  Model.Entidade.Aliquota.Markup.Interfaces,
+  Model.Imp.Entidade.Aliquota.Markup;
+
+type
+  TFactoryEntidade<T : iInterface> = Class(TInterfacedObject, iFactoryEntidade<T>)
+    private
+      [Weak]
+      FParent    : T;
+      FAliquotaMarkup : iFactoryEntidade<T>;
+    public
+      constructor Create(Parent : T);
+      destructor Destroy; override;
+      class function New(Parent : T): iAliquotaMarkup<T>;
+
+      function AliquotaMarkup : iAliquotaMarkup<T>;
+
+      function &End : T;
+  End;
+
+
+implementation
+
+
+constructor TFactoryEntidade<T>.Create(Parent: T);
+begin
+  FParent := Parent;
+end;
+
+destructor TFactoryEntidade<T>.Destroy;
+begin
+  inherited;
+end;
+
+function TFactoryEntidade<T>.&End: T;
+begin
+  Result := FParent;
+end;
+
+class function TFactoryEntidade<T>.New(Parent: T): iAliquotaMarkup<T>;
+begin
+  Result := Self.Create(Parent);
+end;
+
+function TFactoryEntidade<T>.AliquotaMarkup: iAliquotaMarkup<T>;
+begin
+  if not Assigned(FAliquotaMarkup) then
+    FAliquotaMarkup := TAliquotaMarkup<T>.New(FParent);
+
+  Result := FAliquotaMarkup;
+end;
+
+end.

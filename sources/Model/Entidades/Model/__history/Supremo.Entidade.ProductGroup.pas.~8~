@@ -1,0 +1,62 @@
+unit Supremo.Entidade.ProductGroup;
+
+interface
+
+uses
+  Data.DB,
+
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory,
+  Whorkshop.Model.Entidades.Interfaces;
+
+type
+  TProductGroup = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+    procedure Open;
+  end;
+
+implementation
+
+{ TProductGroup }
+
+constructor TProductGroup.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+function TProductGroup.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TProductGroup.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+destructor TProductGroup.Destroy;
+begin
+  inherited;
+end;
+
+class function TProductGroup.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+procedure TProductGroup.Open;
+begin
+  FQuery.Open('cad_grupo');
+end;
+
+end.

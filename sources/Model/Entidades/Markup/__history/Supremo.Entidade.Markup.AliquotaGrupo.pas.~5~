@@ -1,0 +1,111 @@
+unit Supremo.Entidade.Markup.AliquotaGrupo;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TMarkupAliquotaGrupo = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData: Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus: Integer;
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo: String;
+    FIdProduto: String;
+    FIdParametro: String;
+    FValorLancamento: Currency;
+    FAliquota: Currency;
+    FGenId: Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue: Integer): iModelEntidade;
+  end;
+
+implementation
+
+{ TMarkupAliquotaGrupo }
+
+constructor TMarkupAliquotaGrupo.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TMarkupAliquotaGrupo.Destroy;
+begin
+  inherited;
+end;
+
+class function TMarkupAliquotaGrupo.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+
+function TMarkupAliquotaGrupo.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TMarkupAliquotaGrupo.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TMarkupAliquotaGrupo.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TMarkupAliquotaGrupo.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TMarkupAliquotaGrupo.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Status(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+
+
+end.

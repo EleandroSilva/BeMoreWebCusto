@@ -1,0 +1,29 @@
+inherited frmSearchMarkupNome: TfrmSearchMarkupNome
+  Caption = 'Pesquisa Nome Markup'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited lSite: TLabel
+        Width = 218
+      end
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+  end
+  inherited pSearch: TPanel
+    inherited Panel6: TPanel
+      inherited Label1: TLabel
+        Width = 513
+      end
+    end
+  end
+  inherited Panel2: TPanel
+    inherited lTextoEmpresa: TLabel
+      Width = 870
+      Height = 34
+    end
+  end
+end

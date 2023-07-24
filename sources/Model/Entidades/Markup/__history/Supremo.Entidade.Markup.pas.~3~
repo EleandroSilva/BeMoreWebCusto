@@ -1,0 +1,52 @@
+unit Supremo.Entidade.Markup;
+
+interface
+
+uses
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TMarkup = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData : Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus : Integer;
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo : String;
+    FIdProduto : String;
+    FIdParametro : String;
+
+    FValorLancamento : currency;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+  end;
+
+implementation
+
+{ TMarkup }
+
+constructor TMarkup.Create;
+begin
+   FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TMarkup.Destroy;
+begin
+  inherited;
+end;
+
+class function TMarkup.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+end.

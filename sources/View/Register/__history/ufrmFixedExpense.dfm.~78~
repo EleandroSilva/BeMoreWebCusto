@@ -1,0 +1,543 @@
+inherited frmFixedExpense: TfrmFixedExpense
+  Caption = 'Despesa Fixas'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel2: TPanel
+    inherited lTextoEmpresa: TLabel
+      Width = 818
+      Height = 41
+    end
+    inherited pOperator: TPanel
+      inherited lOperator: TLabel
+        Width = 120
+      end
+    end
+  end
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited lSite: TLabel
+        Width = 218
+      end
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSalve: TBitBtn
+      OnClick = btnSalveClick
+    end
+    inherited btnDelete: TBitBtn
+      OnClick = btnDeleteClick
+    end
+  end
+  inherited Panel1: TPanel
+    inherited pgMain: TPageControl
+      inherited tsRegister: TTabSheet
+        ExplicitLeft = 4
+        ExplicitTop = 24
+        ExplicitWidth = 930
+        ExplicitHeight = 419
+        inherited pGrid: TPanel
+          inherited pEdit: TPanel
+            Height = 60
+            TabOrder = 3
+            ExplicitTop = -5
+            ExplicitHeight = 60
+            object lDescription: TLabel [2]
+              Left = 277
+              Top = 28
+              Width = 12
+              Height = 13
+              Caption = '...'
+            end
+            object lMoney: TLabel [3]
+              Left = 751
+              Top = 6
+              Width = 28
+              Height = 13
+              Alignment = taRightJustify
+              Caption = 'Valor:'
+            end
+            object Label3: TLabel [4]
+              Left = 225
+              Top = 6
+              Width = 38
+              Height = 13
+              Alignment = taRightJustify
+              Caption = 'Id CCC:'
+            end
+            inherited lDescricao: TLabel
+              Left = 277
+              Width = 134
+              Caption = 'Descri'#231#227'o Classe de contas:'
+              ExplicitLeft = 277
+              ExplicitWidth = 134
+            end
+            inherited edtDescription: TEdit
+              Left = 213
+              Width = 50
+              Alignment = taRightJustify
+              OnExit = edtDescriptionExit
+              OnKeyDown = edtDescriptionKeyDown
+              OnKeyPress = edtDescriptionKeyPress
+              ExplicitLeft = 213
+              ExplicitWidth = 50
+            end
+            object btnModel: TBitBtn
+              Left = 185
+              Top = 21
+              Width = 27
+              Height = 25
+              Caption = '...'
+              TabOrder = 3
+            end
+            object edtMoney: TEdit
+              Left = 751
+              Top = 24
+              Width = 90
+              Height = 21
+              Alignment = taRightJustify
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clRed
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 4
+              OnExit = edtMoneyExit
+              OnKeyPress = edtMoneyKeyPress
+            end
+          end
+          inherited Panel9: TPanel
+            Top = 149
+            Height = 269
+            TabOrder = 4
+            ExplicitTop = 149
+            ExplicitHeight = 269
+          end
+          object pProduct: TPanel
+            Left = 1
+            Top = 61
+            Width = 928
+            Height = 69
+            Align = alTop
+            BevelOuter = bvNone
+            Color = 10768721
+            ParentBackground = False
+            TabOrder = 0
+            object Panel8: TPanel
+              Left = 573
+              Top = 0
+              Width = 355
+              Height = 69
+              Align = alClient
+              BevelOuter = bvNone
+              Color = 10768721
+              ParentBackground = False
+              TabOrder = 0
+              object Label2: TLabel
+                Left = 0
+                Top = 30
+                Width = 355
+                Height = 18
+                Align = alBottom
+                Caption = 'Digite conforme escolha:'
+                Color = 5483007
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clBlack
+                Font.Height = -16
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+                ExplicitWidth = 158
+              end
+              object edtProduct: TEdit
+                Left = 0
+                Top = 48
+                Width = 355
+                Height = 21
+                Align = alBottom
+                TabOrder = 0
+                OnKeyPress = edtSearchKeyPress
+              end
+              object btnSearchProduct: TBitBtn
+                Left = 0
+                Top = 0
+                Width = 170
+                Height = 30
+                Align = alLeft
+                Caption = 'Buscar Contas'
+                TabOrder = 1
+                OnClick = btnSearchProductClick
+              end
+              object btnInsertContasPagarDespesaFixa: TBitBtn
+                Left = 170
+                Top = 0
+                Width = 170
+                Height = 30
+                Align = alLeft
+                Caption = 'Inserir contas na Depesa Fixa'
+                TabOrder = 2
+                OnClick = btnInsertContasPagarDespesaFixaClick
+              end
+            end
+            object rgPeriodoContas: TRadioGroup
+              Left = 173
+              Top = 0
+              Width = 261
+              Height = 69
+              Align = alLeft
+              Caption = 'Escolha per'#237'odo'
+              Color = 10768721
+              Columns = 2
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWhite
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ItemIndex = 1
+              Items.Strings = (
+                '  M'#234's Anterior'
+                '  3 Meses Anteriores '
+                '  6 Meses Anteriores'
+                ' 12 Meses Anteriores')
+              ParentBackground = False
+              ParentColor = False
+              ParentFont = False
+              TabOrder = 1
+            end
+            object rgChoiceTypeAccount: TRadioGroup
+              Left = 0
+              Top = 0
+              Width = 173
+              Height = 69
+              Align = alLeft
+              Caption = 'Escolha'
+              Color = 10768721
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWhite
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ItemIndex = 1
+              Items.Strings = (
+                'Todas (Data Emiss'#227'o)'
+                'Pagas(Data Pagamento) ')
+              ParentBackground = False
+              ParentColor = False
+              ParentFont = False
+              TabOrder = 2
+            end
+            object rdTipoDespesa: TRadioGroup
+              Left = 434
+              Top = 0
+              Width = 139
+              Height = 69
+              Align = alLeft
+              Caption = 'Escolha tipo de despesas'
+              ItemIndex = 0
+              Items.Strings = (
+                'Todas as Despesas'
+                'Despesas Vari'#225'veis'
+                'Despesas Fixas')
+              TabOrder = 3
+            end
+          end
+          object dbgPayAccounts: TDBGrid
+            Left = 1
+            Top = 149
+            Width = 928
+            Height = 269
+            Align = alClient
+            DataSource = dsPayAccounts
+            TabOrder = 1
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+            OnCellClick = dbgPayAccountsCellClick
+            OnColEnter = dbgPayAccountsColEnter
+            OnDrawColumnCell = dbgPayAccountsDrawColumnCell
+            Columns = <
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'IdClasseContas'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Id Classe Contas:'
+                Width = 97
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'Status'
+                Title.Alignment = taCenter
+                Title.Caption = 'Enviar:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'ClasseContas'
+                Title.Caption = 'Classe Contas:'
+                Width = 442
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'ValorClasse'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                Title.Alignment = taCenter
+                Title.Caption = 'Valor Classe:'
+                Width = 105
+                Visible = True
+              end>
+          end
+          object Panel7: TPanel
+            Left = 1
+            Top = 130
+            Width = 928
+            Height = 19
+            Align = alTop
+            Caption = 'Lista de Despesas Lan'#231'adas no contas a pagar'
+            Color = 1543167
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Berlin Sans FB'
+            Font.Style = []
+            ParentBackground = False
+            ParentFont = False
+            TabOrder = 2
+          end
+        end
+      end
+      inherited tsSearch: TTabSheet
+        ExplicitLeft = 4
+        ExplicitTop = 24
+        ExplicitWidth = 930
+        ExplicitHeight = 419
+        inherited pSearch: TPanel
+          inherited Panel6: TPanel
+            inherited lDigiteConformeEscolha: TLabel
+              Width = 503
+            end
+            object Label1: TLabel [1]
+              Left = 0
+              Top = 0
+              Width = 3
+              Height = 13
+            end
+          end
+        end
+        inherited dbgSearch: TDBGrid
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'Id'
+              Title.Alignment = taCenter
+              Title.Caption = 'Id:'
+              Width = 48
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'idclassecontas'
+              Title.Alignment = taCenter
+              Title.Caption = 'Id Classe Contas:'
+              Width = 87
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'descricao'
+              Title.Alignment = taCenter
+              Title.Caption = 'Descri'#231#227'o:'
+              Width = 337
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'valor'
+              Title.Alignment = taCenter
+              Title.Caption = 'Valor:'
+              Width = 139
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'origem'
+              Title.Alignment = taCenter
+              Title.Caption = 'Origem:'
+              Width = 111
+              Visible = True
+            end>
+        end
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    OnDataChange = DataSource1DataChange
+    Left = 656
+    Top = 272
+  end
+  object dsAccountSearch: TDataSource
+    Left = 464
+    Top = 272
+  end
+  object dsPayAccounts: TDataSource
+    OnDataChange = dsPayAccountsDataChange
+    OnUpdateData = dsPayAccountsUpdateData
+    Left = 304
+    Top = 272
+  end
+  object ImageList1: TImageList
+    Left = 408
+    Top = 368
+    Bitmap = {
+      494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000001000000001002000000000000010
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000B5000000B5000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF000000000000000000000000000000B5000000B5000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000B5000000B500000000000000000000000000000000000000
+      0000000000000000000000000000F7FFF7000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000DEEF
+      EF00DEEFEF00DEEFEF00DEEFEF00DEEFEF00DEEFEF00DEEFEF00DEEFEF00DEEF
+      EF00DEEFEF00FFFFFF000000000000000000000000000000B5000000B5000000
+      B500000000000000000000000000000000000000000000000000000000000000
+      00000000B5000000B50000000000000000000000000000000000000000000000
+      00000000000000000000108C290018732100C6CEC60000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF000000000000000000000000000000B5000000B5000000
+      B5000000B5000000000000000000000000000000000000000000000000000000
+      B5000000B5000000000000000000000000000000000000000000000000000000
+      000000000000318C4A0000940000008400005AA56B0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF00000000000000000000000000000000000000D6000000
+      BD000000B5000000B500000000000000000000000000000000000000B5000000
+      B500000000000000000000000000000000000000000000000000000000000000
+      00008CB59C001084310000840000008C0000008C210000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF0000000000000000000000000000000000000000000000
+      00000000B5000000B5000000B500000000000000B5000000B5000000B5000000
+      0000000000000000000000000000000000000000000000000000000000008CB5
+      9C0010843100008400000000000042AD5A000073000073AD8400000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF0000000000000000000000000000000000000000000000
+      0000000000000000B5000000C6000000C6000000CE000000B500000000000000
+      0000000000000000000000000000000000000000000000000000000000002163
+      310010732900000000000000000000000000218C290029733900000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF0000000000000000000000000000000000000000000000
+      000000000000000000000000C6000000C6000000DE0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000008C000042A552000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF0000000000000000000000000000000000000000000000
+      0000000000000000B5000000D6000000CE000000DE000000EF00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000108C2900187B31008CCE
+      9C00000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF0000000000000000000000000000000000000000000000
+      00000000E7000000DE000000D60000000000000000000000E7000000EF000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000108C2900187B
+      31008CCE9C000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF0000000000000000000000000000000000000000000000
+      FF000000DE000000EF00000000000000000000000000000000000000FF000000
+      F700000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000000000108C
+      2900187B31008CCE9C0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD0000000000FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DEEFEF00FFFFFF00000000000000000000000000000000000000F7000000
+      F7000000FF000000000000000000000000000000000000000000000000000000
+      F7000000F7000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000108C2900187B31008CCE9C00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000DEEFEF00FFFFFF000000000000000000000000000000F7000000F7000000
+      F700000000000000000000000000000000000000000000000000000000000000
+      0000000000000000F70000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000106B290018842900000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000009CADAD009CADAD009CAD
+      AD009CADAD009CADAD009CADAD009CADAD009CADAD009CADAD009CADAD009CAD
+      AD009CADAD000000000000000000000000000000F7000000F7000000F7000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000088C2100000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000F7000000F700000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000087B21000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000424D3E000000000000003E000000
+      2800000040000000100000000100010000000000800000000000000000000000
+      000000000000000000000000FFFFFF00FFFFFFFFFFFF0000FFFFFFFCFFFF0000
+      C0039FF9FEFF000080038FF3FC7F0000800387E7F87F00008003C3CFF07F0000
+      8003F11FE23F00008003F83FE73F00008003FC7FFF9F00008003F83FFF8F0000
+      8003F19FFFC700008003E3CFFFE300008003C7E7FFF1000080038FFBFFF90000
+      80071FFFFFFD0000FFFF3FFFFFFE000000000000000000000000000000000000
+      000000000000}
+  end
+end

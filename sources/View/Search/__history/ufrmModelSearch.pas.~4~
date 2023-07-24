@@ -1,0 +1,72 @@
+unit ufrmModelSearch;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  ufrmModeloPesquisa,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller;
+
+type
+  TfrmModelSearch = class(TfrmModeloPesquisa)
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+  private
+    FController: iController;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmModelSearch: TfrmModelSearch;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TfrmModelSearch.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  frmModelSearch := nil;
+  Action := caFree;
+end;
+
+procedure TfrmModelSearch.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FController := TController.New;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmModelSearch.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Pesquisa Modelo';
+end;
+
+end.

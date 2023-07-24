@@ -1,0 +1,65 @@
+inherited frmLocalProducao: TfrmLocalProducao
+  Caption = 'Local Produ'#231#227'o'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    ExplicitTop = 560
+    ExplicitWidth = 934
+    inherited pSite: TPanel
+      ExplicitLeft = 716
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 218
+      end
+    end
+    inherited rgActive: TRadioGroup
+      ExplicitLeft = 652
+    end
+  end
+  inherited pCabecalho: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 934
+    inherited pOperator: TPanel
+      ExplicitLeft = 814
+      inherited edtOperator: TDBEdit
+        ExplicitTop = 20
+        ExplicitWidth = 120
+      end
+    end
+  end
+  inherited pgMain: TPageControl
+    ExplicitLeft = 0
+    ExplicitTop = 41
+    ExplicitWidth = 934
+    ExplicitHeight = 519
+    inherited tsRegister: TTabSheet
+      ExplicitLeft = 0
+      ExplicitTop = 0
+    end
+    inherited tsSearch: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pSearch: TPanel
+        ExplicitWidth = 926
+        inherited pFiltro: TPanel
+          ExplicitWidth = 501
+          inherited lDigiteConformeEscolha: TLabel
+            ExplicitLeft = 0
+            ExplicitTop = 28
+          end
+          inherited edtSearch: TEdit
+            OnKeyPress = nil
+            ExplicitLeft = 0
+            ExplicitTop = 46
+            ExplicitWidth = 501
+          end
+        end
+      end
+    end
+  end
+end

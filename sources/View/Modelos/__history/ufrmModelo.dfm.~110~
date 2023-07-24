@@ -1,0 +1,367 @@
+object frmModelo: TfrmModelo
+  Left = 0
+  Top = 0
+  BorderIcons = [biMaximize]
+  ClientHeight = 539
+  ClientWidth = 938
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
+  OnKeyUp = FormKeyUp
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel2: TPanel
+    Left = 0
+    Top = 0
+    Width = 938
+    Height = 34
+    Align = alTop
+    BevelOuter = bvNone
+    Color = 5592405
+    ParentBackground = False
+    TabOrder = 0
+    object lTextoEmpresa: TLabel
+      Left = 34
+      Top = 0
+      Width = 870
+      Height = 34
+      Align = alClient
+      Alignment = taCenter
+      Caption = 'lTextForm'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWhite
+      Font.Height = -21
+      Font.Name = 'Berlin Sans FB'
+      Font.Style = [fsItalic]
+      ParentFont = False
+      ExplicitWidth = 88
+      ExplicitHeight = 23
+    end
+    object Panel3: TPanel
+      Left = 904
+      Top = 0
+      Width = 34
+      Height = 34
+      Align = alRight
+      BevelOuter = bvNone
+      Color = 1543167
+      ParentBackground = False
+      TabOrder = 0
+    end
+    object Panel5: TPanel
+      Left = 0
+      Top = 0
+      Width = 34
+      Height = 34
+      Align = alLeft
+      BevelOuter = bvNone
+      Color = 5592405
+      ParentBackground = False
+      TabOrder = 1
+    end
+  end
+  object pButtons: TPanel
+    Left = 0
+    Top = 488
+    Width = 938
+    Height = 51
+    Align = alBottom
+    BevelOuter = bvNone
+    Color = 5592405
+    ParentBackground = False
+    TabOrder = 1
+    object Panel4: TPanel
+      Left = 720
+      Top = 0
+      Width = 218
+      Height = 51
+      Align = alRight
+      BevelOuter = bvNone
+      Color = 5592405
+      ParentBackground = False
+      TabOrder = 0
+      object lSite: TLabel
+        Left = 0
+        Top = 33
+        Width = 218
+        Height = 18
+        Cursor = crHandPoint
+        Align = alBottom
+        Alignment = taCenter
+        Caption = '...'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWhite
+        Font.Height = -16
+        Font.Name = 'Bell MT'
+        Font.Style = []
+        ParentFont = False
+        OnClick = lSiteClick
+        ExplicitWidth = 12
+      end
+      object Navigator: TDBNavigator
+        Left = 0
+        Top = 0
+        Width = 218
+        Height = 33
+        DataSource = DataSource1
+        VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+        Align = alClient
+        TabOrder = 0
+      end
+    end
+    object btnSearch: TBitBtn
+      Left = 90
+      Top = 0
+      Width = 90
+      Height = 51
+      Align = alLeft
+      Caption = '&Pesquisar'
+      TabOrder = 1
+      OnClick = btnSearchClick
+    end
+    object btnCancel: TBitBtn
+      Left = 180
+      Top = 0
+      Width = 90
+      Height = 51
+      Align = alLeft
+      Caption = '&Cancelar'
+      Enabled = False
+      TabOrder = 2
+    end
+    object btnNew: TBitBtn
+      Left = 0
+      Top = 0
+      Width = 90
+      Height = 51
+      Align = alLeft
+      Caption = '&Novo'
+      TabOrder = 3
+    end
+    object btnSalve: TBitBtn
+      Left = 450
+      Top = 0
+      Width = 90
+      Height = 51
+      Align = alLeft
+      Caption = '&Salvar'
+      Enabled = False
+      TabOrder = 4
+    end
+    object btnUpdate: TBitBtn
+      Left = 270
+      Top = 0
+      Width = 90
+      Height = 51
+      Align = alLeft
+      Caption = '&Alterar'
+      Enabled = False
+      TabOrder = 5
+    end
+    object btnDelete: TBitBtn
+      Left = 360
+      Top = 0
+      Width = 90
+      Height = 51
+      Align = alLeft
+      Caption = 'Excluir'
+      Enabled = False
+      TabOrder = 6
+    end
+    object bbClose: TBitBtn
+      Left = 632
+      Top = 0
+      Width = 88
+      Height = 51
+      Align = alRight
+      Caption = '&X Sair'
+      TabOrder = 7
+      OnClick = bbCloseClick
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 34
+    Width = 938
+    Height = 454
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 2
+    object pgMain: TPageControl
+      Left = 0
+      Top = 0
+      Width = 938
+      Height = 454
+      ActivePage = tsSearch
+      Align = alClient
+      MultiLine = True
+      TabOrder = 0
+      object tsRegister: TTabSheet
+        Caption = 'Registro'
+      end
+      object tsSearch: TTabSheet
+        Caption = 'Pesquisa'
+        ImageIndex = 1
+        object pSearch: TPanel
+          Left = 0
+          Top = 0
+          Width = 930
+          Height = 67
+          Align = alTop
+          BevelOuter = bvNone
+          Color = clGray
+          ParentBackground = False
+          TabOrder = 0
+          object rgChoice: TRadioGroup
+            Left = 0
+            Top = 0
+            Width = 185
+            Height = 67
+            Align = alLeft
+            Caption = 'Escolha'
+            Color = 1543167
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWhite
+            Font.Height = -13
+            Font.Name = 'Berlin Sans FB'
+            Font.Style = []
+            ItemIndex = 1
+            Items.Strings = (
+              '0 - Id'
+              '1 - Descri'#231#227'o')
+            ParentBackground = False
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 0
+          end
+          object gbBetweenDates: TGroupBox
+            Left = 185
+            Top = 0
+            Width = 240
+            Height = 67
+            Align = alLeft
+            Caption = 'Entra datas'
+            Color = 1543167
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Berlin Sans FB'
+            Font.Style = []
+            ParentBackground = False
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 1
+            object lStart: TLabel
+              Left = 6
+              Top = 15
+              Width = 42
+              Height = 20
+              Caption = 'Inicio:'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clBlack
+              Font.Height = -16
+              Font.Name = 'Tempus Sans ITC'
+              Font.Style = []
+              ParentFont = False
+            end
+            object lEnd: TLabel
+              Left = 122
+              Top = 15
+              Width = 31
+              Height = 20
+              Caption = 'FIm:'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clBlack
+              Font.Height = -16
+              Font.Name = 'Tempus Sans ITC'
+              Font.Style = []
+              ParentFont = False
+            end
+            object StartDate: TDateTimePicker
+              Left = 6
+              Top = 34
+              Width = 110
+              Height = 23
+              Date = 43907.000000000000000000
+              Time = 0.659640995370864400
+              TabOrder = 0
+            end
+            object EndDate: TDateTimePicker
+              Left = 122
+              Top = 34
+              Width = 110
+              Height = 23
+              Date = 43907.000000000000000000
+              Time = 0.659640995370864400
+              TabOrder = 1
+            end
+          end
+          object Panel6: TPanel
+            Left = 425
+            Top = 0
+            Width = 505
+            Height = 67
+            Align = alClient
+            Color = 1543167
+            ParentBackground = False
+            TabOrder = 2
+            object Label1: TLabel
+              Left = 1
+              Top = 27
+              Width = 503
+              Height = 18
+              Align = alBottom
+              Caption = 'Digite conforme escolha:'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clBlack
+              Font.Height = -16
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ParentFont = False
+              ExplicitWidth = 158
+            end
+            object edtSearch: TEdit
+              Left = 1
+              Top = 45
+              Width = 503
+              Height = 21
+              Align = alBottom
+              TabOrder = 0
+              OnKeyPress = edtSearchKeyPress
+            end
+          end
+        end
+        object dbgSearch: TDBGrid
+          Left = 0
+          Top = 67
+          Width = 930
+          Height = 359
+          Align = alClient
+          BorderStyle = bsNone
+          DataSource = DataSource1
+          ReadOnly = True
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+          OnDrawColumnCell = dbgSearchDrawColumnCell
+        end
+      end
+    end
+  end
+  object DataSource1: TDataSource
+    Left = 720
+    Top = 248
+  end
+end

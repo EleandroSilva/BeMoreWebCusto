@@ -1,0 +1,44 @@
+inherited frmSearchAccountClass: TfrmSearchAccountClass
+  Caption = 'Pesquisa Classe de contas'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSearch: TBitBtn
+      OnClick = btnSearchClick
+    end
+  end
+  inherited Panel1: TPanel
+    inherited dbgSearch: TDBGrid
+      Columns = <
+        item
+          Alignment = taRightJustify
+          Expanded = False
+          FieldName = 'Id_CCC'
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Id Classe Contas:'
+          Width = 97
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Descricao'
+          Title.Caption = 'Descri'#231#227'o:'
+          Width = 399
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Usuario'
+          Title.Caption = 'Operador:'
+          Width = 164
+          Visible = True
+        end>
+    end
+  end
+end

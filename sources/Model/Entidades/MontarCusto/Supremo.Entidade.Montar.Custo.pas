@@ -1,0 +1,445 @@
+unit Supremo.Entidade.Montar.Custo;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TMontarCusto = class (TInterfacedObject, iModelEntidade)
+   private
+    FQuery: iModelQuery;
+
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData: Integer;
+    FEscolhaTipoLancamento : Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus: Integer;
+
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo: String;
+    FIdProduto: String;
+    FIdParametro1: String;
+    FIdParametro2 : String;
+    FValorLancamento1 : Currency;
+    FValorLancamento2 : Currency;
+    FValorLancamento3 : Currency;
+    FValorLancamento4 : Currency;
+    FQtdeInteger : Integer;
+    FQtdeCurrency : Currency;
+    FAliquota1: Currency;
+    FAliquota2: Currency;
+    FAliquota3: Currency;
+    FAliquota4: Currency;
+    FPrazoMedio : Currency;
+    FInicioPeriodo : TDateTime;
+    FFimPeriodo : TDateTime;
+
+
+    FGenId: Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue: Integer): iModelEntidade;
+    function EscolhaTipoLancamento(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue: Integer): iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro1(aValue: String): iModelEntidade;
+    function IdParametro2(aValue: String): iModelEntidade;
+    function ValorLancamento1(aValue: currency): iModelEntidade;
+    function ValorLancamento2(aValue: currency): iModelEntidade;
+    function ValorLancamento3(aValue : Currency) : iModelEntidade;
+    function ValorLancamento4(aValue : Currency) : iModelEntidade;
+    function Qtde(aValue : Integer) : iModelEntidade; overload;
+    function Qtde(aValue : Currency) : iModelEntidade; overload;
+    function Aliquota1(aValue : Currency) : iModelEntidade;
+    function Aliquota2(aValue : Currency) : iModelEntidade;
+    function Aliquota3(aValue : Currency) : iModelEntidade;
+    function Aliquota4(aValue : Currency) : iModelEntidade;
+    function PrazoMedio(aValue : Currency) : iModelEntidade;
+    function InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+    function FimPeriodo(aValue : TDateTime) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Append : iModelEntidade;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+
+implementation
+
+{ TMarkupAliquotaGrupo }
+
+constructor TMontarCusto.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TMontarCusto.Destroy;
+begin
+  inherited;
+end;
+
+class function TMontarCusto.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+
+function TMontarCusto.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TMontarCusto.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TMontarCusto.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TMontarCusto.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TMontarCusto.EscolhaTipoLancamento(aValue: Integer): iModelEntidade;
+begin
+  Result:= Self;
+  FEscolhaTipoLancamento := aValue;
+end;
+
+function TMontarCusto.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TMontarCusto.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TMontarCusto.Status(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+function TMontarCusto.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TMontarCusto.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TMontarCusto.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TMontarCusto.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TMontarCusto.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TMontarCusto.IdParametro1(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro1 := aValue;
+end;
+
+function TMontarCusto.IdParametro2(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro2 := aValue;
+end;
+
+function TMontarCusto.ValorLancamento1(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento1 := aValue;
+end;
+
+function TMontarCusto.ValorLancamento2(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento2 := aValue;
+end;
+
+function TMontarCusto.ValorLancamento3(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento3 := aValue;
+end;
+
+function TMontarCusto.ValorLancamento4(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento4 := aValue;
+end;
+
+function TMontarCusto.Qtde(aValue : Integer) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeInteger := aValue;
+end;
+
+function TMontarCusto.Qtde(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeCurrency := aValue;
+end;
+
+function TMontarCusto.Aliquota1(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota1 := aValue;
+end;
+
+function TMontarCusto.Aliquota2(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota2 := aValue;
+end;
+
+function TMontarCusto.Aliquota3(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota3 := aValue;
+end;
+
+function TMontarCusto.Aliquota4(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota4 := aValue;
+end;
+
+function TMontarCusto.PrazoMedio(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FPrazoMedio := aValue;
+end;
+
+function TMontarCusto.InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+begin
+  Result := Self;
+  FInicioPeriodo := aValue;
+end;
+
+function TMontarCusto.FimPeriodo(aValue : TDateTime) : iModelEntidade;
+begin
+  Result := Self;
+  FFimPeriodo := aValue;
+end;
+
+function TMontarCusto.Buscar(aValue: String): iModelEntidade;
+const
+  cSQL = (
+          'select '+
+          'mc.ID, '+
+          'mc.IdModelo, '+
+          'm.Descricao, '+
+          'mc.IdRegiao, '+
+          'mn.Descricao NomeRegiao, '+
+          'mc.ValorDespesaFixa, '+
+          'mc.ValorFichaTecnica, '+
+          'mc.ValorMaoObraInterna, '+
+          'mc.ValorMaoObraExterna, '+
+          'mc.ValorMaoObraAjustado, '+
+          'mc.ValorFrete, '+
+          'mc.QtdeProducao, '+
+          'mc.CustoModeloDespesaFixa, '+
+          'mc.CustoTotalModelo, '+
+          'mc.AliquotaMarkup, '+
+          'mc.IndiceaVistaMultiplicar, '+
+          'mc.IndiceaVistaDividir, '+
+          'mc.ValorVendaaVista, '+
+          'mc.DataLancamento, '+
+          'mc.Operador, '+
+          'mc.Status, '+
+          'mc.Ativo '+
+          'from MontarCusto mc '+
+          'inner join Modelo      m on m.id  = mc.idmodelo '+
+          'inner join MarkupNome mn on mn.id = mc.idregiao '
+         );
+var
+  lWhere, lOrdem: String;
+begin
+  Result := Self;
+  lWhere := '';
+  lOrdem := '';
+
+  //lWhere := ('where ag.Ativo=' + IntToStr(FAtivo) + ' ');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere := lWhere + ('and ag.Id=' +IntToStr(StrToInt(aValue)) + ' ');
+      1: lWhere := lWhere + ('and ag.IdAliquotaNome=' +IntToStr(StrToInt(aValue)) + ' ');
+      2: lWhere := lWhere + ('and mn.Descricao CONTAINING ''' + aValue + ''' ');
+      3: lWhere := lWhere + ('and am.Descricao CONTAINING ''' + aValue + ''' ');
+      4: lWhere := lWhere + ('and ag.Operador CONTAINING ''' + aValue + ''' ');
+    end;
+
+  lOrdem :=('order by mc.idmodelo asc ');
+  FQuery.Open(cSQL + lWhere+ lOrdem);
+end;
+
+function TMontarCusto.Insert: iModelEntidade;
+const
+    cInsert = (
+               'insert into MontarCusto ' +
+               '( ' +
+               'IDMODELO, '+
+               'IDREGIAO, '+
+               'VALORDESPESAFIXA, '+
+               'VALORFICHATECNICA, '+
+               'VALORMAOOBRAINTERNA, '+
+               'VALORMAOOBRAEXTERNA, '+
+               'VALORFRETE, '+
+               'QTDEPRODUCAO, '+
+               'CUSTOMODELODESPESAFIXA, '+
+               'CUSTOTOTALMODELO, '+
+               'ALIQUOTAMARKUP, ' +
+               'ALIQUOTAMARKUPSEMLUCRO, '+
+               'INDICEAVISTAMULTIPLICAR, '+
+               'INDICEAVEISTADIVIDIR, '+
+               'VALORVENDAAVISTA, ' +
+               'DataLancamento, '+
+               'Operador, '+
+               'Status, '+
+               'Ativo '+
+               ') '
+              );
+var
+  lInsert: String;
+  lSomaValor : Currency;
+begin
+  Result := Self;
+  lInsert := '';
+  lSomaValor := 0;
+
+  lSomaValor :=FValorLancamento2+FValorLancamento3;
+  lInsert := cInsert +
+    'values ' +
+    '( ' +
+    ''+FIdModelo+', '+
+    ''+FIdParametro1+', '+
+    StringReplace(CurrToStr(FValorLancamento1), ',', '.', [RFReplaceAll]) + ',' +//valor total despesa fixa
+    StringReplace(CurrToStr(FValorLancamento2), ',', '.', [RFReplaceAll]) + ',' +//valor total matéria prima
+    StringReplace(CurrToStr(FValorLancamento3), ',', '.', [RFReplaceAll]) + ',' +//valor mão de obra interna
+    StringReplace(CurrToStr(FValorLancamento4), ',', '.', [RFReplaceAll]) + ',' +//valor mão de obra externa
+    StringReplace(CurrToStr(FAliquota4), ',', '.', [RFReplaceAll]) + ',' +//valor frete
+    IntToStr(FQtdeInteger)+ ',' +//Qtde Produção
+    StringReplace(CurrToStr(FValorLancamento3), ',', '.', [RFReplaceAll]) + ',' +//valor custo modelo despesa fixa
+    StringReplace(CurrToStr(lSomaValor), ',', '.', [RFReplaceAll]) + ',' +//valor custo total
+    StringReplace(CurrToStr(FAliquota1), ',', '.', [RFReplaceAll]) + ',' +//ALIQUOTAMARKUP
+    StringReplace(CurrToStr(FAliquota1), ',', '.', [RFReplaceAll]) + ',' +//ALIQUOTAMARKUPSEMLUCRO
+    StringReplace(CurrToStr(FAliquota2), ',', '.', [RFReplaceAll]) + ',' +//Indice Multiplicar
+    StringReplace(CurrToStr(FAliquota3), ',', '.', [RFReplaceAll]) + ',' +//Indice Dividir
+    StringReplace(CurrToStr(FValorLancamento4), ',', '.', [RFReplaceAll]) + ', ' +//Valor venda à vista
+    '''' + FormatDateTime('dd.mm.yyyy', FDataLancamento) + ''',' +
+    '''' + FOperador + ''',' +
+    IntToStr(1)+', '+//Status
+    IntToStr(1)+' '+//Ativo 0->Inativo  - 1 Ativo
+    ') ';
+  FQuery.ExecSQL(lInsert);
+end;
+
+function TMontarCusto.Insert(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Json quando precisar
+end;
+
+function TMontarCusto.Append : iModelEntidade;
+begin
+  Result := Self;
+  FQuery.Append('');
+end;
+
+function TMontarCusto.Update(aValue: String): iModelEntidade;
+const
+  cUpdate = ('update MontarCusto set ');
+begin
+  Result := Self;
+  FQuery.ExecSQL(cUpdate +
+    'Descricao=''' + FDescricao + ''',' +
+    'IdGrupoAliquota='+FIdParametro1+','+
+    'IdAliquota='+FIdParametro2+','+
+    'Aliquota='+StringReplace(CurrToStr(FAliquota1), ',', '.', [RFReplaceAll]) + ',' +
+    'Status=' + IntToStr(FStatus) + ', ' +
+    'Ativo=' + IntToStr(FAtivo) + ' ' +
+    'where Id=' + aValue + ' ');
+end;
+
+function TMontarCusto.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FQuery.ExecSQL('delete from MontarCusto where Id='+aValue+'');
+end;
+
+function TMontarCusto.PegarGenId: Integer;
+begin
+  Result := 0;
+  //Criar PegarGenId quando precisar
+end;
+
+
+//JSON
+function TMontarCusto.Get(const aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Delete quando precisar
+end;
+
+end.

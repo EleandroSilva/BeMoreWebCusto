@@ -1,0 +1,469 @@
+inherited frmModel: TfrmModel
+  Caption = 'Modelo Produto'
+  Position = poDesktopCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel2: TPanel
+    inherited pOperator: TPanel
+      object tdbOperator: TDBEdit
+        Left = 0
+        Top = 16
+        Width = 120
+        Height = 21
+        Align = alTop
+        DataField = 'OPERADOR'
+        DataSource = DataSource1
+        TabOrder = 1
+        Visible = False
+      end
+    end
+  end
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+  end
+  inherited Panel1: TPanel
+    inherited pgMain: TPageControl
+      inherited tsRegister: TTabSheet
+        inherited pGrid: TPanel
+          inherited pEdit: TPanel
+            Height = 48
+            TabOrder = 2
+            ExplicitHeight = 48
+            inherited LId: TLabel
+              Left = 3
+              ExplicitLeft = 3
+            end
+            object lfrmExecutando: TLabel [2]
+              Left = 848
+              Top = 46
+              Width = 75
+              Height = 13
+              Caption = 'lfrmExecutando'
+              Visible = False
+            end
+            object Label1: TLabel [4]
+              Left = 811
+              Top = 6
+              Width = 112
+              Height = 13
+              Alignment = taRightJustify
+              Caption = 'Qtde Produ'#231#227'o Mensal:'
+            end
+            object Label2: TLabel [5]
+              Left = 600
+              Top = 6
+              Width = 82
+              Height = 13
+              Caption = 'Al'#237'quota Interna:'
+            end
+            object Label3: TLabel [6]
+              Left = 710
+              Top = 6
+              Width = 84
+              Height = 13
+              Caption = 'Al'#237'quota Externa:'
+            end
+            inherited edtId: TEdit
+              Left = 568
+              Top = 173
+              Visible = False
+              ExplicitLeft = 568
+              ExplicitTop = 173
+            end
+            inherited edtDescription: TEdit
+              Left = 14
+              Top = 173
+              Width = 307
+              Visible = False
+              ExplicitLeft = 14
+              ExplicitTop = 173
+              ExplicitWidth = 307
+            end
+            inherited MedtReleaseDate: TMaskEdit
+              Left = 629
+              Top = 173
+              Visible = False
+              ExplicitLeft = 629
+              ExplicitTop = 173
+            end
+            object edtQtdeProducao: TEdit
+              Left = 733
+              Top = 173
+              Width = 123
+              Height = 21
+              Alignment = taRightJustify
+              TabOrder = 3
+              Visible = False
+            end
+            object tdbId: TDBEdit
+              Left = 5
+              Top = 25
+              Width = 49
+              Height = 21
+              BiDiMode = bdRightToLeft
+              Color = clGrayText
+              DataField = 'ID'
+              DataSource = DataSource1
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentBiDiMode = False
+              ParentFont = False
+              TabOrder = 4
+            end
+            object tdbMedtReleaseDate: TDBEdit
+              Left = 80
+              Top = 25
+              Width = 93
+              Height = 21
+              DataField = 'DATALANCAMENTO'
+              DataSource = DataSource1
+              TabOrder = 5
+            end
+            object tdbDescription: TDBEdit
+              Left = 198
+              Top = 25
+              Width = 387
+              Height = 21
+              DataField = 'DESCRICAO'
+              DataSource = DataSource1
+              TabOrder = 6
+              OnExit = tdbDescriptionExit
+            end
+            object tdbQtdeProducao: TDBEdit
+              Left = 813
+              Top = 24
+              Width = 110
+              Height = 21
+              BiDiMode = bdRightToLeft
+              DataField = 'QTDEPRODUCAO'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              TabOrder = 9
+              OnExit = tdbQtdeProducaoExit
+              OnKeyPress = tdbQtdeProducaoKeyPress
+            end
+            object dbAliquotaInternaa: TDBEdit
+              Left = 592
+              Top = 24
+              Width = 90
+              Height = 21
+              BiDiMode = bdRightToLeft
+              DataField = 'ALIQUOTAINTERNA'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              TabOrder = 7
+            end
+            object dbAliquotaExterna: TDBEdit
+              Left = 704
+              Top = 24
+              Width = 90
+              Height = 21
+              BiDiMode = bdRightToLeft
+              DataField = 'ALIQUOTAEXTERNA'
+              DataSource = DataSource1
+              ParentBiDiMode = False
+              TabOrder = 8
+            end
+          end
+          inherited Panel9: TPanel
+            Top = 49
+            Height = 369
+            BevelOuter = bvNone
+            ExplicitTop = 49
+            ExplicitHeight = 369
+          end
+          object dbgRegister: TDBGrid
+            Left = 1
+            Top = 49
+            Width = 928
+            Height = 369
+            Align = alClient
+            DataSource = DataSource1
+            ReadOnly = True
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+            OnDrawColumnCell = dbgRegisterDrawColumnCell
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'ID'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Alignment = taCenter
+                Title.Caption = 'Id Modelo:'
+                Title.Font.Charset = ANSI_CHARSET
+                Title.Font.Color = clWindowText
+                Title.Font.Height = -13
+                Title.Font.Name = 'Berlin Sans FB'
+                Title.Font.Style = []
+                Width = 61
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DESCRICAO'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Alignment = taCenter
+                Title.Caption = 'Descri'#231#227'o:'
+                Title.Font.Charset = ANSI_CHARSET
+                Title.Font.Color = clWindowText
+                Title.Font.Height = -13
+                Title.Font.Name = 'Berlin Sans FB'
+                Title.Font.Style = []
+                Width = 360
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTDEPRODUCAO'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Qtde Produ'#231#227'o:'
+                Width = 98
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERADOR'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Caption = 'Operador:'
+                Title.Font.Charset = ANSI_CHARSET
+                Title.Font.Color = clWindowText
+                Title.Font.Height = -13
+                Title.Font.Name = 'Berlin Sans FB'
+                Title.Font.Style = []
+                Width = 126
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DATALANCAMENTO'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Alignment = taCenter
+                Title.Caption = 'Data Lan'#231'amento:'
+                Title.Font.Charset = ANSI_CHARSET
+                Title.Font.Color = clWindowText
+                Title.Font.Height = -13
+                Title.Font.Name = 'Berlin Sans FB'
+                Title.Font.Style = []
+                Width = 118
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'STATUS'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Status:'
+                Width = 44
+                Visible = True
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'ATIVO'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -13
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                Title.Alignment = taCenter
+                Title.Caption = 'Ativo:'
+                Title.Font.Charset = ANSI_CHARSET
+                Title.Font.Color = clWindowText
+                Title.Font.Height = -13
+                Title.Font.Name = 'Berlin Sans FB'
+                Title.Font.Style = []
+                Width = 44
+                Visible = True
+              end>
+          end
+        end
+      end
+      inherited tsSearch: TTabSheet
+        inherited pSearch: TPanel
+          inherited rgChoice: TRadioGroup
+            Width = 113
+            Items.Strings = (
+              '0 - Id Modelo'
+              '1 - Descri'#231#227'o '
+              '2 - Operador')
+            ExplicitWidth = 113
+          end
+          inherited gbBetweenDates: TGroupBox
+            Left = 113
+            ExplicitLeft = 113
+          end
+          inherited Panel6: TPanel
+            Left = 353
+            Width = 577
+            ExplicitLeft = 353
+            ExplicitWidth = 577
+            inherited lDigiteConformeEscolha: TLabel
+              Width = 575
+            end
+            inherited edtSearch: TEdit
+              Width = 575
+              ExplicitWidth = 575
+            end
+            inherited btnPrint: TBitBtn
+              OnClick = btnPrintClick
+            end
+          end
+        end
+        inherited dbgSearch: TDBGrid
+          OnDblClick = dbgSearchDblClick
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'ID'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              Title.Alignment = taCenter
+              Title.Caption = 'Id Modelo:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DESCRICAO'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              Title.Caption = 'Descri'#231#227'o:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 360
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'QTDEPRODUCAO'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              Title.Alignment = taRightJustify
+              Title.Caption = 'Qtde Produ'#231#227'o:'
+              Width = 98
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'OPERADOR'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ImeName = 'usuario'
+              Title.Caption = 'Operador:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 126
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DATALANCAMENTO'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              Title.Alignment = taCenter
+              Title.Caption = 'Data Lan'#231'amento:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 118
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'STATUS'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              Title.Alignment = taCenter
+              Title.Caption = 'Status:'
+              Width = 44
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'ATIVO'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              Title.Alignment = taCenter
+              Width = 44
+              Visible = True
+            end>
+        end
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    DataSet = dmPrincipal.cdsModelo
+    Left = 440
+  end
+end

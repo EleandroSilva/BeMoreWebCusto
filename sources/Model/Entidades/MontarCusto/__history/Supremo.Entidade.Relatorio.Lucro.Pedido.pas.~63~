@@ -1,0 +1,695 @@
+unit Supremo.Entidade.Relatorio.Lucro.Pedido;
+
+interface
+
+uses
+  System.SysUtils,
+  System.IniFiles,
+  FireDAC.Comp.Client,
+
+  udmPrincipal;
+
+type
+  TRelatorioLucroPedido = class
+  private
+    FSQL     : String;
+    FSQL1    : String;
+    FSQL2    : String;
+    FSQL3    : String;
+    FFrom    : String;
+    FWhere   : String;
+    FGrupo   : String;
+    FOrdem   : String;
+    FFechar  : String;
+
+    FNomePessoa       : String;
+    FValorCusto       : Currency;
+    FQtdeVendida      : Currency;
+    FIdProduto        : Integer;
+    FIdRepresentante  : Integer;
+    FIdRegiao         : Integer;
+    FValorVendido     : Currency;
+    FAliquota         : Currency;
+    FIdPessoa         : Integer;
+    FLucroPrejuizo    : Currency;
+    FIdPedido         : Integer;
+    FNomeProduto      : String;
+    FNomeRepresentante: String;
+    FNomeRegiao       : String;
+    FIdLucroPedido    : Integer;
+    FDataFinal        : TDateTime;
+    FDataInicial      : TDateTime;
+    FTipoRelatorio    : Integer;
+    FAliquotaFinal: Currency;
+    FTipoFiltro: Integer;
+    FTextoFiltro: String;
+    FFiltroComVirgula: Boolean;
+
+    procedure SetAliquota         (const Value: Currency);
+    procedure SetDataFinal        (const Value: TDateTime);
+    procedure SetDataInicial      (const Value: TDateTime);
+    procedure SetIdLucroPedido    (const Value: Integer);
+    procedure SetIdPedido         (const Value: Integer);
+    procedure SetIdPessoa         (const Value: Integer);
+    procedure SetIdProduto        (const Value: Integer);
+    procedure SetIdRegiao         (const Value: Integer);
+    procedure SetIdRepresentante  (const Value: Integer);
+    procedure SetLucroPrejuizo    (const Value: Currency);
+    procedure SetNomePessoa       (const Value: String);
+    procedure SetNomeProduto      (const Value: String);
+    procedure SetNomeRegiao       (const Value: String);
+    procedure SetNomeRepresentante(const Value: String);
+    procedure SetQtdeVendida      (const Value: Currency);
+    procedure SetValorCusto       (const Value: Currency);
+    procedure SetValorVendido     (const Value: Currency);
+    procedure SetTipoRelatorio    (const Value: Integer);
+
+    procedure PreenchendoVariaveis;
+    procedure SetAliquotaFinal(const Value: Currency);
+    procedure SetTipoFiltro(const Value: Integer);
+    procedure SetTextoFiltro(const Value: String);
+    procedure SetFiltroComVirgula(const Value: Boolean);
+  public
+    FDQuery  : TFDQuery;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    property DataInicial       : TDateTime read FDataInicial       write SetDataInicial;
+    property DataFinal         : TDateTime read FDataFinal         write SetDataFinal;
+    property IdProduto         : Integer   read FIdProduto         write SetIdProduto;
+    property IdRegiao          : Integer   read FIdRegiao          write SetIdRegiao;
+    property IdRepresentante   : Integer   read FIdRepresentante   write SetIdRepresentante;
+    property IdPessoa          : Integer   read FIdPessoa          write SetIdPessoa;
+    property IdPedido          : Integer   read FIdPedido          write SetIdPedido;
+    property IdLucroPedido     : Integer   read FIdLucroPedido     write SetIdLucroPedido;
+    property NomeProduto       : String    read FNomeProduto       write SetNomeProduto;
+    property NomeRegiao        : String    read FNomeRegiao        write SetNomeRegiao;
+    property NomeRepresentante : String    read FNomeRepresentante write SetNomeRepresentante;
+    property NomePessoa        : String    read FNomePessoa        write SetNomePessoa;
+    property QtdeVendida       : Currency  read FQtdeVendida       write SetQtdeVendida;
+    property ValorVendido      : Currency  read FValorVendido      write SetValorVendido;
+    property ValorCusto        : Currency  read FValorCusto        write SetValorCusto;
+    property Aliquota          : Currency  read FAliquota          write SetAliquota;
+    property AliquotaFinal     : Currency read FAliquotaFinal write SetAliquotaFinal;
+    property LucroPrejuizo     : Currency  read FLucroPrejuizo     write SetLucroPrejuizo;
+    property TipoRelatorio     : Integer   read FTipoRelatorio     write SetTipoRelatorio;
+    property TipoFiltro        : Integer read FTipoFiltro write SetTipoFiltro;
+    property TextoFiltro       : String read FTextoFiltro write SetTextoFiltro;
+    property FiltroComVirgula  : Boolean read FFiltroComVirgula write SetFiltroComVirgula;
+    function RelatorioSintetico     : Boolean;//1
+    function RelatorioProduto       : Boolean;//2
+    function RelatorioRegiao        : Boolean;//3
+    function RelatorioRepresentante : Boolean;//4
+  end;
+
+implementation
+
+{ TRelatorioLucroPedido }
+
+constructor TRelatorioLucroPedido.Create;
+begin
+  FDQuery := TFDQuery.Create(nil);
+  FDQuery.Connection := dmPrincipal.FDConexao;
+end;
+
+destructor TRelatorioLucroPedido.Destroy;
+begin
+  FreeAndNil(FDQuery);
+  inherited;
+end;
+
+procedure TRelatorioLucroPedido.PreenchendoVariaveis;
+begin
+  SetQtdeVendida(FDQuery.FieldByName('QtdeVendida').AsCurrency);
+  SetValorVendido(FDQuery.FieldByName('ValorVendido').AsCurrency);
+  SetValorCusto(FDQuery.FieldByName('ValorCusto').AsCurrency);
+  SetAliquota(FDQuery.FieldByName('Aliquota').AsCurrency);
+  SetLucroPrejuizo(FDQuery.FieldByName('LucroPrejuizo').AsCurrency);
+
+  if TipoRelatorio >1 then
+    SetNomeProduto(FDQuery.FieldByName('NomeProduto').AsString);
+  if ((TipoRelatorio = 3) or (TipoRelatorio = 4)) Then
+    SetNomeRegiao(FDQuery.FieldByName('NomeRegiao').AsString);
+
+  if TipoRelatorio = 4 Then
+    SetNomeRepresentante(FDQuery.FieldByName('NomeRepresentante').AsString);
+end;
+
+function TRelatorioLucroPedido.RelatorioSintetico: Boolean;
+begin
+  FSQL :='';
+  FWhere := '';
+  FGrupo := '';
+  FOrdem := '';
+  FFechar := '';
+
+  FSQL := ('select ' +
+           'QtdeVendida, ' +
+           'ValorVendido, ' +
+           'ValorCusto, ' +
+           '(LucroPrejuizo / ValorVendido*100) Aliquota, ' +
+           'LucroPrejuizo ' +
+           'from ' +
+           '( ' +
+           ' select ' +
+           '   coalesce(cast(sum(lp.qtde) as numeric(10,2)),0) QtdeVendida, ' +
+           '   coalesce(cast(sum(lp.somaritem) as numeric(10,2)),0) ValorVendido, ' +
+           '   coalesce(cast(sum(lp.somarvalorcustomarkup) as numeric(10,2)),0) ValorCusto, ' +
+           '   coalesce(cast(sum(lp.somarvalorlucroreal) as numeric(10,2)),0) LucroPrejuizo ' +
+           'from LucroPedido lp '+
+           'inner join Modelo      m on m.id        = lp.idmodelo '+
+           'inner join cad_pro   pro on pro.id      = lp.idproduto '+
+           'inner join MarkupNome mn on mn.idregiao = lp.idregiao '+
+           'inner join cad_ped     p on p.id        = lp.idpedido '+
+           'inner join cad_cli     c on c.id        = p.idpessoa ');
+
+
+  FWhere :=('where lp.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''' '+
+            'and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+'''');
+
+  if TextoFiltro<>'' then
+    case TipoFiltro of
+      0: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdPedido' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdPedido='+TextoFiltro+' ');
+
+      1: if FiltroComVirgula then FWhere := FWhere + ('and p.IdPessoa' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.IdPessoa='+TextoFiltro+' ');
+      2: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdRegiao' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdRegiao='+TextoFiltro+' ');
+
+      3: if FiltroComVirgula then FWhere := FWhere + ('and p.cod_rep' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.cod_rep='+TextoFiltro+' ');
+
+      4: FWhere := FWhere +('and c.Razao_Social like ''%'+TextoFiltro+'%'' ');
+      5: FWhere := FWhere +('and mn.Descricao like ''%'+TextoFiltro+'%'' ');
+    end;
+
+  FOrdem :=('order by LucroPrejuizo Desc ');
+  FFechar :=(' )');
+
+  FDQuery.Close;
+  Try
+    FDQuery.SQL.Clear;
+    FDQuery.SQL.Text :=(FSQL + FWhere + FOrdem + FFechar);
+    FDQuery.Open;
+
+    if not FDQuery.IsEmpty then
+     Result := True
+    else
+     Result := False;
+  Finally
+    FWhere := '';
+    FGrupo := '';
+    FOrdem := '';
+    FFechar := '';
+  End;
+end;
+
+function TRelatorioLucroPedido.RelatorioProduto: Boolean;
+begin
+  FSQL   := '';
+  FSQL1  := '';
+  FSQL2  := '';
+  FSQL3  := '';
+  FFrom  := '';
+  FWhere := '';
+  FGrupo := '';
+  FOrdem := '';
+  FFechar := '';
+
+
+  FSQL := ('select ' +
+           'IdModelo, '+
+           'NomeProduto, ' +
+           'QtdeVendida, ' +
+           'ValorVendido, ' +
+           'ValorCusto, ' +
+           'cast(LucroPrejuizo / ValorVendido*100 as numeric(10,4)) Aliquota, ' +
+           'LucroPrejuizo, ' +
+           'QtdeFinal, '+
+           'ValorFinal, '+
+           'ValorCustoFinal, '+
+           'LucroFinal, '+
+           'cast(LucroFinal / ValorFinal * 100 as numeric(10,4)) AliquotaFinal '+
+           'from ' +
+           '( ' +
+           ' select ' +
+           '   lp.IdModelo, '+
+           '   pro.descricao NomeProduto, ' +
+           '   coalesce(cast(sum(lp.qtde) as numeric(10,4)),0) QtdeVendida, ' +
+           '   coalesce(cast(sum(lp.somaritem) as numeric(10,4)),0) ValorVendido, ' +
+           '   coalesce(cast(sum(lp.somarvalorcustomarkup) as numeric(10,4)),0) ValorCusto, ' +
+           '   coalesce(cast(sum(lp.somarvalorlucroreal) as numeric(10,4)),0) LucroPrejuizo, ');
+   if TextoFiltro ='' then
+     FSQL1:=('( '+
+            ' select '+
+            '  coalesce(cast(sum(lp1.Qtde) as numeric(10,4)),0) QtdeFinal '+
+            ' from lucropedido lp1 '+
+            ' where lp1.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+            ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+            '), '+
+            '( '+
+            ' select '+
+            '  coalesce(cast(sum(lp2.somaritem) as numeric(10,4)),0) ValorFinal '+
+            ' from lucropedido lp2 '+
+            ' where lp2.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+            ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+            '), '+
+            '( '+
+            ' select '+
+            '  coalesce(cast(sum(lp3.somarvalorcustomarkup) as numeric(10,4)),0) ValorCustoFinal '+
+            ' from lucropedido lp3 '+
+            ' where lp3.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+            ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+            '), '+
+            '( '+
+            ' select '+
+            '  coalesce(cast(sum(lp4.somarvalorlucroreal) as numeric(10,4)),0) LucroFinal '+
+            ' from lucropedido lp4 '+
+            ' where lp4.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+            ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+            ') ');
+    if TextoFiltro <>'' then
+
+    FFrom :='from LucroPedido lp ' +
+            'inner join Modelo      m on m.id        = lp.idmodelo '+
+            'inner join cad_pro   pro on pro.id      = lp.idproduto '+
+            'inner join MarkupNome mn on mn.idregiao = lp.idregiao '+
+            'inner join cad_ped     p on p.id        = lp.idpedido '+
+            'inner join cad_cli     c on c.id        = p.idpessoa ');
+
+
+  FWhere :=('where lp.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''' '+
+            'and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+'''');
+
+
+  if TextoFiltro<>'' then
+    case TipoFiltro of
+      0: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdPedido' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdPedido='+TextoFiltro+' ');
+
+      1: if FiltroComVirgula then FWhere := FWhere + ('and p.IdPessoa' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.IdPessoa='+TextoFiltro+' ');
+
+      2: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdRegiao' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdRegiao='+TextoFiltro+' ');
+
+      3: if FiltroComVirgula then FWhere := FWhere + ('and p.cod_rep' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.cod_rep='+TextoFiltro+' ');
+
+
+      4: FWhere := FWhere +('and c.Razao_Social like ''%'+TextoFiltro+'%'' ');
+      5: FWhere := FWhere +('and mn.Descricao like ''%'+TextoFiltro+'%'' ');
+    end;
+
+  FGrupo :=('group by 1,2 ');
+  FOrdem :=('order by LucroPrejuizo Desc ');
+  FFechar :=(' )');
+
+  FDQuery.Close;
+  Try
+    FDQuery.SQL.Clear;
+    FDQuery.SQL.Text :=(FSQL + FWhere + FGrupo + FOrdem + FFechar);
+    FDQuery.Open;
+
+    if not FDQuery.IsEmpty then
+     Result := True
+    else
+     Result := False;
+  Finally
+    FWhere := '';
+    FGrupo := '';
+    FOrdem := '';
+    FFechar := '';
+  End;
+end;
+
+function TRelatorioLucroPedido.RelatorioRegiao: Boolean;
+begin
+  FSQL   := '';
+  FWhere := '';
+  FGrupo := '';
+  FOrdem := '';
+  FFechar := '';
+
+  FSQL := ('select ' +
+              'IdRegiao, '+
+              'NomeRegiao, '+
+              'NomeProduto, ' +
+              'QtdeVendida, ' +
+              'ValorVendido, ' +
+              'ValorCusto, ' +
+              '(LucroPrejuizo / ValorVendido*100) Aliquota, ' +
+              'LucroPrejuizo, ' +
+              'QtdeRegiao, '+
+              'ValorRegiao, '+
+              'ValorCustoRegiao, '+
+              'LucroRegiao, '+
+              'cast(LucroFinal / ValorFinal * 100 as numeric(10,4)) AliquotaRegiao, '+
+              'QtdeFinal, '+
+              'ValorFinal, '+
+              'ValorCustoFinal, '+
+              'LucroFinal, '+
+              'cast(LucroFinal / ValorFinal * 100 as numeric(10,4)) AliquotaFinal '+
+              'from ' +
+              '( ' +
+              ' select ' +
+              'lp.IdRegiao, '+
+              'mn.descricao NomeRegiao, '+
+              '   pro.descricao NomeProduto, ' +
+              '   coalesce(cast(sum(lp.qtde) as numeric(10,2)),0) QtdeVendida, ' +
+              '   coalesce(cast(sum(lp.somaritem) as numeric(10,2)),0) ValorVendido, ' +
+              '   coalesce(cast(sum(lp.somarvalorcustomarkup) as numeric(10,2)),0) ValorCusto, ' +
+              '   coalesce(cast(sum(lp.somarvalorlucroreal) as numeric(10,2)),0) LucroPrejuizo, ' +
+              '( '+
+              'select '+
+              '  coalesce(cast(sum(lp1.Qtde) as numeric(10,4)),0) QtdeRegiao '+
+              ' from lucropedido lp1 '+
+              ' where lp1.idregiao = lp.idregiao '+
+              ' and lp1.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              '), '+
+              '( '+
+              ' select '+
+              '  coalesce(cast(sum(lp2.somaritem) as numeric(10,4)),0) ValorRegiao '+
+              ' from lucropedido lp2 '+
+              ' where lp2.idregiao = lp.idregiao '+
+              ' and lp2.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              '), '+
+              '( '+
+              ' select '+
+              '  coalesce(cast(sum(lp3.somarvalorcustomarkup) as numeric(10,4)),0) ValorCustoRegiao '+
+              ' from lucropedido lp3 '+
+              '  where lp3.idregiao = lp.idregiao '+
+              ' and lp3.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              ' ), '+
+              ' ( '+
+              '  select '+
+              '   coalesce(cast(sum(lp4.somarvalorlucroreal) as numeric(10,4)),0) LucroRegiao '+
+              '  from lucropedido lp4 '+
+              '  where lp4.idregiao = lp.idregiao '+
+              ' and lp4.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              ' ), '+
+               '( '+
+              ' select '+
+              '  coalesce(cast(sum(lp1.Qtde) as numeric(10,4)),0) QtdeFinal '+
+              ' from lucropedido lp1 '+
+              ' where lp1.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              '), '+
+              '( '+
+              ' select '+
+              '  coalesce(cast(sum(lp2.somaritem) as numeric(10,4)),0) ValorFinal '+
+              ' from lucropedido lp2 '+
+              ' where lp2.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              '), '+
+              '( '+
+              ' select '+
+              '  coalesce(cast(sum(lp3.somarvalorcustomarkup) as numeric(10,4)),0) ValorCustoFinal '+
+              ' from lucropedido lp3 '+
+              ' where lp3.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              '), '+
+              '( '+
+              ' select '+
+              '  coalesce(cast(sum(lp4.somarvalorlucroreal) as numeric(10,4)),0) LucroFinal '+
+              ' from lucropedido lp4 '+
+              ' where lp4.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+              ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+              ') '+
+              'from LucroPedido lp ' +
+              'inner join Modelo      m on m.id        = lp.idmodelo '+
+              'inner join cad_pro   pro on pro.id      = lp.idproduto '+
+              'inner join MarkupNome mn on mn.idregiao = lp.idregiao '+
+              'inner join cad_ped     p on p.id        = lp.idpedido '+
+              'inner join cad_cli     c on c.id        = p.idpessoa '+
+              'inner join cad_rep     r on r.id        = p.cod_rep ');
+
+
+  FWhere :=('where lp.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''' '+
+            'and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+'''');
+
+  if TextoFiltro<>'' then
+    case TipoFiltro of
+      0: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdPedido' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdPedido='+TextoFiltro+' ');
+
+      1: if FiltroComVirgula then FWhere := FWhere + ('and p.IdPessoa' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.IdPessoa='+TextoFiltro+' ');
+      2: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdRegiao' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdRegiao='+TextoFiltro+' ');
+      3: if FiltroComVirgula then FWhere := FWhere + ('and p.cod_rep' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.cod_rep='+TextoFiltro+' ');
+
+      4: FWhere := FWhere +('and c.Razao_Social like ''%'+TextoFiltro+'%'' ');
+      5: FWhere := FWhere +('and mn.Descricao like ''%'+TextoFiltro+'%'' ');
+    end;
+
+  FGrupo :=('group by 1,2,3 ');
+  FOrdem :=('order by lp.IdRegiao asc, LucroPrejuizo Desc ');
+  FFechar :=(' )');
+
+  FDQuery.Close;
+  Try
+    FDQuery.SQL.Clear;
+    FDQuery.SQL.Text :=(FSQL + FWhere + FGrupo + FOrdem + FFechar);
+    FDQuery.Open;
+
+    if not FDQuery.IsEmpty then
+     Result := True
+    else
+     Result := False;
+  Finally
+    FWhere := '';
+    FGrupo := '';
+    FOrdem := '';
+    FFechar := '';
+  End;
+end;
+
+function TRelatorioLucroPedido.RelatorioRepresentante: Boolean;
+begin
+  FSQL   := '';
+  FWhere := '';
+  FGrupo := '';
+  FOrdem := '';
+  FFechar := '';
+
+  FSQL :=('select ' +
+          'NomeRepresentante, '+
+          'NomeRegiao, '+
+          'NomeProduto, ' +
+          'QtdeVendida, ' +
+          'ValorVendido, ' +
+          'ValorCusto, ' +
+          '(LucroPrejuizo / ValorVendido*100) Aliquota, ' +
+          'LucroPrejuizo, ' +
+          'QtdeFinal, '+
+          'ValorFinal, '+
+          'ValorCustoFinal, '+
+          'LucroFinal, '+
+          'cast(LucroFinal / ValorFinal * 100 as numeric(10,4)) AliquotaFinal '+
+          'from ' +
+          '( ' +
+          ' select ' +
+          '   r.nome NomeRepresentante, '+
+          '   mn.descricao NomeRegiao, '+
+          '   pro.descricao NomeProduto, ' +
+          '   coalesce(cast(sum(lp.qtde) as numeric(10,2)),0) QtdeVendida, ' +
+          '   coalesce(cast(sum(lp.somaritem) as numeric(10,2)),0) ValorVendido, ' +
+          '   coalesce(cast(sum(lp.somarvalorcustomarkup) as numeric(10,2)),0) ValorCusto, ' +
+          '   coalesce(cast(sum(lp.somarvalorlucroreal) as numeric(10,2)),0) LucroPrejuizo, ' +
+          '( '+
+          ' select '+
+          '  coalesce(cast(sum(lp1.Qtde) as numeric(10,4)),0) QtdeFinal '+
+          ' from lucropedido lp1 '+
+          ' where lp1.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+          ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+          '), '+
+          '( '+
+          ' select '+
+          '  coalesce(cast(sum(lp2.somaritem) as numeric(10,4)),0) ValorFinal '+
+          ' from lucropedido lp2 '+
+          ' where lp2.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+          ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+          '), '+
+          '( '+
+          ' select '+
+          '  coalesce(cast(sum(lp3.somarvalorcustomarkup) as numeric(10,4)),0) ValorCustoFinal '+
+          ' from lucropedido lp3 '+
+          ' where lp3.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+          ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+          '), '+
+          '( '+
+          ' select '+
+          '  coalesce(cast(sum(lp4.somarvalorlucroreal) as numeric(10,4)),0) LucroFinal '+
+          ' from lucropedido lp4 '+
+          ' where lp4.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''''+
+          ' and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+''' '+
+          ') '+
+          'from LucroPedido lp ' +
+          'inner join Modelo      m on m.id        = lp.idmodelo '+
+          'inner join cad_pro   pro on pro.id      = lp.idproduto '+
+          'inner join MarkupNome mn on mn.idregiao = lp.idregiao '+
+          'inner join cad_ped     p on p.id        = lp.idpedido '+
+          'inner join cad_cli     c on c.id        = p.idpessoa '+
+          'inner join cad_rep     r on r.id        = p.cod_rep ');
+
+  FWhere :=('where lp.datalancamento between '''+FormatDateTime('dd.mm.yyyy',DataInicial)+''' '+
+            'and '''+FormatDateTime('dd.mm.yyyy',DataFinal)+'''');
+
+  if TextoFiltro<>'' then
+    case TipoFiltro of
+      0: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdPedido' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdPedido='+TextoFiltro+' ');
+
+      1: if FiltroComVirgula then FWhere := FWhere + ('and p.IdPessoa' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.IdPessoa='+TextoFiltro+' ');
+      2: if FiltroComVirgula then FWhere := FWhere + ('and lp.IdRegiao' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and lp.IdRegiao='+TextoFiltro+' ');
+      3: if FiltroComVirgula then FWhere := FWhere + ('and p.cod_rep' + ' in (' + StringReplace(QuotedSTr(trim(TextoFiltro)), ',', QuotedSTr(','), [RFReplaceAll]) + ')')
+                             else FWhere := FWhere + ('and p.cod_rep='+TextoFiltro+' ');
+
+      4: FWhere := FWhere +('and c.Razao_Social like ''%'+TextoFiltro+'%'' ');
+      5: FWhere := FWhere +('and mn.Descricao like ''%'+TextoFiltro+'%'' ');
+    end;
+
+
+  FGrupo :=('group by 1,2,3 ');
+  FOrdem :=('order by LucroPrejuizo Desc ');
+  FFechar :=(' )');
+
+  FDQuery.Close;
+  Try
+    FDQuery.SQL.Clear;
+    FDQuery.SQL.Text :=(FSQL + FWhere + FGrupo + FOrdem + FFechar);
+    FDQuery.Open;
+
+    if not FDQuery.IsEmpty then
+     Result := True
+    else
+     Result := False;
+  Finally
+    FWhere := '';
+    FGrupo := '';
+    FOrdem := '';
+    FFechar := '';
+  End;
+end;
+
+procedure TRelatorioLucroPedido.SetAliquota(const Value: Currency);
+begin
+  FAliquota := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetAliquotaFinal(const Value: Currency);
+begin
+  FAliquotaFinal := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetDataFinal(const Value: TDateTime);
+begin
+  FDataFinal := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetDataInicial(const Value: TDateTime);
+begin
+  FDataInicial := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetFiltroComVirgula(const Value: Boolean);
+begin
+  FFiltroComVirgula := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetIdLucroPedido(const Value: Integer);
+begin
+  FIdLucroPedido := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetIdPedido(const Value: Integer);
+begin
+  FIdPedido := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetIdPessoa(const Value: Integer);
+begin
+  FIdPessoa := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetIdProduto(const Value: Integer);
+begin
+  FIdProduto := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetIdRegiao(const Value: Integer);
+begin
+  FIdRegiao := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetIdRepresentante(const Value: Integer);
+begin
+  FIdRepresentante := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetLucroPrejuizo(const Value: Currency);
+begin
+  FLucroPrejuizo := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetNomePessoa(const Value: String);
+begin
+  FNomePessoa := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetNomeProduto(const Value: String);
+begin
+  FNomeProduto := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetNomeRegiao(const Value: String);
+begin
+  FNomeRegiao := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetNomeRepresentante(const Value: String);
+begin
+  FNomeRepresentante := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetQtdeVendida(const Value: Currency);
+begin
+  FQtdeVendida := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetTextoFiltro(const Value: String);
+begin
+  FTextoFiltro := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetTipoFiltro(const Value: Integer);
+begin
+  FTipoFiltro := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetTipoRelatorio(const Value: Integer);
+begin
+  FTipoRelatorio := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetValorCusto(const Value: Currency);
+begin
+  FValorCusto := Value;
+end;
+
+procedure TRelatorioLucroPedido.SetValorVendido(const Value: Currency);
+begin
+  FValorVendido := Value;
+end;
+
+end.

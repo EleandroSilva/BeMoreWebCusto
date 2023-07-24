@@ -1,0 +1,97 @@
+unit Whorkshop.Model.Conexao.Config;
+
+interface
+
+uses
+  System.SysUtils,
+  Vcl.Forms,
+  System.IniFiles,
+
+  Whorkshop.Model.Conexao.Interfaces;
+
+type
+  TModelConexaoConfig = class(TInterfacedObject, iModelConnectionConfig)
+  private
+    FConfig: TIniFile;
+
+    { private }
+  public
+    { public }
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelConnectionConfig;
+
+    function DriverName : String;
+    function Database : String;
+    function UserName : String;
+    function Password : String;
+    function Server : String;
+    function Port : String;
+    function VendorLib : String;
+    function ServerName : String;
+  end;
+
+implementation
+
+{ TModelConexaoConfig }
+
+constructor TModelConexaoConfig.Create;
+var
+  lDiretorio: String;
+begin
+  lDiretorio := (ExtractFilePath(Application.ExeName));
+  FConfig := TIniFile.Create(lDiretorio + 'ConfigFireBird.ini');
+end;
+
+function TModelConexaoConfig.Database: String;
+begin
+  Result := FConfig.ReadString('Config', 'DataBase', Result);
+end;
+
+destructor TModelConexaoConfig.Destroy;
+begin
+  FreeAndNil(FConfig);
+  inherited;
+end;
+
+function TModelConexaoConfig.DriverName: String;
+begin
+  Result := FConfig.ReadString('Config', 'DriverID', Result);
+end;
+
+function TModelConexaoConfig.ServerName: String;
+begin
+  Result := FConfig.ReadString('Config', 'NomeServidor', Result);
+end;
+
+class function TModelConexaoConfig.New: iModelConnectionConfig;
+begin
+  Result := Self.Create;
+end;
+
+function TModelConexaoConfig.Password: String;
+begin
+  Result := FConfig.ReadString('Config', 'Password', Result);
+end;
+
+function TModelConexaoConfig.Port: String;
+begin
+  Result := FConfig.ReadString('Config', 'Port', Result);
+end;
+
+function TModelConexaoConfig.Server: String;
+begin
+  Result := FConfig.ReadString('Config', 'Server', Result);
+end;
+
+function TModelConexaoConfig.UserName: String;
+begin
+  Result := FConfig.ReadString('Config', 'UserName', Result);
+end;
+
+function TModelConexaoConfig.VendorLib: String;
+begin
+  Result := FConfig.ReadString('Config', 'VendorLib', Result);
+end;
+
+end.

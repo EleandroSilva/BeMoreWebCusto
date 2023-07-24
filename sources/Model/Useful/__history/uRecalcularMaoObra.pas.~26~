@@ -1,0 +1,164 @@
+unit uRecalcularMaoObra;
+
+interface
+
+uses udmPrincipal, Data.SqlExpr, System.SysUtils;
+
+Type
+  TRecalcularMaoObra = class
+  public
+    FValorGasto: Currency;
+    FQtdeProducao: Integer;
+    FAliquotaFrete: Currency;
+    FId: String;
+    FIdParametro: String;
+    FIdModelo: String;
+    FIdLocal: String;
+    FCalcularValorAjustado: Integer;
+
+    function CalcularFreteMaoObra: Currency;
+    function CalcularValorMaoObra: Currency;
+    procedure UpdateCabecalhoMaoObra;
+  private
+    FValorMaoObra: Currency;
+    FAliquotaInterna: Currency;
+    FAliquotaExterna: Currency;
+    FValorAjustado: Currency;
+    qrAuxiliar: TSQLQuery;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    function ValorAjustado: Currency;
+    function CalcularValorAjustado(aValorMaoObra, aAliquota: Currency): Currency;
+  end;
+
+implementation
+
+{ TRecalcularMaoObra }
+
+function TRecalcularMaoObra.CalcularValorAjustado(aValorMaoObra, aAliquota: Currency): Currency;
+var
+  lSoma: Currency;
+begin
+  lSoma := 0;
+
+  lSoma := aValorMaoObra * aAliquota / 100;
+  lSoma := StrToFloat(FormatFloat('0.00', lSoma));
+  Result := lSoma;
+  if Result > 0 then
+    dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency := Result
+  else
+    dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency := aValorMaoObra;
+end;
+
+procedure TRecalcularMaoObra.UpdateCabecalhoMaoObra;
+var
+  lValorFrete, lValorMaoObra: Currency;
+begin
+  lValorFrete := 0;
+  lValorMaoObra := 0;
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Create.Text := ('select ' +
+    'coalesce(cast(sum(pitem.valorfrete) as numeric (10,2)),0) ValorFrete, ' +
+    'coalesce(cast(sum(pitem.valormaoobra) as numeric (10,2)),0) ValorMaoObra ' +
+    'from ProducaoItem pitem ' +
+    'where pitem.IdProducao=' + FId + ' ');
+  qrAuxiliar.Active := True;
+  lValorFrete := qrAuxiliar.FieldByName('ValorFrete').AsCurrency;
+  lValorMaoObra := qrAuxiliar.FieldByName('ValorMaoObra').AsCurrency;
+  try
+    qrAuxiliar.Active := False;
+    qrAuxiliar.SQL.Clear;
+    qrAuxiliar.SQL.Text := ('update Producao p set ' +
+      'p.ValorFrete=' + StringReplace(CurrToStr(lValorFrete), ',', '.', [RFReplaceAll]) + ', ' +
+      'p.ValorMaoObra=' + StringReplace(CurrToStr(lValorMaoObra), ',', '.', [RFReplaceAll]) + ' ' +
+      'where p.ID=' + FId + ' ');
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+function TRecalcularMaoObra.CalcularFreteMaoObra: Currency;
+begin
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  try
+    Result := 0;
+    Result := StrToFloat(FormatFloat('0.00', (FValorGasto / FQtdeProducao * FAliquotaFrete / 100)));
+    qrAuxiliar.SQL.Text := ('update ProducaoItem pitem set pitem.valorfrete = ' + StringReplace(CurrToStr(Result), ',', '.', [RFReplaceAll]) +
+      'where pitem.ID=' + FIdParametro + ' ');
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+function TRecalcularMaoObra.ValorAjustado: Currency;
+var
+  lStatus: Integer;
+begin
+  Result := 0;
+  lStatus := 99;
+  FAliquotaInterna := 0;
+  FAliquotaExterna := 0;
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Text := ('select ' +
+    'm.AliquotaInterna, ' +
+    'm.AliquotaExterna ' +
+    'from Modelo m ' +
+    'where m.id=' + FIdModelo + '');
+  qrAuxiliar.Active := True;
+
+  FAliquotaInterna := qrAuxiliar.FieldByName('AliquotaInterna').AsCurrency;
+  FAliquotaExterna := qrAuxiliar.FieldByName('AliquotaExterna').AsCurrency;
+
+  if FCalcularValorAjustado = 1 then
+  begin
+    qrAuxiliar.Active := False;
+    qrAuxiliar.SQL.Clear;
+    qrAuxiliar.SQL.Text := ('select ' +
+      'l.Status ' +
+      'from Local l ' +
+      'where l.id=' + FIdLocal + '');
+    qrAuxiliar.Active := True;
+    lStatus := qrAuxiliar.FieldByName('Status').AsInteger;
+
+    if lStatus = 0 then
+      CalcularValorAjustado(FValorMaoObra, FAliquotaInterna)
+    else
+      CalcularValorAjustado(FValorMaoObra, FAliquotaExterna);
+  end
+  else
+    FValorAjustado := FValorMaoObra;
+    Result :=FValorAjustado;
+end;
+
+function TRecalcularMaoObra.CalcularValorMaoObra: Currency;
+begin
+  try
+    Result := 0;
+    Result := StrToFloat(FormatFloat('0.00', (FValorGasto / FQtdeProducao)));
+    qrAuxiliar.SQL.Text := ('update ProducaoItem pitem set pitem.valormaoobra = ' + StringReplace(CurrToStr(Result), ',', '.', [RFReplaceAll]) +
+      'where pitem.ID=' + FIdParametro + ' ');
+      FValorMaoObra := 0;
+      FValorMaoObra := Result;
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+constructor TRecalcularMaoObra.Create;
+begin
+  qrAuxiliar := TSQLQuery.Create(nil);
+  qrAuxiliar.SQLConnection := dmPrincipal.sqlConexao;
+end;
+
+destructor TRecalcularMaoObra.Destroy;
+begin
+  FreeAndNil(qrAuxiliar);
+  inherited;
+end;
+
+end.

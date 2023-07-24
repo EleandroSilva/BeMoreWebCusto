@@ -1,0 +1,7 @@
+unit Model.DAO.Aliquota.Markup.Interfaces;
+
+interface
+
+implementation
+
+end.

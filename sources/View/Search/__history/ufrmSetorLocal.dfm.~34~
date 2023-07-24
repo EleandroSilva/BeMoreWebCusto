@@ -1,0 +1,283 @@
+inherited frmSetorLocal: TfrmSetorLocal
+  Caption = 'Relacionamento Setor com Local'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    ExplicitTop = 560
+    ExplicitWidth = 934
+    inherited pSite: TPanel
+      ExplicitLeft = 716
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+        OnClick = NavigatorClick
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 218
+      end
+    end
+    inherited btnSalve: TBitBtn
+      OnClick = btnSalveClick
+    end
+    inherited rgActive: TRadioGroup
+      ExplicitLeft = 652
+    end
+  end
+  inherited pCabecalho: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 934
+    inherited pOperator: TPanel
+      ExplicitLeft = 814
+      inherited edtOperator: TDBEdit
+        ExplicitTop = 20
+        ExplicitWidth = 120
+      end
+    end
+  end
+  inherited pgMain: TPageControl
+    ExplicitLeft = 0
+    ExplicitTop = 41
+    ExplicitWidth = 934
+    ExplicitHeight = 519
+    inherited tsRegister: TTabSheet
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pGrid: TPanel
+        ExplicitWidth = 926
+        ExplicitHeight = 491
+        inherited pEdit: TPanel
+          ExplicitLeft = -4
+          ExplicitTop = 81
+          ExplicitWidth = 924
+          inherited lDescricao: TLabel
+            Left = 574
+            ExplicitLeft = 574
+          end
+          object Label1: TLabel [3]
+            Left = 184
+            Top = 6
+            Width = 30
+            Height = 13
+            Caption = 'Setor:'
+          end
+          object Label2: TLabel [4]
+            Left = 382
+            Top = 6
+            Width = 28
+            Height = 13
+            Caption = 'Local:'
+          end
+          inherited MedtReleaseDate: TDBEdit
+            DataField = 'DATALANCAMENTO'
+            DataSource = DataSource1
+          end
+          inherited edtDescricao: TDBEdit
+            Left = 574
+            Width = 323
+            DataField = 'DESCRICAO'
+            TabOrder = 4
+            ExplicitLeft = 574
+            ExplicitWidth = 323
+          end
+          object dblkSetor: TDBLookupComboBox
+            Left = 184
+            Top = 25
+            Width = 186
+            Height = 21
+            DataField = 'IDSETOR'
+            DataSource = DataSource1
+            KeyField = 'ID'
+            ListField = 'DESCRICAO'
+            ListSource = dmPrincipal.dsSetor
+            TabOrder = 2
+            OnEnter = dblkSetorEnter
+          end
+          object dblkLocal: TDBLookupComboBox
+            Left = 382
+            Top = 25
+            Width = 186
+            Height = 21
+            DataField = 'IDLOCAL'
+            DataSource = DataSource1
+            KeyField = 'ID'
+            ListField = 'DESCRICAO'
+            ListSource = dmPrincipal.dsLocal
+            TabOrder = 3
+            OnEnter = dblkLocalEnter
+            OnExit = dblkLocalExit
+          end
+        end
+        inherited pGridCadastro: TPanel
+          ExplicitWidth = 924
+          ExplicitHeight = 424
+          object dbgCadastro: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 924
+            Height = 424
+            Align = alClient
+            DataSource = DataSource1
+            ReadOnly = True
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+            OnDrawColumnCell = dbgCadastroDrawColumnCell
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'ID'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'ID:'
+                Width = 38
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IDSETOR'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Id Setor:'
+                Width = 52
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IDLOCAL'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Id Local:'
+                Width = 52
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DESCRICAO'
+                Title.Caption = 'Descri'#231#227'o:'
+                Width = 244
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'DATALANCAMENTO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Data Lan'#231'amento:'
+                Width = 108
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERADOR'
+                Title.Caption = 'Operador:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'STATUS'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Status:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'ATIVO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Ativo:'
+                Visible = True
+              end>
+          end
+        end
+      end
+    end
+    inherited tsSearch: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pSearch: TPanel
+        ExplicitWidth = 926
+        inherited pFiltro: TPanel
+          ExplicitWidth = 501
+          inherited lDigiteConformeEscolha: TLabel
+            ExplicitLeft = 0
+            ExplicitTop = 28
+          end
+          inherited edtSearch: TEdit
+            OnKeyPress = nil
+            ExplicitLeft = 0
+            ExplicitTop = 46
+            ExplicitWidth = 501
+          end
+        end
+      end
+      inherited dbgSearch: TDBGrid
+        DataSource = DataSource1
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'ID'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'ID:'
+            Width = 38
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IDSETOR'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Id Setor:'
+            Width = 52
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IDLOCAL'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Id Local:'
+            Width = 52
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DESCRICAO'
+            Title.Caption = 'Descri'#231#227'o:'
+            Width = 244
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'DATALANCAMENTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Data Lan'#231'amento:'
+            Width = 108
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'OPERADOR'
+            Title.Caption = 'Operador:'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'STATUS'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Status:'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ATIVO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Ativo:'
+            Visible = True
+          end>
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    DataSet = dmPrincipal.cdsSetorLocal
+  end
+end

@@ -1,0 +1,389 @@
+{*******************************************************}
+{                  API-HORSE-REST-JSON                  }
+{                      ES Sistemas                      }
+{            Início do projeto 27/05/2023               }
+{                 www.bemoreweb.com.br                  }
+{                     (17)98169-5336                    }
+{                        2003/2023                      }
+{         Analista desenvolvedor (Eleandro Silva)       }
+{*******************************************************}
+unit Model.DAO.Imp.Aliquota.Markup;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+  Vcl.Dialogs,
+
+  Model.DAO.Aliquota.Markup.Interfaces,
+  Model.Entidade.Aliquota.Markup.Interfaces,
+  Model.Conexao.Firedac.Interfaces,
+  Model.Query,
+  Model.Imp.Entidade.Aliquota.Markup,
+  Model.Imp.Conexao.Firedac,
+  Model.Imp.Query;
+
+type
+  TDAOAliquotaMarkup = class(TInterfacedObject, iDAOAliquotaMarkup)
+    private
+      FAliquotaMarkup : iAliquotaMarkup<iDAOAliquotaMarkup>;
+      FConexao        : iConexao;
+      FDataSet        : TDataSet;
+      FQuery          : iQuery;
+      FSQL            : String;
+      FWhere          : String;
+      FGrupo          : String;
+      FOrdem          : String;
+
+      function Somar  : Currency;
+    public
+      constructor Create;
+      destructor Destroy; override;
+      class function New : iDAOAliquotaMarkup;
+
+      function DataSet(DataSource : TDataSource) : iDAOAliquotaMarkup; overload;
+      function DataSet                           : TDataSet;           overload;
+      function GetAll                            : iDAOAliquotaMarkup;
+      function GetbyId(Id : Variant)             : iDAOAliquotaMarkup;
+      function GetbyIdRegiao(IdRegiao : Variant) : iDAOAliquotaMarkup;
+      function GetbyParams                       : iDAOAliquotaMarkup;
+      function Post                              : iDAOAliquotaMarkup;
+      function Put                               : iDAOAliquotaMarkup;
+      function Delete                            : iDAOAliquotaMarkup;
+
+      function This : iAliquotaMarkup<iDAOAliquotaMarkup>;
+  end;
+
+implementation
+
+
+constructor TDAOAliquotaMarkup.Create;
+begin
+  FAliquotaMarkup := TAliquotaMarkup<iDAOAliquotaMarkup>.New(Self);
+  FConexao        := TModelConexaoFiredac.New;
+  FQuery          := TQuery.New;
+  FSQL            := '';
+  FWhere          := '';
+  FGrupo          := '';
+  FOrdem          := '';
+end;
+
+class function TDAOAliquotaMarkup.New: iDAOAliquotaMarkup;
+begin
+  Result := Self.Create;
+end;
+
+destructor TDAOAliquotaMarkup.Destroy;
+begin
+  inherited;
+end;
+
+function TDAOAliquotaMarkup.This: iAliquotaMarkup<iDAOAliquotaMarkup>;
+begin
+   Result := FAliquotaMarkup;
+end;
+
+function TDAOAliquotaMarkup.DataSet(DataSource: TDataSource): iDAOAliquotaMarkup;
+begin
+  Result := Self;
+  if not Assigned(FDataset) then
+    DataSource.DataSet := FQuery.DataSet
+  else
+    DataSource.DataSet := FDataSet;
+end;
+
+function TDAOAliquotaMarkup.DataSet: TDataSet;
+begin
+  Result := FDataSet;
+end;
+
+function TDAOAliquotaMarkup.GetAll: iDAOAliquotaMarkup;
+begin
+  Result := Self;
+  try
+    try
+      FDataSet := FQuery
+                    .SQL(FSQL)
+                    .Open
+                  .DataSet;
+    except
+     raise Exception.Create('Erro ao pesquisar dados!');
+    end;
+  finally
+    //
+  end;
+end;
+
+function TDAOAliquotaMarkup.GetbyId(Id: Variant): iDAOAliquotaMarkup;
+var
+  lSomar  : Currency;
+  lSQL    : String;
+  lSQL1   : String;
+  lSQL2   : String;
+  lSQL3   : String;
+  lWhere  : String;
+  lWhere1 : String;
+  lWhere2 : String;
+  lResult : String;
+begin
+  Result  := Self;
+  lSomar  := 0;
+  lSQL    :='';
+  lSQL1   :='';
+  lSQL2   :='';
+  lSQL3   := '';
+  lWhere  :='';
+  lWhere1 :='';
+  lWhere2 :='';
+  lResult := '';
+  FSQL :=('select '+
+        '  id, '+
+        '  idmarkupnome, '+
+        '  Status, '+
+        '  valorvendaavista, '+
+        '  valorfichatecnica, '+
+        '  NomeMarkup, '+
+        '  aliquota, '+
+        '  valor, '+
+        '  valormarkupcomlucro, '+
+        '  ValorFichatecnicaMarkup, '+
+        '  ValorLucroReal, '+
+        '  case '+
+        '   when status=1 then (ValorMarkupComLucro-Valor) '+
+        '   when status=0 then 0 '+
+        '   end valormarkupsemlucro ' +
+        '  from '+
+        '     ( '+
+        '      select '+
+        '        mt.id, '+
+        '        ag.idmarkupnome, '+
+        '        an.status, '+
+        '        mt.valorfichatecnica, '+
+        '        mt.valorvendaavista, '+
+        '        an.descricao NomeMarkup, '+
+        '        ag.aliquota, '+
+        '        coalesce(cast(sum(ag.aliquota*mt.valorvendaavista/100) as numeric(10,2)),0) as Valor, ');
+  lSQL :=(' ( '+
+        '    select '+
+        '      coalesce(cast(sum(ag1.aliquota*mt.valorvendaavista/100) as numeric(10,2)),0) as valormarkupcomlucro '+
+        '    from aliquotagrupo ag1 ');
+
+  lWhere :=(' where mt.id='+IntToStr(Id)+' and ag1.idmarkupnome=ag.idmarkupnome '+
+        '      ), ');
+
+  lSQL1 :=(' ( '+
+        '       select '+
+        '         coalesce(cast(sum(ag2.aliquota*mt.valorvendaavista/100)+mt.valorfichatecnica as numeric(10,2)),0) as ValorFichatecnicaMarkup '+
+        '       from aliquotagrupo ag2 ');
+
+  lWhere1 :=(' where mt.id='+IntToStr(Id)+' and ag2.idmarkupnome=ag.idmarkupnome '+
+        '      ), ');
+
+  lSQL2   :=('(select '+
+             'coalesce(cast(sum(ag3.aliquota*mt.valorvendaavista/100) as numeric(10,2)),0) as ValorLucroReal '+
+             'from aliquotagrupo ag3 '+
+             'inner join aliquotanome  an1 on an1.id = ag3.idaliquotanome ');
+
+  lWhere2 :=('where mt.id='+IntToStr(Id)+' and ag3.idmarkupnome=ag.idmarkupnome '+
+             'and an1.status=1 '+
+             ')');
+
+  lSQL3 :=('from montarcusto mt '+
+          'inner join markupnome    mn on mn.idregiao     = mt.idregiao '+
+          'inner join aliquotagrupo ag on ag.idmarkupnome = mn.idregiao '+
+          'inner join aliquotanome  an on an.id           = ag.idaliquotanome ');
+
+  lResult :=(FSQL+lSQL+lWhere+lSQL1+lWhere1+lSQL2+lWhere2+lSQL3+' where mt.Id='+IntToStr(Id)+ ' group by 1, 2, 3, 4, 5, 6, 7)');
+  try
+    try
+      FDataSet := FQuery
+                    .SQL(lResult)
+                    .Open
+                  .DataSet;
+    except
+      raise Exception.Create('Erro ao pesquisar dados!');
+    end;
+  finally
+    if not FDataSet.IsEmpty then
+    begin
+      FDataSet.First;
+      while not FDataSet.Eof do
+      begin
+        lSomar  := lSomar  + FDataSet.FieldByName('valor').AsCurrency;
+        FDataSet.Next;
+      end;
+       FAliquotaMarkup.ValorLucroReal(FDataSet.FieldByName('valorlucroreal').AsCurrency);
+       FAliquotaMarkup.ValorMarkupComLucro(lSomar);
+       FAliquotaMarkup.ValorFichatecnicaMarkup(lSomar + FDataSet.FieldByName('valorfichatecnica').AsCurrency);
+    end
+    else
+      ShowMessage('Resgistro não encontrado');
+  end;
+end;
+
+function TDAOAliquotaMarkup.GetbyIdRegiao(IdRegiao: Variant): iDAOAliquotaMarkup;
+var
+  lSQL    : String;
+  lWhere  : String;
+  lGrupo  : String;
+  lSomar  : Currency;
+  lSomar1 : Currency;
+begin
+  Result  := Self;
+  lSQL    := '';
+  lWhere  := '';
+  lGrupo  := '';
+  lSomar  := 0;
+  lSomar1 := 0;
+
+  lSQL   := ('select distinct '+
+             '  ALIQUOTAMARKUPSEMLUCRO, '+
+             '  ALIQUOTAMARKUPCOMLUCRO, '+
+             '  (Maximo/((Maximo-ALIQUOTAMARKUPCOMLUCRO))) IndiceMultiplicacao '+
+             '  from '+
+             '      (select '+
+             '         100 as Maximo, '+
+             '      (select '+
+             '         coalesce(cast(sum(ag1.aliquota) as numeric(15,6)),0) as ALIQUOTAMARKUPSEMLUCRO '+
+             '       from aliquotagrupo ag1 '+
+             '       inner join aliquotanome an1 on an1.id = ag1.idaliquotanome '+
+             '       where ag1.idmarkupnome=ag.idmarkupnome '+
+             '       and an1.status=0 '+
+             '      ), '+
+             '      (select '+
+             '         coalesce(cast(sum(ag2.aliquota) as numeric(15,6)),0) as ALIQUOTAMARKUPCOMLUCRO '+
+             '       from aliquotagrupo ag2 '+
+             '       where ag2.idmarkupnome=ag.idmarkupnome '+
+             '       ) '+
+             'from aliquotagrupo ag '+
+             'inner join aliquotanome an on an.id = ag.idaliquotanome ');
+
+  lWhere :=('where ag.idmarkupnome ='+IntToStr(IdRegiao)+' '+
+            'and financeiro=0) ');
+  try
+   try
+     FDataSet := FQuery
+                   .SQL(lSQL+lWhere)
+                   .Open
+                 .DataSet;
+   except
+     raise exception.Create('Erro ao pesquisar dados!');
+   end;
+  finally
+    if not FDataSet.IsEmpty then
+    begin
+      FAliquotaMarkup.AliquotaMarkupComLucro(FDataSet.FieldByName('ALIQUOTAMARKUPCOMLUCRO').AsCurrency);
+      FAliquotaMarkup.AliquotaMarkupSemLucro(FDataSet.FieldByName('ALIQUOTAMARKUPSEMLUCRO').AsCurrency);
+      lSomar  := FAliquotaMarkup.ValorMarkupComLucro;
+      lSomar1 := lSomar * FDataSet.FieldByName('IndiceMultiplicacao').AsCurrency;
+      lSomar1 := lSomar1 -  lSomar;
+      FAliquotaMarkup.ValorMarkupComLucro(lSomar1);
+    end;
+  end;
+end;
+
+function TDAOAliquotaMarkup.GetbyParams: iDAOAliquotaMarkup;
+begin
+  Result := Self;
+  try
+   try
+     FDataSet := FQuery
+                   .SQL(FSQL+' where ((lower(descricao) like lower(:descricao)) ')
+                   .Params('descricao', FAliquotaMarkup.NomeMarkup)
+                   .Open
+                 .DataSet;
+   except
+     raise exception.Create('Erro ao pesquisar dados!');
+   end;
+  finally
+    //
+  end;
+end;
+
+function TDAOAliquotaMarkup.Post: iDAOAliquotaMarkup;
+const
+  LSQL=('insert into categoria('+
+                             'descricao '+
+                           ')'+
+                             ' values '+
+                           '('+
+                             ':descricao '+
+                            ')'
+       );
+begin
+  Result := Self;
+
+  FConexao.StartTransaction;
+  try
+    try
+      FQuery
+        .SQL(LSQL)
+          .Params('descricao' , FAliquotaMarkup.NomeMarkup)
+        .ExecSQL;
+    except
+      FConexao.Rollback;
+      raise Exception.Create('Erro ao tentar salvar registro');
+    end;
+  finally
+    FConexao.Commit;
+    FDataSet := FQuery
+                    .SQL('select LAST_INSERT_ID () as id').Open.DataSet;
+    FAliquotaMarkup.Id(FDataSet.FieldByName('id').AsInteger);
+    ShowMessage('Registro salvo com sucesso!');
+  end;
+end;
+
+function TDAOAliquotaMarkup.Put: iDAOAliquotaMarkup;
+const
+  LSQL=('update categoria set '+
+        'descricao=:descricao '+
+        'where id=:id ');
+begin
+  Result := Self;
+
+  FConexao.StartTransaction;
+  try
+    try
+      FQuery
+        .SQL(LSQL)
+          .Params('id'        , FAliquotaMarkup.Id)
+          .Params('descricao' , FAliquotaMarkup.NomeMarkup)
+        .ExecSQL;
+    except
+      FConexao.Rollback;
+      raise Exception.Create('Erro ao tentar alterar o registro');
+    end;
+  finally
+    FConexao.Commit;
+    ShowMessage('Registro alterado com sucesso!');
+  end;
+end;
+
+function TDAOAliquotaMarkup.Somar: Currency;
+begin
+  Result := FAliquotaMarkup.ValorAliquota;
+end;
+
+function TDAOAliquotaMarkup.Delete: iDAOAliquotaMarkup;
+const
+  LSQL=('delete from categoria where id=:id ');
+begin
+  Result := self;
+  FConexao.StartTransaction;
+ try
+  try
+    FQuery.SQL(LSQL)
+            .Params('id', FAliquotaMarkup.Id)
+          .ExecSQL;
+  except
+    FConexao.Rollback;
+    raise Exception.Create('Erro ao tentar excluir o registro');
+  end;
+ finally
+   FConexao.Commit;
+   ShowMessage('Registro excluído com sucesso!');
+ end;
+end;
+
+end.

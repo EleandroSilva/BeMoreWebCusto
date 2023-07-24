@@ -1,0 +1,85 @@
+unit Whorkshop.Model.Entidades.Interfaces;
+
+interface
+
+uses
+  Data.DB,
+  System.JSON,
+  DataSetConverter4D.Helper,
+  DataSetConverter4D.Impl;
+
+type
+  iModelEntidade = interface
+    ['{3FAB11D3-0E9A-4549-8ABF-F404CC03739A}']
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue : Integer) : iModelEntidade;
+    function EscolhaTipoLancamento(aValue : Integer) : iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue : Integer) :iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue : String) : iModelEntidade;
+    function IdProduto(aValue : String) : iModelEntidade;
+    function IdParametro1(aValue : String) : iModelEntidade;
+    function IdParametro2(aValue : String) : iModelEntidade;
+    function ValorLancamento1(aValue : Currency) : iModelEntidade;
+    function ValorLancamento2(aValue : Currency) : iModelEntidade;
+    function ValorLancamento3(aValue : Currency) : iModelEntidade;
+    function ValorLancamento4(aValue : Currency) : iModelEntidade;
+    function Qtde(aValue : Integer) : iModelEntidade; overload;
+    function Qtde(aValue : Currency) : iModelEntidade; overload;
+    function Aliquota1(aValue : Currency) : iModelEntidade;
+    function Aliquota2(aValue : Currency) : iModelEntidade;
+    function Aliquota3(aValue : Currency) : iModelEntidade;
+    function Aliquota4(aValue : Currency) : iModelEntidade;
+    function PrazoMedio(aValue : Currency) : iModelEntidade;
+    function InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+    function FimPeriodo(aValue : TDateTime) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue : String): iModelEntidade; overload;
+    function Append : iModelEntidade;
+    function Update(aValue : String) : iModelEntidade;
+    function Delete(aValue : String) : iModelEntidade;
+    function PegarGenId : Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+  iModelEntidadeFactory = interface
+    ['{F5FCEA47-CE08-4938-AA05-FE06B5CBB5D0}']
+    function Model: iModelEntidade;
+    function ModelProduct : iModelEntidade;
+    function ModelProductItem : iModelEntidade;
+    function Product : iModelEntidade;
+    function FixedExpense : iModelEntidade;
+    function ClasseContas : iModelEntidade;
+    function ContasPagar :iModelEntidade;
+    function MateriaPrima : iModelEntidade;
+    function MarkupNome : iModelEntidade;
+    function AliquotaNome: iModelEntidade;
+    function AliquotaGrupo : iModelEntidade;
+    function CustoFinanceiro : iModelEntidade;
+    function MarkupCusto : iModelEntidade;
+    function PrazoPagamento : iModelEntidade;
+    function RegiaoPessoa : iModelEntidade;
+    function ReceitaDespesa : iModelEntidade;
+    function FichaTecnica : iModelEntidade;
+    function FichaTecnicaItem : iModelEntidade;
+    function MontaCusto : iModelEntidade;
+    function SomaAliquotaGrupo : iModelEntidade;
+    function SomaDespesaFixa : iModelEntidade;
+    function SomaCustoModelo : iModelEntidade;
+    function TabelaPreco : iModelEntidade;
+  end;
+
+implementation
+
+end.

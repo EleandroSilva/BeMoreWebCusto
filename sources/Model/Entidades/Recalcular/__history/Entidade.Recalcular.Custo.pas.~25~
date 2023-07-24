@@ -1,0 +1,217 @@
+unit Entidade.Recalcular.Custo;
+
+interface
+
+uses udmPrincipal, Data.SqlExpr, System.SysUtils,
+  Whorkshop.Controller.Interfaces, Whorkshop.Controller, Data.DB;
+
+Type
+  TRecalcularCusto = class
+  private
+    FController: iController;
+    qrAuxiliar: TSQLQuery;
+    qrAuxiliar1: TSQLQuery;
+    qrUpdate: TSQLQuery;
+    qrSelect: TSQLQuery;
+    dsAuxiliar: TDataSource;
+    dsModelo: TDataSource;
+
+    function BuscaQtdeProducao(aValue: String): Integer;
+    function CalculaValorMaoObra(aValue: String; aStatus: Integer): Currency;
+    function CalculaCustoDespesaFixa(aValue: Currency; aQtdeProducao: Integer): Currency;
+    function SomCustoTotalModelo(aCustoFixaTecnica, aCustoDespesaFixa, aCustoMaoObraAjustado, aCustoFrete: Currency): Currency;
+    function BuscarMarkup(aValue: String; aCustoFinal: Currency): Currency;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure LoopCusto(aValue: String);
+    procedure UpdateMontarCusto(aValue: String);
+  end;
+
+implementation
+
+{ TRecalcularCusto }
+
+function TRecalcularCusto.CalculaCustoDespesaFixa(aValue: Currency; aQtdeProducao: Integer): Currency;
+begin
+  Result := 0;
+  Result := StrToFloat(FormatFloat('0.00', aValue / aQtdeProducao));
+end;
+
+function TRecalcularCusto.SomCustoTotalModelo(aCustoFixaTecnica, aCustoDespesaFixa, aCustoMaoObraAjustado, aCustoFrete: Currency): Currency;
+begin
+  Result := 0;
+  Result := aCustoFixaTecnica + aCustoDespesaFixa + aCustoMaoObraAjustado + aCustoFrete;
+end;
+
+function TRecalcularCusto.BuscaQtdeProducao(aValue: String): Integer;
+begin
+  Result := 0;
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Text := ('select ' +
+    'p.QtdeProducao ' +
+    'from producao p ' +
+    'where p.idmodelo =  ' + aValue + ' ');
+  qrAuxiliar.Active := True;
+  Result := qrAuxiliar.FieldByName('QtdeProducao').AsInteger;
+  qrAuxiliar.Active := False;
+end;
+
+procedure TRecalcularCusto.LoopCusto(aValue: String);
+begin
+  if not qrSelect.Active then
+  begin
+    qrSelect.Active := False;
+    qrSelect.SQL.Clear;
+    qrSelect.SQL.Text := ('select * from MontarCusto mc ' +
+      'order by mc.idmodelo asc, mc.idmarkupnome asc ');
+    qrSelect.Active := True;
+
+    FController
+      .Entidades
+      .SomaDespesaFixa
+      .DataSet(dsAuxiliar)
+      .Ativo(1)
+      .Buscar('');
+
+    FController
+      .Entidades
+      .SomaCustoModelo
+      .DataSet(dsModelo)
+      .Ativo(1)
+      .TextoFiltro(qrSelect.FieldByName('IdModelo').AsString)
+      .Buscar(qrSelect.FieldByName('IdModelo').AsString);
+
+    UpdateMontarCusto(aValue);
+  end;
+end;
+
+function TRecalcularCusto.CalculaValorMaoObra(aValue: String; aStatus: Integer): Currency;
+begin
+  Result := 0;
+  qrAuxiliar1.Active := False;
+  qrAuxiliar1.SQL.Clear;
+  qrAuxiliar1.SQL.Text := ('select ' +
+    'coalesce(cast(sum(pitem.valormaoobra) as numeric(10,2)),0) ValorMaoObra ' +
+    'from producaoitem pitem ' +
+    'inner join Producao    p on p.id  = pitem.idproducao ' +
+    'inner join SetorLocal sl on sl.id = pitem.idsetorlocal ' +
+    'inner join Local       l on l.id  = sl.idlocal ' +
+    'where l.Status= ' + IntToStr(aStatus) + ' ' +
+    'and p.idmodelo =  ' + aValue + ' ');
+  qrAuxiliar1.Active := True;
+  Result := qrAuxiliar1.FieldByName('ValorMaoObra').AsCurrency;
+  qrAuxiliar1.Active := False;
+end;
+
+function TRecalcularCusto.BuscarMarkup(aValue: String; aCustoFinal: Currency): Currency;
+var
+  lSoma: Currency;
+begin
+  lSoma := 0;
+
+  FController
+    .Entidades
+    .SomaAliquotaGrupo
+    .DataSet(dmPrincipal.dsAuxiliar)
+    .Ativo(1)
+    .EscolhaFiltro(0)
+    .TextoFiltro(qrSelect.FieldByName('IdMarkupNome').AsString)
+    .Buscar(qrSelect.FieldByName('IdMarkupNome').AsString);
+
+  if not dmPrincipal.dsAuxiliar.DataSet.IsEmpty then
+  begin
+    Result := True;
+    dmPrincipal.cdsMontarCusto.FieldByName('MarkupNome').AsString := dmPrincipal.dsAuxiliar.DataSet.FieldByName('MarkupNome').AsString;
+    dmPrincipal.cdsMontarCusto.FieldByName('AliquotaMarkup').AsCurrency := dmPrincipal.dsAuxiliar.DataSet.FieldByName('SomaAliquota').AsCurrency;
+    dmPrincipal.cdsMontarCusto.FieldByName('IndiceaVistaMultiplicar').AsCurrency :=
+      dmPrincipal.dsAuxiliar.DataSet.FieldByName('IndiceMultiplicacao').AsCurrency;
+    dmPrincipal.cdsMontarCusto.FieldByName('IndiceaVistaDividir').AsCurrency :=
+      dmPrincipal.dsAuxiliar.DataSet.FieldByName('IndiceDivisao').AsCurrency;
+
+    lSoma := aCustoFinal;
+    lSoma := lSoma * dmPrincipal.cdsMontarCusto.FieldByName('IndiceaVistaMultiplicar').AsCurrency;
+    dmPrincipal.cdsMontarCusto.FieldByName('ValorVendaaVista').AsCurrency := StrToFloat(FormatFloat('#,##0.00', lSoma));
+    btnSalve.Enabled := True;
+    btnSalve.SetFocus;
+  end
+  else
+  begin
+    Result := False;
+    lCaptionNomeMarkup.Caption := '...';
+    raise Exception.Create('Registro não encontrado!');
+  end;
+end;
+
+procedure TRecalcularCusto.UpdateMontarCusto(aValue: String);
+var
+  lValorMaoObraInterna, lValorMaoObraExterna: Currency;
+  lCustoModeloDespesaFixa, lCustoTotalModelo: Currency;
+begin
+  lValorMaoObraInterna := 0;
+  lValorMaoObraExterna := 0;
+  lCustoModeloDespesaFixa := 0;
+  lCustoTotalModelo := 0;
+
+  lValorMaoObraInterna := CalculaValorMaoObra(dsModelo.DataSet.FieldByName('IdModelo').AsString, 0);
+  lValorMaoObraExterna := CalculaValorMaoObra(dsModelo.DataSet.FieldByName('IdModelo').AsString, 1);
+  lCustoModeloDespesaFixa := CalculaCustoDespesaFixa(
+    dsAuxiliar.DataSet.FieldByName('SomaDespesaFixa').AsCurrency,
+    qrSelect.FieldByName('QtdeProducao').AsInteger);
+
+  lCustoTotalModelo := SomCustoTotalModelo(
+    dsModelo.DataSet.FieldByName('ValorFichaTecnica').AsCurrency,
+    lCustoModeloDespesaFixa,
+    dsModelo.DataSet.FieldByName('ValorAjustado').AsCurrency,
+    dsModelo.DataSet.FieldByName('ValorFrete').AsCurrency
+    );
+
+  qrUpdate.Active := False;
+  qrUpdate.SQL.Clear;
+  qrUpdate.SQL.Text := ('update MontarCusto mc set ' +
+    'ValorDespesaFixa= ' + StringReplace(CurrToStr(dsAuxiliar.DataSet.FieldByName('SomaDespesaFixa').AsCurrency), ',', '.', [RFReplaceAll]) + ', ' +
+    'ValorFichaTecnica= ' + StringReplace(CurrToStr(dsModelo.DataSet.FieldByName('ValorFichaTecnica').AsCurrency), ',', '.', [RFReplaceAll]) + ', ' +
+    'ValorMaoObraAjustado= ' + StringReplace(CurrToStr(dsModelo.DataSet.FieldByName('ValorAjustado').AsCurrency), ',', '.', [RFReplaceAll]) + ', ' +
+    'ValorFrete= ' + StringReplace(CurrToStr(dsModelo.DataSet.FieldByName('ValorFrete').AsCurrency), ',', '.', [RFReplaceAll]) + ', ' +
+    'ValorMaoObraInterna= ' + StringReplace(CurrToStr(lValorMaoObraInterna), ',', '.', [RFReplaceAll]) + ', ' +
+    'ValorMaoObraExterna= ' + StringReplace(CurrToStr(lValorMaoObraExterna), ',', '.', [RFReplaceAll]) + ', ' +
+    'CustoModeloDespesaFixa= ' + StringReplace(CurrToStr(lCustoModeloDespesaFixa), ',', '.', [RFReplaceAll]) + ', ' +
+    'CustoTotalModelo= ' + StringReplace(CurrToStr(lCustoTotalModelo), ',', '.', [RFReplaceAll]) + ' ' +
+    'where mc.id=' + aValue + ' ');
+  qrUpdate.ExecSQL;
+end;
+
+constructor TRecalcularCusto.Create;
+begin
+  qrAuxiliar := TSQLQuery.Create(nil);
+  qrAuxiliar.SQLConnection := dmPrincipal.sqlConexao;
+
+  qrAuxiliar1 := TSQLQuery.Create(nil);
+  qrAuxiliar1.SQLConnection := dmPrincipal.sqlConexao;
+
+  qrUpdate := TSQLQuery.Create(nil);
+  qrUpdate.SQLConnection := dmPrincipal.sqlConexao;
+
+  qrSelect := TSQLQuery.Create(nil);
+  qrSelect.SQLConnection := dmPrincipal.sqlConexao;
+
+  dsAuxiliar := TDataSource.Create(nil);
+  dsModelo := TDataSource.Create(nil);
+
+  FController := TController.New;
+end;
+
+destructor TRecalcularCusto.Destroy;
+begin
+  FreeAndNil(qrAuxiliar);
+  FreeAndNil(qrAuxiliar1);
+  FreeAndNil(qrUpdate);
+  FreeAndNil(qrSelect);
+  FreeAndNil(dsAuxiliar);
+  FreeAndNil(dsModelo);
+  inherited;
+end;
+
+end.

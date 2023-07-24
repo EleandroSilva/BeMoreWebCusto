@@ -1,0 +1,151 @@
+unit udmEntidade.Relatorios;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ppComm, ppRelatv, ppProd, ppClass, ppReport,
+  ppDB, ppDBPipe, Data.FMTBcd, Data.DB, Datasnap.DBClient, Datasnap.Provider,
+  Data.SqlExpr, ppDesignLayer, ppParameter, udmPrincipal, ppVar, ppCtrls,
+  ppPrnabl, ppBands, ppCache, Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller;
+
+type
+  TdmEntidadeRelatorios = class(TDataModule)
+    ppdbModelo: TppDBPipeline;
+    pprModelo: TppReport;
+    ppDesignLayers2: TppDesignLayers;
+    ppDesignLayer2: TppDesignLayer;
+    ppParameterList2: TppParameterList;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppShape1: TppShape;
+    ppLabel1: TppLabel;
+    ppLabel2: TppLabel;
+    ppLabel3: TppLabel;
+    ppLabel4: TppLabel;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppLine1: TppLine;
+    ppSystemVariable1: TppSystemVariable;
+    ppSystemVariable2: TppSystemVariable;
+    pplEmpresa: TppLabel;
+    ppDBText4: TppDBText;
+    ppLabel5: TppLabel;
+    ppLine2: TppLine;
+    pplDesenvolvidopor: TppLabel;
+    pplSiteEmpresa: TppLabel;
+    ppdbModeloProduto: TppDBPipeline;
+    pprModeloProduto: TppReport;
+    ppParameterList3: TppParameterList;
+    ppDesignLayers3: TppDesignLayers;
+    ppDesignLayer3: TppDesignLayer;
+    ppHeaderBand3: TppHeaderBand;
+    ppDetailBand3: TppDetailBand;
+    ppFooterBand3: TppFooterBand;
+    ppShape3: TppShape;
+    ppSystemVariable5: TppSystemVariable;
+    lNomeEmpresa: TppLabel;
+    ppLabel9: TppLabel;
+    ppSystemVariable6: TppSystemVariable;
+    ppdbIdModelo: TppDBText;
+    ppdbNomeModelo: TppDBText;
+    ppGroup2: TppGroup;
+    ppGroupHeaderBand2: TppGroupHeaderBand;
+    ppGroupFooterBand2: TppGroupFooterBand;
+    ppDBText9: TppDBText;
+    ppDBText10: TppDBText;
+    ppLine8: TppLine;
+    ppLabel16: TppLabel;
+    ppLabel17: TppLabel;
+    ppLabel18: TppLabel;
+    ppLine9: TppLine;
+    lSiteEmpresa: TppLabel;
+    ppLabel8: TppLabel;
+    ppLabel6: TppLabel;
+    ppDBText5: TppDBText;
+    ppLabel7: TppLabel;
+    ppDBText6: TppDBText;
+    ppDBText7: TppDBText;
+    ppdbModeloProdutoItem: TppDBPipeline;
+    procedure pprModeloBeforePrint(Sender: TObject);
+    procedure DataModuleCreate(Sender: TObject);
+    procedure pprModeloProdutoBeforePrint(Sender: TObject);
+  private
+    FController : iController;
+
+    procedure FiltraEmpresa(aValue : String);
+
+    { Private declarations }
+  public
+
+    { Public declarations }
+  end;
+
+var
+  dmEntidadeRelatorios: TdmEntidadeRelatorios;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses ufrmModelProduct;
+
+
+{$R *.dfm}
+
+procedure TdmEntidadeRelatorios.DataModuleCreate(Sender: TObject);
+begin
+  FController := TController.New;
+end;
+
+procedure TdmEntidadeRelatorios.FiltraEmpresa(aValue: String);
+begin
+  dmPrincipal.sqlEmpresa.Active := False;
+  dmPrincipal.sqlEmpresa.CommandText := ('select '+
+  'emp.id_emp, '+
+  'case '+
+  '  when emp.nome is null then emp.razao_social '+
+  '  else emp.nome '+
+  ' end NomeEmpresa, '+
+  'emp.fone '+
+  'from cad_razao_social emp '+
+  'where emp.Id_Emp='+aValue+' ');
+  dmPrincipal.cdsEmpresa.Active := False;
+  dmPrincipal.cdsEmpresa.Active := True;
+end;
+
+procedure TdmEntidadeRelatorios.pprModeloBeforePrint(Sender: TObject);
+begin
+  if not dmPrincipal.cdsModelo.IsEmpty then
+  begin
+   pplEmpresa.Caption:= FController
+                          .EntidadesEmpresaLogada
+                            .DadosEmpresaLogada
+                               .NomeEmpresa;
+
+   pplSiteEmpresa.Caption :=  FController
+                                   .EntidadesRedeInfocon
+                                     .DadosRedeInfocon
+                                      .Site;
+  end;
+end;
+
+procedure TdmEntidadeRelatorios.pprModeloProdutoBeforePrint(Sender: TObject);
+begin
+ if not dmPrincipal.cdsModeloProduto.IsEmpty then
+  begin
+   lNomeEmpresa.Caption:= FController
+                          .EntidadesEmpresaLogada
+                            .DadosEmpresaLogada
+                               .NomeEmpresa;
+
+   lSiteEmpresa.Caption :=  FController
+                                .EntidadesRedeInfocon
+                                   .DadosRedeInfocon
+                                     .Site;
+  end;
+end;
+
+end.

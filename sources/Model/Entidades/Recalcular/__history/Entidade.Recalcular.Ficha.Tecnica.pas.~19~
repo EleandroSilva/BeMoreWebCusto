@@ -1,0 +1,177 @@
+unit Entidade.Recalcular.Ficha.Tecnica;
+
+interface
+
+uses udmPrincipal, Data.SqlExpr, System.SysUtils;
+
+Type
+  TRecalcularFichaTecnica = class
+  private
+    qrAuxiliar: TSQLQuery;
+    qrUpdate: TSQLQuery;
+    qrSelect: TSQLQuery;
+
+    FValorUnitario: Currency;
+    FQtde: Currency;
+    FPerda: Currency;
+    FValorPerda: Currency;
+    FSubTotal: Currency;
+    FValorFinal: Currency;
+    function PesquisaMateriaPrima(aValue: String): Currency;
+
+    procedure SomaNovosValores(aQtde, aPerda, aValorUnitario: Currency);
+
+  public
+    FId: String;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    function PesquisaFichaTecnicaItem(aValue: String): Currency;
+    procedure SomaCabecalho(aValue: String);
+  end;
+
+implementation
+
+{ TRecalcularFichaTecnica }
+
+constructor TRecalcularFichaTecnica.Create;
+begin
+  qrAuxiliar := TSQLQuery.Create(nil);
+  qrAuxiliar.SQLConnection := dmPrincipal.sqlConexao;
+
+  qrUpdate := TSQLQuery.Create(nil);
+  qrUpdate.SQLConnection := dmPrincipal.sqlConexao;
+
+  qrSelect := TSQLQuery.Create(nil);
+  qrSelect.SQLConnection := dmPrincipal.sqlConexao;
+end;
+
+destructor TRecalcularFichaTecnica.Destroy;
+begin
+  FreeAndNil(qrAuxiliar);
+  FreeAndNil(qrUpdate);
+  FreeAndNil(qrSelect);
+  inherited;
+end;
+
+function TRecalcularFichaTecnica.PesquisaFichaTecnicaItem(aValue: String): Currency;
+var
+  lIdMateriaPrima: String;
+begin
+  FQtde := 0;
+  FPerda := 0;
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Text := ('select ' +
+    'fti.id, ' +
+    'fti.idfichatecnica, ' +
+    'fti.idmateriaprima, ' +
+    'fti.valorunitario, ' +
+    'fti.qtde, ' +
+    'fti.subtotal, ' +
+    'fti.perda, ' +
+    'fti.valorperda, ' +
+    'fti.valorfinal ' +
+    'from fichatecnicaitem fti ' +
+    'where fti.IdFichaTecnica= ' + aValue + ' ' +
+    'order by fti.idmateriaprima desc ');
+  qrAuxiliar.Active := True;
+
+  qrAuxiliar.First;
+  while not qrAuxiliar.Eof do
+  begin
+    Result := qrAuxiliar.FieldByName('Qtde').AsCurrency;
+    FQtde := Result;
+    FPerda := qrAuxiliar.FieldByName('Perda').AsCurrency;
+
+    PesquisaMateriaPrima(qrAuxiliar.FieldByName('IdMateriaPrima').AsString);
+
+    SomaNovosValores(FQtde, FPerda, FValorUnitario);
+
+    qrUpdate.Active := False;
+    qrUpdate.SQL.Clear;
+    qrUpdate.SQL.Text := ('update FichaTecnicaItem fti set ' +
+      'ValorUnitario=' + StringReplace(CurrToStr(FValorUnitario), ',', '.', [RFReplaceAll]) + ',' +
+      'SubTotal=' + StringReplace(CurrToStr(FSubTotal), ',', '.', [RFReplaceAll]) + ',' +
+      'ValorPerda=' + StringReplace(CurrToStr(FValorPerda), ',', '.', [RFReplaceAll]) + ',' +
+      'ValorFinal=' + StringReplace(CurrToStr(FValorFinal), ',', '.', [RFReplaceAll]) + ' ' +
+      'where fti.IdFichaTecnica=' + aValue + ' ' +
+      'and fti.ID=' + qrAuxiliar.FieldByName('ID').AsString + ' ');
+    qrUpdate.ExecSQL;
+    qrUpdate.Active := False;
+
+    qrAuxiliar.Next;
+  end;
+end;
+
+function TRecalcularFichaTecnica.PesquisaMateriaPrima(aValue: String): Currency;
+begin
+  FValorUnitario := 0;
+  qrSelect.Active := False;
+  qrSelect.SQL.Clear;
+  qrSelect.SQL.Text := (
+    'select ' +
+    'mp.id, ' +
+    'mp.descricao, ' +
+    'mp.un, ' +
+    'mp.vl_liquido, ' +
+    'mp.vl_unitario, ' +
+    'mp.usuario Operador, ' +
+    'mp.Status, ' +
+    'mp.Ativo ' +
+    'from cad_gmp mp ' +
+    'where mp.id=' + aValue + ' ');
+  qrSelect.Active := True;
+  Result := qrSelect.FieldByName('vl_liquido').AsCurrency;
+  FValorUnitario := Result;
+end;
+
+procedure TRecalcularFichaTecnica.SomaCabecalho(aValue: String);
+begin
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Text := ('select ' +
+    'coalesce(cast(sum(fti.valorperda) as numeric (10,2)),0) ValorPerda,' +
+    'coalesce(cast(sum(fti.valorfinal) as numeric (10,2)),0) ValorFinal ' +
+    'from fichatecnicaitem fti ' +
+    'where fti.idfichatecnica =' + aValue + ' ');
+  qrAuxiliar.Active := True;
+
+  qrUpdate.Active := False;
+  qrUpdate.SQL.Clear;
+  qrUpdate.SQL.Text := ('update FichaTecnica ft set ' +
+    'ValorPerda=' + StringReplace(CurrToStr(qrAuxiliar.FieldByName('ValorPerda').AsCurrency), ',', '.', [RFReplaceAll]) + ',' +
+    'ValorFinal=' + StringReplace(CurrToStr(qrAuxiliar.FieldByName('ValorFinal').AsCurrency), ',', '.', [RFReplaceAll]) + ' ' +
+    'where ft.ID=' + aValue + ' ');
+  qrUpdate.ExecSQL;
+  qrUpdate.Active := False;
+end;
+
+procedure TRecalcularFichaTecnica.SomaNovosValores(aQtde, aPerda,
+  aValorUnitario: Currency);
+var
+  lSoma: Currency;
+begin
+  lSoma := 0;
+  FSubTotal := 0;
+  FValorFinal := 0;
+  if aPerda > 0 then
+  begin
+    lSoma := StrToFloat(FormatFloat('0.0000', aValorUnitario * aPerda / 100));
+    FValorPerda := lSoma;
+  end
+  else
+    FValorPerda := 0;
+
+  lSoma := StrToFloat(FormatFloat('0.0000', aValorUnitario * aQtde));
+  FSubTotal := lSoma;
+
+  if FValorPerda > 0 then
+    lSoma := StrToFloat(FormatFloat('0.0000', FSubTotal + FValorPerda))
+  else
+    lSoma := StrToFloat(FormatFloat('0.0000', FSubTotal));
+  FValorFinal := lSoma;
+end;
+
+end.

@@ -1,0 +1,40 @@
+unit ufrmAccountClassSearch;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  ufrmModeloPesquisa,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls;
+
+type
+  TfrmAccountClassSearch = class(TfrmModeloPesquisa)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAccountClassSearch: TfrmAccountClassSearch;
+
+implementation
+
+{$R *.dfm}
+
+end.

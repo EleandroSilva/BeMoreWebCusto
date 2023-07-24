@@ -1,0 +1,90 @@
+unit Supremo.Entidade.ProductGroup;
+
+interface
+
+uses
+  Data.DB,
+
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory,
+  Whorkshop.Model.Entidades.Interfaces, System.SysUtils;
+
+type
+  TProductGroup = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FTextoFiltro: String;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade; overload;
+  end;
+
+implementation
+
+{ TProductGroup }
+
+function TProductGroup.Buscar(aValue: String): iModelEntidade;
+var
+  lWhere : String;
+begin
+  Result := Self;
+  lWhere:='';
+
+  if FTextoFiltro<>'' then
+  case FEscolhaFiltro of
+    0:lWhere:=('where Id='+aValue+' ');
+    1:lWhere:=('where Descricao=like ''%' + aValue + '%'' ');
+  end;
+  FQuery.Open('cad_grupo ' +lWhere);
+end;
+
+constructor TProductGroup.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+function TProductGroup.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TProductGroup.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+destructor TProductGroup.Destroy;
+begin
+  inherited;
+end;
+
+function TProductGroup.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+class function TProductGroup.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TProductGroup.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+end.

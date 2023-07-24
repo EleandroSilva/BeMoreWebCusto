@@ -1,0 +1,542 @@
+inherited frmFixedExpense: TfrmFixedExpense
+  Caption = 'Despesa Fixas'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel2: TPanel
+    inherited lTextoEmpresa: TLabel
+      Width = 818
+      Height = 41
+    end
+    inherited pOperator: TPanel
+      inherited lOperator: TLabel
+        Width = 120
+      end
+      inherited edtOperator: TEdit
+        Top = 22
+        Align = alNone
+        Visible = False
+        ExplicitTop = 22
+      end
+      object dbOperador: TDBEdit
+        Left = 0
+        Top = 20
+        Width = 120
+        Height = 21
+        Align = alBottom
+        Color = 8224125
+        DataField = 'OPERADOR'
+        DataSource = dmPrincipal.dsDespesaFixa
+        ReadOnly = True
+        TabOrder = 1
+      end
+    end
+  end
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited lSite: TLabel
+        Width = 218
+      end
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSearch: TBitBtn
+      Left = 88
+      ExplicitLeft = 88
+    end
+    inherited btnCancel: TBitBtn
+      Left = 178
+      ExplicitLeft = 178
+    end
+    inherited btnNew: TBitBtn
+      Width = 88
+      ExplicitWidth = 88
+    end
+    inherited btnSalve: TBitBtn
+      Left = 448
+      ExplicitLeft = 448
+    end
+    inherited btnUpdate: TBitBtn
+      Left = 268
+      ExplicitLeft = 268
+    end
+    inherited btnDelete: TBitBtn
+      Left = 358
+      ExplicitLeft = 358
+    end
+    inherited bbClose: TBitBtn
+      Left = 538
+      ExplicitLeft = 538
+    end
+  end
+  inherited Panel1: TPanel
+    inherited pgMain: TPageControl
+      inherited tsRegister: TTabSheet
+        ExplicitLeft = 4
+        ExplicitTop = 24
+        ExplicitWidth = 930
+        ExplicitHeight = 419
+        inherited pGrid: TPanel
+          inherited pEdit: TPanel
+            Height = 50
+            TabOrder = 3
+            ExplicitHeight = 50
+            object lDescription: TLabel [2]
+              Left = 293
+              Top = 104
+              Width = 12
+              Height = 13
+              Caption = '...'
+              Visible = False
+            end
+            object lMoney: TLabel [3]
+              Left = 751
+              Top = 6
+              Width = 28
+              Height = 13
+              Alignment = taRightJustify
+              Caption = 'Valor:'
+            end
+            object Label3: TLabel [4]
+              Left = 225
+              Top = 6
+              Width = 38
+              Height = 13
+              Alignment = taRightJustify
+              Caption = 'Id CCC:'
+            end
+            inherited lDescricao: TLabel
+              Left = 277
+              Width = 134
+              Caption = 'Descri'#231#227'o Classe de contas:'
+              ExplicitLeft = 277
+              ExplicitWidth = 134
+            end
+            object dbtDescricaoClasseContas: TDBText [6]
+              Left = 277
+              Top = 28
+              Width = 228
+              Height = 17
+              DataField = 'DESCRICAO'
+              DataSource = dmPrincipal.dsDespesaFixa
+            end
+            inherited edtId: TEdit
+              Left = 8
+              Top = 96
+              TabOrder = 4
+              Visible = False
+              ExplicitLeft = 8
+              ExplicitTop = 96
+            end
+            inherited edtDescription: TEdit
+              Left = 205
+              Top = 96
+              Width = 50
+              Alignment = taRightJustify
+              TabOrder = 6
+              Visible = False
+              ExplicitLeft = 205
+              ExplicitTop = 96
+              ExplicitWidth = 50
+            end
+            inherited MedtReleaseDate: TMaskEdit
+              Left = 69
+              Top = 96
+              TabOrder = 5
+              Visible = False
+              ExplicitLeft = 69
+              ExplicitTop = 96
+            end
+            object btnModel: TBitBtn
+              Left = 185
+              Top = 21
+              Width = 27
+              Height = 25
+              Caption = '...'
+              TabOrder = 7
+            end
+            object edtMoney: TEdit
+              Left = 749
+              Top = 96
+              Width = 90
+              Height = 21
+              Alignment = taRightJustify
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clRed
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 8
+              Visible = False
+            end
+            object edtMedtReleaseDate: TDBEdit
+              Left = 77
+              Top = 25
+              Width = 96
+              Height = 21
+              DataField = 'DATALANCAMENTO'
+              DataSource = dmPrincipal.dsDespesaFixa
+              TabOrder = 1
+            end
+            object dbId: TDBEdit
+              Left = 16
+              Top = 25
+              Width = 55
+              Height = 21
+              BiDiMode = bdRightToLeft
+              Color = 8224125
+              DataField = 'ID'
+              DataSource = dmPrincipal.dsDespesaFixa
+              ParentBiDiMode = False
+              ReadOnly = True
+              TabOrder = 0
+            end
+            object edtIdClasseContas: TDBEdit
+              Left = 218
+              Top = 25
+              Width = 45
+              Height = 21
+              BiDiMode = bdRightToLeft
+              DataField = 'IDCLASSECONTAS'
+              DataSource = dmPrincipal.dsDespesaFixa
+              ParentBiDiMode = False
+              TabOrder = 2
+              OnExit = edtIdClasseContasExit
+              OnKeyDown = edtIdClasseContasKeyDown
+              OnKeyPress = edtIdClasseContasKeyPress
+            end
+            object dbValor: TDBEdit
+              Left = 688
+              Top = 25
+              Width = 91
+              Height = 21
+              BiDiMode = bdRightToLeft
+              DataField = 'VALOR'
+              DataSource = dmPrincipal.dsDespesaFixa
+              ParentBiDiMode = False
+              TabOrder = 3
+              OnExit = dbValorExit
+              OnKeyPress = dbValorKeyPress
+            end
+          end
+          inherited Panel9: TPanel
+            Top = 139
+            Height = 279
+            TabOrder = 4
+            ExplicitTop = 139
+            ExplicitHeight = 279
+          end
+          object pProduct: TPanel
+            Left = 1
+            Top = 51
+            Width = 928
+            Height = 69
+            Align = alTop
+            BevelOuter = bvNone
+            Color = 10768721
+            ParentBackground = False
+            TabOrder = 0
+            object Panel8: TPanel
+              Left = 573
+              Top = 0
+              Width = 355
+              Height = 69
+              Align = alClient
+              BevelOuter = bvNone
+              Color = 10768721
+              ParentBackground = False
+              TabOrder = 0
+              object Label2: TLabel
+                Left = 0
+                Top = 30
+                Width = 355
+                Height = 18
+                Align = alBottom
+                Caption = 'Digite conforme escolha:'
+                Color = 5483007
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clBlack
+                Font.Height = -16
+                Font.Name = 'Berlin Sans FB'
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+                ExplicitWidth = 158
+              end
+              object edtProduct: TEdit
+                Left = 0
+                Top = 48
+                Width = 355
+                Height = 21
+                Align = alBottom
+                TabOrder = 0
+                OnKeyPress = edtSearchKeyPress
+              end
+              object btnSearchProduct: TBitBtn
+                Left = 0
+                Top = 0
+                Width = 170
+                Height = 30
+                Align = alLeft
+                Caption = 'Buscar Contas'
+                TabOrder = 1
+                OnClick = btnSearchProductClick
+              end
+              object btnInsertContasPagarDespesaFixa: TBitBtn
+                Left = 170
+                Top = 0
+                Width = 170
+                Height = 30
+                Align = alLeft
+                Caption = 'Inserir contas na Depesa Fixa'
+                TabOrder = 2
+                OnClick = btnInsertContasPagarDespesaFixaClick
+              end
+            end
+            object rgPeriodoContas: TRadioGroup
+              Left = 173
+              Top = 0
+              Width = 261
+              Height = 69
+              Align = alLeft
+              Caption = 'Escolha per'#237'odo'
+              Color = 10768721
+              Columns = 2
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWhite
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ItemIndex = 1
+              Items.Strings = (
+                '  M'#234's Anterior'
+                '  3 Meses Anteriores '
+                '  6 Meses Anteriores'
+                ' 12 Meses Anteriores')
+              ParentBackground = False
+              ParentColor = False
+              ParentFont = False
+              TabOrder = 1
+            end
+            object rgChoiceTypeAccount: TRadioGroup
+              Left = 0
+              Top = 0
+              Width = 173
+              Height = 69
+              Align = alLeft
+              Caption = 'Escolha'
+              Color = 10768721
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWhite
+              Font.Height = -13
+              Font.Name = 'Berlin Sans FB'
+              Font.Style = []
+              ItemIndex = 1
+              Items.Strings = (
+                'Todas (Data Emiss'#227'o)'
+                'Pagas(Data Pagamento) ')
+              ParentBackground = False
+              ParentColor = False
+              ParentFont = False
+              TabOrder = 2
+            end
+            object rdTipoDespesa: TRadioGroup
+              Left = 434
+              Top = 0
+              Width = 139
+              Height = 69
+              Align = alLeft
+              Caption = 'Escolha tipo de despesas'
+              ItemIndex = 0
+              Items.Strings = (
+                'Todas as Despesas'
+                'Despesas Vari'#225'veis'
+                'Despesas Fixas')
+              TabOrder = 3
+            end
+          end
+          object dbgPayAccounts: TDBGrid
+            Left = 1
+            Top = 139
+            Width = 928
+            Height = 279
+            Align = alClient
+            DataSource = dsPayAccounts
+            TabOrder = 1
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+            OnCellClick = dbgPayAccountsCellClick
+            OnColEnter = dbgPayAccountsColEnter
+            OnDrawColumnCell = dbgPayAccountsDrawColumnCell
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'IDCLASSECONTAS'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Id Classe Contas:'
+                Width = 97
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'Status'
+                Title.Alignment = taCenter
+                Title.Caption = 'Enviar:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'ClasseContas'
+                Title.Caption = 'Classe Contas:'
+                Width = 442
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'ValorClasse'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                Title.Alignment = taCenter
+                Title.Caption = 'Valor Classe:'
+                Width = 105
+                Visible = True
+              end>
+          end
+          object Panel7: TPanel
+            Left = 1
+            Top = 120
+            Width = 928
+            Height = 19
+            Align = alTop
+            Caption = 'Lista de Despesas Lan'#231'adas no contas a pagar'
+            Color = 1543167
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Berlin Sans FB'
+            Font.Style = []
+            ParentBackground = False
+            ParentFont = False
+            TabOrder = 2
+          end
+        end
+      end
+      inherited tsSearch: TTabSheet
+        ExplicitLeft = 4
+        ExplicitTop = 24
+        ExplicitWidth = 930
+        ExplicitHeight = 419
+        inherited pSearch: TPanel
+          inherited rgChoice: TRadioGroup
+            Width = 338
+            Columns = 2
+            Items.Strings = (
+              'Id'
+              'Id Classe de Contas'
+              'Descri'#231#227'o Classe de Contas'
+              'Operador')
+            ExplicitWidth = 338
+          end
+          inherited gbBetweenDates: TGroupBox
+            Left = 338
+            ExplicitLeft = 338
+          end
+          inherited Panel6: TPanel
+            Left = 578
+            Width = 352
+            ExplicitLeft = 578
+            ExplicitWidth = 352
+            inherited lDigiteConformeEscolha: TLabel
+              Width = 350
+            end
+            object Label1: TLabel [1]
+              Left = 0
+              Top = 0
+              Width = 3
+              Height = 13
+            end
+            inherited edtSearch: TEdit
+              Width = 350
+              ExplicitWidth = 350
+            end
+            inherited btnPrint: TBitBtn
+              OnClick = btnPrintClick
+            end
+          end
+        end
+        inherited dbgSearch: TDBGrid
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'ID'
+              Title.Alignment = taCenter
+              Title.Caption = 'Id:'
+              Width = 48
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IDCLASSECONTAS'
+              Title.Alignment = taCenter
+              Title.Caption = 'Id Classe Contas:'
+              Width = 87
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DESCRICAO'
+              Title.Alignment = taCenter
+              Title.Caption = 'Descri'#231#227'o:'
+              Width = 337
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'VALOR'
+              Title.Alignment = taCenter
+              Title.Caption = 'Valor:'
+              Width = 139
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'ORIGEM'
+              Title.Alignment = taCenter
+              Title.Caption = 'Origem:'
+              Width = 111
+              Visible = True
+            end>
+        end
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    DataSet = dmPrincipal.cdsDespesaFixa
+    OnDataChange = DataSource1DataChange
+    Left = 576
+    Top = 264
+  end
+  object dsPayAccounts: TDataSource [4]
+    OnDataChange = dsPayAccountsDataChange
+    OnUpdateData = dsPayAccountsUpdateData
+    Left = 288
+    Top = 264
+  end
+  inherited ImageList1: TImageList
+    Left = 376
+    Top = 264
+  end
+  object dsAccountSearch: TDataSource
+    Left = 464
+    Top = 272
+  end
+end

@@ -1,0 +1,26 @@
+unit ufrmProductModel;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ufrmModelo, Data.DB, Vcl.Grids,
+  Vcl.DBGrids, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
+  Vcl.DBCtrls;
+
+type
+  TfrmProductModel = class(TfrmModelo)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmProductModel: TfrmProductModel;
+
+implementation
+
+{$R *.dfm}
+
+end.

@@ -1,0 +1,247 @@
+unit Supremo.Entidade.ContasPagar;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TContasPagar = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo: String;
+    FIdProduto: String;
+    FIdClasseContas: String;
+
+    FValorLancamento: currency;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro(aValue: String): iModelEntidade;
+    function ValorLancamento(aValue: currency): iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+{ TContasPagar }
+
+constructor TContasPagar.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TContasPagar.Destroy;
+begin
+  inherited;
+end;
+
+class function TContasPagar.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TContasPagar.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TContasPagar.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TContasPagar.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TContasPagar.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TContasPagar.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TContasPagar.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TContasPagar.IdParametro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdClasseContas := aValue;
+end;
+
+function TContasPagar.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TContasPagar.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TContasPagar.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TContasPagar.ValorLancamento(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento := aValue;
+end;
+
+function TContasPagar.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TContasPagar.Buscar(aValue: String): iModelEntidade;
+const
+  constSQL = (
+    'select ' +
+    'cp.cod_classe IdClasseContas, ' +
+    'ccc.descricao ClasseContas, ' +
+    '( ' +
+    '  select ' +
+    '  sum(cp1.vl_parcela) ValorClasse ' +
+    ' from cad_ct_pagar cp1 ' +
+    ' where cp1.cod_classe=cp.cod_classe ' +
+    ') ' +
+    'from cad_ct_pagar cp ' +
+    'inner join cad_classe_contas ccc on ccc.codigo=cp.cod_classe '
+    );
+var
+  lWhere, lGrupo: String;
+  lHoje: TDateTime;
+begin
+  Result := Self;
+  lWhere := '';
+  lHoje := Now;
+
+  {
+    0- Todas as Contas(Data Emissão)
+    1- Contas Pagas(Data Pagamento)
+
+    0 Mês Anterior
+    1  3 Meses Anteriores
+    2  6 Meses Anteriores
+    3 12 Meses Anteriores
+  }
+  case FEscolhaFiltro of
+    0: lHoje := Now - 30;
+    1: lHoje := Now - 90;
+    2: lHoje := Now - 180;
+    3: lHoje := Now - 360;
+  end;
+    lWhere := FormatDateTime('dd.mm.yyyy', lHoje);
+{
+0:
+  lWhere := ('where');
+1:
+  lWhere := ('where');
+2:
+  lWhere := ('where');
+3:
+  lWhere := ('where');
+ }
+  lWhere := ('where cp.dt_emissao between '''+FormatDateTime('dd.mm.yyyy',lHoje)+''''+
+  'and '''+FormatDateTime('dd.mm.yyyy',Now)+'''');
+
+  lGrupo := ('group by 1,2 ');
+  {
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0:
+        lWhere := lWhere + ('and cp.Cod_Classe=' + aValue + ' ');
+      1:
+        lWhere := lWhere + ('and ccc.Descricao CONTAINING ''' + aValue + ''' ');
+      2:
+        lWhere := lWhere + ('and df.Operador CONTAINING ''' + aValue + ''' ');
+    end;
+  }
+  FQuery.Open(constSQL + lWhere+ lGrupo);
+end;
+
+function TContasPagar.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TContasPagar.Insert: iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TContasPagar.Insert(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TContasPagar.Update(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TContasPagar.PegarGenId: Integer;
+begin
+  Result := 0; // Criar quando precisar
+end;
+
+function TContasPagar.Get(const aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  // criar Json quando precisar
+end;
+
+end.

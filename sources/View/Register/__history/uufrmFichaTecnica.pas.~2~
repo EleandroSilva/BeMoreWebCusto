@@ -1,0 +1,48 @@
+unit uufrmFichaTecnica;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+
+  Data.DB,
+
+  ufrmModelodbEdit,
+  udmPrincipal;
+
+type
+  TufrmFichaTecnica = class(TfrmModelodbEdit)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ufrmFichaTecnica: TufrmFichaTecnica;
+
+implementation
+
+{$R *.dfm}
+
+end.

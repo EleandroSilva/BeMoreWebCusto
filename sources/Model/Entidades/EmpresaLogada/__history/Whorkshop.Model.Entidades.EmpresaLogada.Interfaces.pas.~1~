@@ -1,0 +1,17 @@
+unit Whorkshop.Model.Entidades.EmpresaLogada;
+
+interface
+
+type
+  iModelEntidadeEmpresaLogada = interface
+    ['{44839549-25EE-48E5-ACFB-9C4478ED75C0}']
+    function IdEmpresa : String;
+    function NomeEmpresa : String;
+    function Operador : String;
+  end;
+
+
+
+implementation
+
+end.

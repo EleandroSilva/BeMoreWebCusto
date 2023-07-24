@@ -1,0 +1,978 @@
+unit Entidade.Replicar.Montar.Custo;
+
+interface
+
+uses
+  System.SysUtils,
+
+  FireDAC.Comp.Client,
+  Vcl.Dialogs;
+
+Type
+  TReplicarMontarCusto = class
+    private
+      FDQuery         : TFDQuery;
+      FDQueryBuscar   : TFDQuery;
+      FDQueryFiltro   : TFDQuery;
+      FDQueryAuxiliar : TFDQuery;
+      FDQueryInsert   : TFDQuery;
+      FDQueryDelete   : TFDQuery;
+
+      FWhere        : String;
+      FGrupo        : String;
+      FOrdem        : String;
+      FInsert       : String;
+      FFechaAspa    : String;
+
+      FValorFrete             : Currency;
+      FIndiceaVistaMultiplicar: Currency;
+      FIndiceaVistaDividir    : Currency;
+      FQtdeProducao           : Integer;
+      FValorDespesaFixa       : Currency;
+      FModeloNome             : String;
+      FIdMarkup               : Integer;
+      FValorVendaaVista       : Currency;
+      FValorLucroReal         : Currency;
+      FValorFichaTecnica      : Currency;
+      FCustoModeloDespesaFixa : Currency;
+      FAliquotaMarkup         : Currency;
+      FValorMaoObraInterna    : Currency;
+      FValorMaoObraExterna    : Currency;
+      FMarkupNome             : String;
+      FCustoTotalModelo       : Currency;
+      FValorMaoObraAjustado   : Currency;
+      FCustoFinal             : Currency;
+      FIdModelo               : Integer;
+      FOperador               : String;
+      FAliquotaFinanceiro     : Currency;
+      FIdPagamento            : Integer;
+      FIdMontarCusto          : Integer;
+      FTabelaSomenteAVIsta    : Boolean;
+      FTipoFiltro             : Integer;
+      FValorCustoMarkup       : Currency;
+      FAliquotaMarkupSemLucro : Currency;
+      FValorCustoComMarkup    : Currency;
+    FIdRegiao: Integer;
+
+
+
+
+      procedure SetAliquotaMarkup         (const Value: Currency);
+      procedure SetAliquotaMarkupSemLucro (const Value: Currency);
+      procedure SetCustoModeloDespesaFixa (const Value: Currency);
+      procedure SetCustoTotalModelo       (const Value: Currency);
+      procedure SetIdMarkup               (const Value: Integer);
+      procedure SetIdModelo               (const Value: Integer);
+      procedure SetIndiceaVistaDividir    (const Value: Currency);
+      procedure SetIndiceaVistaMultiplicar(const Value: Currency);
+      procedure SetMarkupNome             (const Value: String);
+      procedure SetModeloNome             (const Value: String);
+      procedure SetQtdeProducao           (const Value: Integer);
+      procedure SetValorDespesaFixa       (const Value: Currency);
+      procedure SetValorFichaTecnica      (const Value: Currency);
+      procedure SetValorFrete             (const Value: Currency);
+      procedure SetValorMaoObraAjustado   (const Value: Currency);
+      procedure SetValorMaoObraInterna    (const Value: Currency);
+      procedure SetValorMaoObraExterna    (const Value: Currency);
+      procedure SetValorVendaaVista       (const Value: Currency);
+      procedure SetValorLucroReal         (const Value: Currency);
+      procedure SetCustoFinal             (const Value: Currency);
+      procedure SetOperador               (const Value: String);
+      procedure SetAliquotaFinanceiro     (const Value: Currency);
+      procedure SetIdMontarCusto          (const Value: Integer);
+      procedure SetIdPagamento            (const Value: Integer);
+      procedure SetTabelaSomenteAVIsta    (const Value: Boolean);
+      procedure SetTipoFiltro             (const Value: Integer);
+      procedure SetValorCustoComMarkup    (const Value: Currency);
+      procedure SetValorCustoMarkup       (const Value: Currency);
+
+
+      procedure BuscaQtdeProducao;
+      procedure SomaDespesaFixa;
+      procedure SomaCustoModelo;
+      procedure SomarValorCustoMarkup;
+
+
+      procedure CalculaCustoDespesaFixa;
+      procedure CalcularValorMaoObraInterna;
+      procedure CalcularValorMaoObraExterna;
+      procedure DeleteMontarCustoModelo;
+      procedure InsertReplicaCusto;
+      procedure BuscarGenId;
+      procedure BuscarCustoFinanceiro;
+      procedure ExcluirCustoFinanceiro;
+      procedure InsertTabelaPreco;
+    procedure SetIdRegiao(const Value: Integer);
+    public
+      Constructor Create;
+      Destructor Destroy; override;
+
+      property IdModelo                : Integer  read FIdModelo                write SetIdModelo;
+      property IdMarkup                : Integer  read FIdMarkup                write SetIdMarkup;
+      property IdRegiao                : Integer  read FIdRegiao                write SetIdRegiao;
+      property ModeloNome              : String   read FModeloNome              write SetModeloNome;
+      property QtdeProducao            : Integer  read FQtdeProducao            write SetQtdeProducao;
+      property ValorDespesaFixa        : Currency read FValorDespesaFixa        write SetValorDespesaFixa;
+      property ValorFichaTecnica       : Currency read FValorFichaTecnica       write SetValorFichaTecnica;
+      property CustoTotalModelo        : Currency read FCustoTotalModelo        write SetCustoTotalModelo;
+      property ValorMaoObraAjustado    : Currency read FValorMaoObraAjustado    write SetValorMaoObraAjustado;
+      property ValorMaoObraInterna     : Currency read FValorMaoObraInterna     write SetValorMaoObraInterna;
+      property ValorMaoObraExterna     : Currency read FValorMaoObraExterna     write SetValorMaoObraExterna;
+      property ValorFrete              : Currency read FValorFrete              write SetValorFrete;
+      property CustoModeloDespesaFixa  : Currency read FCustoModeloDespesaFixa  write SetCustoModeloDespesaFixa;
+      property MarkupNome              : String   read FMarkupNome              write SetMarkupNome;
+      property AliquotaMarkup          : Currency read FAliquotaMarkup          write SetAliquotaMarkup;
+      property AliquotaFinanceiro      : Currency read FAliquotaFinanceiro      write SetAliquotaFinanceiro;
+      property AliquotaMarkupSemLucro  : Currency read FAliquotaMarkupSemLucro  write SetAliquotaMarkupSemLucro;
+      property ValorCustoMarkup        : Currency read FValorCustoMarkup        write SetValorCustoMarkup;
+      property ValorCustoComMarkup     : Currency read FValorCustoComMarkup     write SetValorCustoComMarkup;
+      property IndiceaVistaMultiplicar : Currency read FIndiceaVistaMultiplicar write SetIndiceaVistaMultiplicar;
+      property IndiceaVistaDividir     : Currency read FIndiceaVistaDividir     write SetIndiceaVistaDividir;
+      property ValorLucroReal          : Currency read FValorLucroReal          write SetValorLucroReal;
+      property ValorVendaaVista        : Currency read FValorVendaaVista        write SetValorVendaaVista;
+      property CustoFinal              : Currency read FCustoFinal              write SetCustoFinal;
+      property IdMontarCusto           : Integer  read FIdMontarCusto           write SetIdMontarCusto;
+      property IdPagamento             : Integer  read FIdPagamento             write SetIdPagamento;
+      property Operador                : String   read FOperador                write SetOperador;
+      property TabelaSomenteAVIsta     : Boolean  read FTabelaSomenteAVIsta     write SetTabelaSomenteAVIsta;
+      property TipoFiltro              : Integer  read FTipoFiltro              write SetTipoFiltro;
+
+      procedure BuscarModelos;
+      procedure ExcluirTodososCustos;
+      function  VerificoseConstaCustoMarkup : Boolean;
+      function  CalcularMarkup          : Currency;
+      function  ListaTabelaPrazoMedio: Boolean;
+  end;
+
+implementation
+
+uses
+  udmPrincipal;
+
+{ TReplicarMontarCusto }
+
+constructor TReplicarMontarCusto.Create;
+begin
+  FDQuery := TFDQuery.Create(nil);
+  FDQuery.Connection := dmPrincipal.FDConexao;
+
+  FDQueryBuscar   := TFDQuery.Create(nil);
+  FDQueryBuscar.Connection := dmPrincipal.FDConexao;
+
+  FDQueryFiltro   := TFDQuery.Create(nil);
+  FDQueryFiltro.Connection := dmPrincipal.FDConexao;
+
+  FDQueryInsert := TFDQuery.Create(nil);
+  FDQueryInsert.Connection := dmPrincipal.FDConexao;
+
+  FDQueryAuxiliar := TFDQuery.Create(nil);
+  FDQueryAuxiliar.Connection := dmPrincipal.FDConexao;
+
+  FDQueryDelete   := TFDQuery.Create(nil);
+  FDQueryDelete.Connection := dmPrincipal.FDConexao;
+end;
+
+destructor TReplicarMontarCusto.Destroy;
+begin
+  FreeAndNil(FDQuery);
+  FreeAndNil(FDQueryBuscar);
+  FreeAndNil(FDQueryFiltro);
+  FreeAndNil(FDQueryInsert);
+  FreeAndNil(FDQueryAuxiliar);
+  FreeAndNil(FDQueryDelete);
+  inherited;
+end;
+
+function TReplicarMontarCusto.ListaTabelaPrazoMedio: Boolean;
+var
+  lSql, lWhere, lOrdem: String;
+begin
+  lSql := '';
+  lWhere := '';
+  lOrdem := '';
+
+  lSql := ('select ' +
+    'distinct ' +
+    'tp.IdMontarCusto, ' +
+    'm.descricao Modelo, ' +
+    'mn.descricao Markup, ' +
+    'tp.valorvendaavista, ' +
+    'cf.prazomedio, ' +
+    'tp.valorvendaprazomedio ' +
+    'from tabelapreco tp ' +
+    'inner join Modelo           m on m.id        = tp.idmodelo ' +
+    'inner join MarkupNome      mn on mn.idregiao = tp.idregiao ' +
+    'inner join custofinanceiro cf on cf.id       = tp.idpagamento ');
+
+  if IdModelo>0 then
+  lWhere := ('where tp.IdModelo=' + IntToStr(IdModelo) + ' ');
+
+  lOrdem := ('order by m.descricao, mn.descricao, cf.prazomedio asc ');
+
+  dmPrincipal.sqlListaTabelaPrazoMedio.Active := False;
+  dmPrincipal.sqlListaTabelaPrazoMedio.CommandText := lSql + lWhere + lOrdem;
+  dmPrincipal.cdsListaTabelaPrazoMedio.Active := False;
+  dmPrincipal.cdsListaTabelaPrazoMedio.Active := True;
+
+  if dmPrincipal.cdsListaTabelaPrazoMedio.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+procedure TReplicarMontarCusto.ExcluirCustoFinanceiro;
+begin
+  FDQueryDelete.Close;
+  Try
+    FDQueryDelete.SQL.Clear;
+    FDQueryDelete.SQL.Text:= ('delete from TabelaPreco tp ' +
+                              'where tp.IdModelo=' + IntToStr(IdModelo) + ' ' +
+                              'and tp.IdMarkupNome=' + IntToStr(IdMarkup) + ' ');
+    FDQueryDelete.ExecSQL;
+  finally
+    FDQueryDelete.Close;
+  End;
+end;
+
+
+procedure TReplicarMontarCusto.BuscarCustoFinanceiro;
+const
+  cSQL = (
+    'select ' +
+    'Id, ' +
+    'IdAliquotaNome, ' +
+    'AliquotaNome, ' +
+    'Aliquota, ' +
+    'IndiceFinanceiro, ' +
+    'IdPagamento, ' +
+    'PagamentoNome, ' +
+    'PrazoMedio, ' +
+    'cast(IndiceFinanceiro*PrazoMedio as numeric(10,2)) JurosFinanceiro, ' +
+    'Operador, ' +
+    'DataLancamento, ' +
+    'Status, ' +
+    'Ativo ' +
+    'from ' +
+    '( ' +
+    'select ' +
+    'cf.Id, ' +
+    'cf.IdAliquotaNome, ' +
+    'an.descricao AliquotaNome, ' +
+    'an.aliquota, ' +
+    'cast(an.Aliquota/30.01 as numeric(10,5)) IndiceFinanceiro, ' +
+    'cf.idpagamento, ' +
+    'pgto.descricao PagamentoNome, ' +
+    'cast(pgto.TT_Dias/pgto.Qtde_Pgto as numeric(10,2)) PrazoMedio, ' +
+    'cf.Operador, ' +
+    'cf.DataLancamento, ' +
+    'cf.Status, ' +
+    'cf.Ativo ' +
+    'from CustoFinanceiro cf ' +
+    'inner join AliquotaNome an on an.id   = cf.IdaliquotaNome ' +
+    'inner join cad_prazo  pgto on pgto.id = cf.IdPagamento ) '
+    );
+begin
+  FWhere := '';
+  FOrdem := '';
+
+  if TabelaSomenteAVIsta then
+    FWhere := ('where PrazoMedio =0 ');
+
+  FOrdem := ('order by PagamentoNome, PrazoMedio asc ');
+
+  FDQueryAuxiliar.Active := False;
+  FDQueryAuxiliar.SQL.Clear;
+  FDQueryAuxiliar.SQL.Text := (cSQL + FWhere + FOrdem);
+  FDQueryAuxiliar.Active := True;
+
+  if not FDQueryAuxiliar.IsEmpty then
+  begin
+    while not FDQueryAuxiliar.Eof do
+    begin
+      SetIdPagamento(FDQueryAuxiliar.FieldByName('Id').AsInteger);
+      SetAliquotaFinanceiro(FDQueryAuxiliar.FieldByName('JurosFinanceiro').AsCurrency);
+
+      InsertTabelaPreco;
+      FDQueryAuxiliar.Next;
+    end;
+  end;
+end;
+
+procedure TReplicarMontarCusto.ExcluirTodososCustos;
+begin
+  FDQueryDelete.Close;
+  Try
+    FDQueryDelete.SQL.Clear;
+    FDQueryDelete.SQL.Text:=('delete from MontarCusto ');
+    FDQueryDelete.ExecSQL;
+  finally
+    FDQueryDelete.Close;
+  End;
+end;
+
+procedure TReplicarMontarCusto.BuscarGenId;
+begin
+  FDQueryFiltro.Close;
+  try
+    FDQueryFiltro.SQL.Clear;
+    FDQueryFiltro.SQL.Text := ('select gen_id(GEN_MONTARCUSTO_ID,0) from rdb$database ');
+    FDQueryFiltro.Active := True;
+    SetIdMontarCusto(FDQueryFiltro.FieldByName('gen_id').AsInteger);
+  finally
+    FDQueryFiltro.Active := False;
+  end;
+end;
+
+procedure TReplicarMontarCusto.InsertTabelaPreco;
+const
+  cInsert = (
+    'insert into TabelaPreco ' +
+    '( ' +
+    'IdMontarCusto, ' +
+    'IDMODELO, ' +
+    'IDREGIAO, ' +
+    'IDPAGAMENTO, ' +
+    'ALIQUOTAMARKUP, ' +
+    'ALIQUOTAMARKUPSEMLUCRO, '+
+    'ALIQUOTAFINANCEIRO, ' +
+    'INDICEMARKUPAVISTA,' +
+    'INDICEMARKUPAPRAZO,' +
+    'VALORCUSTO, ' +
+    'VALORCUSTOMARKUP, '+
+    'VALORCUSTOCOMMARKUP, '+
+    'VALORLUCROREAL, '+
+    'VALORVENDAAVISTA, ' +
+    'VALORVENDAPRAZOMEDIO, ' +
+    'DataLancamento, ' +
+    'Operador, ' +
+    'Status, ' +
+    'Ativo ' +
+    ') '
+    );
+var
+  lInsert: String;
+  lSomaMarkup, lSomaValor, lValorVendaaPrazo: Currency;
+begin
+  try
+    lInsert := '';
+    lSomaMarkup := 0;
+    lSomaValor := 0;
+    lValorVendaaPrazo := 0;
+
+    lSomaMarkup := AliquotaMarkup + AliquotaFinanceiro;
+    lSomaValor := 100 - lSomaMarkup;
+    lSomaMarkup := 100 / lSomaValor;
+
+    lValorVendaaPrazo := ValorVendaaVista * lSomaMarkup;
+
+    BuscarGenId;
+
+    lInsert := cInsert +
+      'values ' +
+      '( ' +
+      '' +IntToStr(IdMontarCusto) + ', ' + // igual ao IdMontarCusto
+      '' +IntToStr(IdModelo) + ', ' +
+      '' +IntToStr(IdRegiao) + ', ' + // igual id markup
+      '' +IntToStr(IdPagamento) + ', ' + // igual id pagamento
+      StringReplace(CurrToStr(AliquotaMarkup), ',', '.', [RFReplaceAll]) + ',' + // Aliquota Markup
+      StringReplace(CurrToStr(AliquotaMarkupSemLucro), ',', '.', [RFReplaceAll]) + ',' + // Aliquota Markup Sem Lucro
+      StringReplace(CurrToStr(AliquotaFinanceiro), ',', '.', [RFReplaceAll]) + ',' + // Aliquota Financeiro
+      StringReplace(CurrToStr(IndiceaVistaMultiplicar), ',', '.', [RFReplaceAll]) + ',' + // IndiceMarkupaVista vem pronta da view
+      StringReplace(CurrToStr(lSomaMarkup), ',', '.', [RFReplaceAll]) + ',' + // IndiceMarkupaPrazo fazendo a conta acima
+      StringReplace(CurrToStr(CustoFinal), ',', '.', [RFReplaceAll]) + ',' + // valor custo
+      StringReplace(CurrToStr(ValorCustoMarkup), ',', '.', [RFReplaceAll]) + ',' + // valor custo que pago em markup
+      StringReplace(CurrToStr(ValorCustoComMarkup), ',', '.', [RFReplaceAll]) + ',' + // valor custo do produto com markup sem envolver lucro
+      StringReplace(CurrToStr(ValorLucroReal), ',', '.', [RFReplaceAll]) + ',' + // valor do lucro real
+      StringReplace(CurrToStr(ValorVendaaVista), ',', '.', [RFReplaceAll]) + ',' + // valor venda à vista vem pronto da view
+      StringReplace(CurrToStr(lValorVendaaPrazo), ',', '.', [RFReplaceAll]) + ',' + // valor venda à prazo
+      '''' + FormatDateTime('dd.mm.yyyy', Now) + ''',' +
+      '''' + Operador + ''',' +
+      IntToStr(1) + ', ' + // Status
+      IntToStr(1) + ' ' + // Ativo 0->Inativo  - 1 Ativo
+      ') ';
+
+    FDQueryInsert.Close;
+    FDQueryInsert.SQL.Clear;
+    FDQueryInsert.SQL.Text := lInsert;
+    FDQueryInsert.ExecSQL;
+  finally
+    FDQueryInsert.Active := False;
+  end;
+end;
+
+procedure TReplicarMontarCusto.BuscarModelos;
+const
+  cSQL =('select ' +
+    'IdModelo, ' +
+    'ModeloNome, ' +
+    'QtdeProducao, ' +
+    'ValorDespesaFixa, ' +
+    'CustoModeloDespesaFixa, ' +
+    'ValorFichaTecnica, ' +
+    'ValorFrete, '+
+    'ValorAjustado, '+
+    '(ValorFichaTecnica+CustoModeloDespesaFixa+ValorFrete+ValorAjustado) ValorPrecoCusto ' +
+    'from ' +
+    '( ' +
+    'Select ' +
+    ' ft.idmodelo, ' +
+    ' m.descricao ModeloNome, ' +
+    ' ft.qtdeproducao, ' +
+    ' p.valorfrete, '+
+    ' p.valorajustado, '+
+    ' coalesce(cast(sum(fti.valorfinal) as numeric(10,2)),0) ValorFichaTecnica ' +
+    ', ' +
+    '( ' +
+    ' select ' +
+    '    coalesce(cast(sum(df.valor) as numeric(10,2)),0) ValorDespesaFixa ' +
+    '   from despesafixa df ' +
+    ' ) ' +
+    ' , ' +
+    '( ' +
+    ' select ' +
+    '    coalesce(cast(sum(df.valor/ft.qtdeproducao) as numeric(10,2)),0) CustoModeloDespesaFixa ' +
+    '   from despesafixa df ' +
+    ' ) ' +
+    'from fichatecnica ft ' +
+    'inner join Modelo             m on m.Id               = ft.idmodelo ' +
+    'inner join fichatecnicaitem fti on fti.idfichatecnica = ft.id '+
+    'inner join producao           p on p.idmodelo         = ft.idmodelo ');
+begin
+  FOrdem :='';
+  FGrupo :='';
+  FFechaAspa :='';
+
+  FGrupo := ('group by '+
+             'IdModelo, '+
+             'ModeloNome, '+
+             'QtdeProducao, '+
+             'ValorFrete, '+
+             'ValorAjustado ');
+
+  FFechaAspa := (')');
+
+  FOrdem :=('order by IdModelo asc');
+  FDQueryBuscar.Close;
+  Try
+    FDQueryBuscar.SQL.Clear;
+    FDQueryBuscar.SQL.Text :=(cSQL + FGrupo + FOrdem + FFechaAspa );
+    FDQueryBuscar.Open;
+
+    ExcluirCustoFinanceiro;
+    FDQueryBuscar.First;
+    while not FDQueryBuscar.Eof do
+    begin
+      SetIdModelo              (FDQueryBuscar.FieldByName('IdModelo').AsInteger);
+      SetModeloNome            (FDQueryBuscar.FieldByName('ModeloNome').AsString);
+      SetQtdeProducao          (FDQueryBuscar.FieldByName('QtdeProducao').AsInteger);
+      SetValorDespesaFixa      (FDQueryBuscar.FieldByName('ValorDespesaFixa').AsCurrency);
+      SetCustoModeloDespesaFixa(FDQueryBuscar.FieldByName('CustoModeloDespesaFixa').AsCurrency);
+      SetValorFichaTecnica     (FDQueryBuscar.FieldByName('ValorFichaTecnica').AsCurrency);
+      SetValorFrete            (FDQueryBuscar.FieldByName('ValorFrete').AsCurrency);
+      SetValorMaoObraAjustado  (FDQueryBuscar.FieldByName('ValorAjustado').AsCurrency);
+      SetCustoFinal            (FDQueryBuscar.FieldByName('ValorPrecoCusto').AsCurrency);
+
+      CalcularValorMaoObraInterna;
+      CalcularValorMaoObraExterna;
+
+      CalcularMarkup;
+
+      FDQueryBuscar.Next;
+    end;
+  finally
+    FDQueryBuscar.Close;
+  end;
+end;
+
+procedure TReplicarMontarCusto.SomarValorCustoMarkup;
+begin
+  SetValorCustoMarkup(ValorVendaaVista * AliquotaMarkupSemLucro / 100);
+  SetValorCustoComMarkup(CustoFinal + ValorCustoMarkup);
+  SetValorLucroReal(ValorVendaaVista - ValorCustoComMarkup);
+end;
+
+procedure TReplicarMontarCusto.CalculaCustoDespesaFixa;
+begin
+  SetCustoModeloDespesaFixa(0);
+  SetCustoModeloDespesaFixa(StrToFloat(FormatFloat('0.00', ValorDespesaFixa / QtdeProducao)));
+end;
+
+procedure TReplicarMontarCusto.SomaCustoModelo;
+const
+  cSQL = ('select ' +
+          'IdModelo, ' +
+          'ModeloNome, ' +
+          'QtdeProducao, ' +
+          'ValorDespesaFixa, ' +
+          'CustoModeloDespesaFixa, ' +
+          'ValorFichaTecnica, ' +
+          'ValorFrete, '+
+          'ValorAjustado, '+
+          '(ValorFichaTecnica+CustoModeloDespesaFixa+ValorFrete+ValorAjustado) ValorPrecoCusto ' +
+          'from ' +
+          '( ' +
+          'Select ' +
+          ' ft.idmodelo, ' +
+          ' m.descricao ModeloNome, ' +
+          ' ft.qtdeproducao, ' +
+          ' p.valorfrete, '+
+          ' p.valorajustado, '+
+          ' coalesce(cast(sum(fti.valorfinal) as numeric(10,2)),0) ValorFichaTecnica ' +
+          ', ' +
+          '( ' +
+          ' select ' +
+          '    coalesce(cast(sum(df.valor) as numeric(10,2)),0) ValorDespesaFixa ' +
+          '   from despesafixa df ' +
+          ' ) ' +
+          ' , ' +
+          '( ' +
+          ' select ' +
+          '    coalesce(cast(sum(df.valor/ft.qtdeproducao) as numeric(10,2)),0) CustoModeloDespesaFixa ' +
+          '   from despesafixa df ' +
+          ' ) ' +
+          'from fichatecnica ft ' +
+          'inner join Modelo             m on m.Id               = ft.idmodelo ' +
+          'inner join fichatecnicaitem fti on fti.idfichatecnica = ft.id '+
+          'inner join producao           p on p.idmodelo         = ft.idmodelo ');
+begin
+  FWhere := '';
+  FGrupo := '';
+  FFechaAspa := '';
+  Try
+    FWhere := ('where ft.Ativo=' + IntToStr(1) + ' '+
+               'and ft.IdModelo='+IntToStr(IdModelo)+'');
+
+    FGrupo := ('group by '+
+               'IdModelo, '+
+               'ModeloNome, '+
+               'QtdeProducao, '+
+               'ValorFrete, '+
+               'ValorAjustado ');
+
+    FFechaAspa := (')');
+
+    FDQueryAuxiliar.Close;
+    FDQueryAuxiliar.SQL.Clear;
+    FDQueryAuxiliar.SQL.Text:=(cSQL + FWhere + FGrupo + FFechaAspa);
+    FDQueryAuxiliar.Open;
+
+    SetValorFichaTecnica   (FDQueryAuxiliar.FieldByName('ValorFichaTecnica').AsCurrency);
+    SetValorMaoObraAjustado(FDQueryAuxiliar.FieldByName('ValorAjustado').AsCurrency);
+    SetValorFrete          (FDQueryAuxiliar.FieldByName('ValorFrete').AsCurrency);
+  Finally
+    FDQueryAuxiliar.Close;
+  End;
+end;
+
+procedure TReplicarMontarCusto.SomaDespesaFixa;
+const
+  cSQL = ('select '+
+          'coalesce(cast(sum(df.valor) as numeric(10,2)),0) SomaDespesaFixa '+
+          'from  despesafixa df '
+         );
+begin
+  FDQueryAuxiliar.Active := False;
+  Try
+    FDQueryAuxiliar.SQL.Clear;
+    FDQueryAuxiliar.SQL.Text := cSQL;
+    FDQueryAuxiliar.Active := True;
+    SetValorDespesaFixa(FDQueryAuxiliar.FieldByName('SomaDespesaFixa').AsCurrency);
+  Finally
+    FDQueryAuxiliar.Active := False;
+  End;
+end;
+
+procedure TReplicarMontarCusto.BuscaQtdeProducao;
+const
+  cSQL =('select ' +
+         'p.QtdeProducao ' +
+         'from producao p '
+         );
+begin
+  FWhere :='';
+  FDQueryAuxiliar.Close;
+  Try
+    FWhere :=('where p.idmodelo =  ' + IntToStr(IdModelo) + ' ');
+    FDQueryAuxiliar.SQL.Clear;
+    FDQueryAuxiliar.SQL.Text := cSQL + FWhere;
+
+    FDQueryAuxiliar.Open;
+    SetQtdeProducao(FDQueryAuxiliar.FieldByName('QtdeProducao').AsInteger);
+  Finally
+    FDQueryAuxiliar.Active := False;
+  End;
+end;
+
+function TReplicarMontarCusto.CalcularMarkup: Currency;
+const
+  cSQL = (
+          'select '+
+          'IdMarkupNome, '+
+          'IdRegiao, '+
+          'MarkupNome, '+
+          'SomaAliquota, '+
+          'AliquotaMarkupSemLucro, '+
+          '((Maximo-SomaAliquota)/Maximo) IndiceDivisao , '+
+          '(Maximo/((Maximo-SomaAliquota))) IndiceMultiplicacao '+
+          'from '+
+          ' ( '+
+          '  select '+
+          '  ag.idmarkupnome, '+
+          '  mn.idregiao, '+
+          '  mn.descricao MarkupNome, '+
+          '  coalesce(cast(sum(ag.aliquota) as numeric(10,6)),0) SomaAliquota, '+
+          '  100 Maximo, '+
+
+          '( '+
+          'Select '+
+          ' coalesce(cast(sum(ag1.aliquota) as numeric(10,2)),0) AliquotaMarkupSemLucro '+
+          'from AliquotaGrupo ag1 '+
+          'inner join AliquotaNome an1 on an1.id = ag1.idaliquotanome '+
+          'where an1.aliquota =0 '+
+          'and ag1.idmarkupnome = ag.idmarkupnome '+
+          ') '+
+
+          'from AliquotaGrupo ag '+
+          'inner join MarkupNome   mn on mn.id = ag.idmarkupnome '+
+          'inner join AliquotaNome an on an.id = ag.idaliquotanome '
+         );
+var
+  lSomar : Currency;
+begin
+  Result := 0;
+  FWhere := '';
+  FGrupo := '';
+
+  FWhere := ('where ag.Ativo=' + IntToStr(1) + ' '+
+             'and an.financeiro=0 '+
+             'and ((ag.idmarkupnome<> '+IntToStr(IdMarkup)+') or (an.Status=1)) ');
+
+
+  FGrupo :=('group by 1,2,3 )');
+
+  FDQuery.Close;
+  FDQuery.SQL.Clear;
+  FDQuery.SQL.Text := cSQL + FWHere + FGrupo;
+  FDQuery.Open;
+
+  FDQuery.First;
+  while Not FDQuery.Eof do
+  begin
+    lSomar := CustoFinal;
+    lSomar := lSomar * FDQuery.FieldByName('IndiceMultiplicacao').AsCurrency;
+    SetIdRegiao               (FDQuery.FieldByName('IdRegiao').AsInteger);
+    SetIdMarkup               (FDQuery.FieldByName('IdMarkupNome').AsInteger);
+    SetAliquotaMarkup         (FDQuery.FieldByName('SomaAliquota').AsCurrency);
+    SetIndiceaVistaMultiplicar(FDQuery.FieldByName('IndiceMultiplicacao').AsCurrency);
+    SetIndiceaVistaDividir    (FDQuery.FieldByName('IndiceDivisao').AsCurrency);
+    SetValorVendaaVista       (lSomar);
+    SetAliquotaMarkupSemLucro (FDQuery.FieldByName('AliquotaMarkupSemLucro').AsCurrency);
+
+    SomarValorCustoMarkup;
+    InsertReplicaCusto;
+
+    FDQuery.Next;
+  end;
+end;
+
+procedure TReplicarMontarCusto.CalcularValorMaoObraExterna;
+const
+  cSQL =('select ' +
+         'coalesce(cast(sum(pitem.valormaoobra) as numeric(10,2)),0) ValorMaoObra ' +
+         'from producaoitem pitem ' +
+         'inner join Producao    p on p.id  = pitem.idproducao ' +
+         'inner join SetorLocal sl on sl.id = pitem.idsetorlocal ' +
+         'inner join Local       l on l.id  = sl.idlocal '
+        );
+begin
+  FWhere := '';
+  FDQueryAuxiliar.Close;
+  Try
+    FWhere :=('where l.Status= ' + IntToStr(1) + ' ' +//Status 1 igual a mão de obra Externa
+              'and p.idmodelo =  ' + IntToStr(IdModelo) + ' ');
+
+    FDQueryAuxiliar.SQL.Clear;
+    FDQueryAuxiliar.SQL.Text := cSQL + FWhere;
+    FDQueryAuxiliar.Open;
+    SetValorMaoObraExterna(0);
+    SetValorMaoObraExterna(FDQueryAuxiliar.FieldByName('ValorMaoObra').AsCurrency);
+  finally
+    FDqueryAuxiliar.Close;
+  End;
+end;
+
+procedure TReplicarMontarCusto.CalcularValorMaoObraInterna;
+const
+  cSQL =('select ' +
+         'coalesce(cast(sum(pitem.valormaoobra) as numeric(10,2)),0) ValorMaoObra ' +
+         'from producaoitem pitem ' +
+         'inner join Producao    p on p.id  = pitem.idproducao ' +
+         'inner join SetorLocal sl on sl.id = pitem.idsetorlocal ' +
+         'inner join Local       l on l.id  = sl.idlocal '
+        );
+begin
+  FWhere := '';
+  FDQueryAuxiliar.Close;
+  Try
+    FWhere :=('where l.Status= ' + IntToStr(0) + ' ' +//Status 0 igual a mão de obra Interna
+              'and p.idmodelo =  ' + IntToStr(IdModelo) + ' ');
+
+    FDQueryAuxiliar.SQL.Clear;
+    FDQueryAuxiliar.SQL.Text := cSQL + FWhere;
+    FDQueryAuxiliar.Open;
+    SetValorMaoObraInterna(0);
+    SetValorMaoObraInterna(FDQueryAuxiliar.FieldByName('ValorMaoObra').AsCurrency);
+  finally
+    FDqueryAuxiliar.Close;
+  End;
+end;
+
+
+procedure TReplicarMontarCusto.DeleteMontarCustoModelo;
+begin
+  FDQueryDelete.Close;
+  try
+    FDQueryDelete.SQL.Clear;
+    FDQueryDelete.SQL.Text:=('delete from MontarCusto '+
+                             'where IdRegiao='+IntToStr(IdRegiao)+' '+
+                             'and IdModelo='+IntToStr(IdModelo)+' ');
+    FDQueryDelete.ExecSQL;
+  finally
+    FDQueryDelete.Close;
+  end;
+end;
+
+function TReplicarMontarCusto.VerificoseConstaCustoMarkup : Boolean;
+begin
+  Result := False;
+  FDQueryAuxiliar.Close;
+    FDqueryAuxiliar.SQL.Clear;
+  try
+    FDQueryAuxiliar.SQL.Text :=('select * from MontarCusto '+
+                                'where IdRegiao='+IntToStr(IdRegiao)+' '+
+                                'and IdModelo='+IntToStr(IdModelo)+' ');
+    FDQueryAuxiliar.Open;
+
+  if not FDQueryAuxiliar.IsEmpty then
+  begin
+    Result := True;
+    DeleteMontarCustoModelo;
+  end
+  else
+   FDQueryAuxiliar.Close;
+  finally
+
+  end;
+end;
+
+procedure TReplicarMontarCusto.InsertReplicaCusto;
+const
+  cSQL =(
+         'insert into MONTARCUSTO '+
+         '( '+
+         'IDMODELO, '+
+         'IDREGIAO, '+
+         'VALORDESPESAFIXA, '+
+         'VALORFICHATECNICA, '+
+         'VALORMAOOBRAINTERNA, '+
+         'VALORMAOOBRAEXTERNA, '+
+         'VALORMAOOBRAAJUSTADO, '+
+         'VALORFRETE, '+
+         'QTDEPRODUCAO, '+
+         'CUSTOMODELODESPESAFIXA, '+
+         'CUSTOTOTALMODELO, '+
+         'ALIQUOTAMARKUP, '+
+         'ALIQUOTAMARKUPSEMLUCRO,'+
+         'VALORCUSTOMARKUP,'+
+         'VALORCUSTOCOMMARKUP,'+
+         'INDICEAVISTAMULTIPLICAR, '+
+         'INDICEAVISTADIVIDIR, '+
+         'VALORVENDAAVISTA, '+
+         'VALORLUCROREAL,'+
+         'DATALANCAMENTO, '+
+         'OPERADOR, '+
+         'STATUS, '+
+         'ATIVO '+
+         ') '
+         );
+begin
+  FInsert :='';
+
+  FInsert := cSQL +
+    'values ' +
+    '( ' +
+    ''+IntToStr(IdModelo)+', '+
+    ''+IntToStr(IdRegiao)+', '+//região do cliente pegar da tabela MarkupNome coluna IdRegiao
+    StringReplace(CurrToStr(ValorDespesaFixa), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorFichaTecnica), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorMaoObraInterna), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorMaoObraExterna), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorMaoObraAjustado), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorFrete), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(QtdeProducao), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(CustoModeloDespesaFixa), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(CustoFinal), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(AliquotaMarkup), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(AliquotaMarkupSemLucro), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorCustoMarkup), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorCustoComMarkup), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(IndiceaVistaMultiplicar), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(IndiceaVistaDividir), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorVendaaVista), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(ValorLucroReal), ',', '.', [RFReplaceAll]) + ',' +
+    '''' + FormatDateTime('dd.mm.yyyy', Now) + ''',' +
+        '''' + Operador + ''',' +
+    IntToStr(1)+', '+
+    IntToStr(1)+' '+
+    ') ';
+  FDQueryInsert.ExecSQL(FInsert);
+
+  BuscarCustoFinanceiro;//Gero tabela de preço para comparar se pedido esta dando lucro ou prejuizo
+end;
+
+procedure TReplicarMontarCusto.SetAliquotaFinanceiro(const Value: Currency);
+begin
+  FAliquotaFinanceiro := Value;
+end;
+
+procedure TReplicarMontarCusto.SetAliquotaMarkup(const Value: Currency);
+begin
+  FAliquotaMarkup := Value;
+end;
+
+procedure TReplicarMontarCusto.SetAliquotaMarkupSemLucro(const Value: Currency);
+begin
+  FAliquotaMarkupSemLucro := Value;
+end;
+
+procedure TReplicarMontarCusto.SetCustoFinal(const Value: Currency);
+begin
+  FCustoFinal := Value;
+end;
+
+procedure TReplicarMontarCusto.SetCustoModeloDespesaFixa(const Value: Currency);
+begin
+  FCustoModeloDespesaFixa := Value;
+end;
+
+procedure TReplicarMontarCusto.SetCustoTotalModelo(const Value: Currency);
+begin
+  FCustoTotalModelo := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIdMarkup(const Value: Integer);
+begin
+  FIdMarkup := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIdModelo(const Value: Integer);
+begin
+  FIdModelo := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIdMontarCusto(const Value: Integer);
+begin
+  FIdMontarCusto := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIdPagamento(const Value: Integer);
+begin
+  FIdPagamento := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIdRegiao(const Value: Integer);
+begin
+  FIdRegiao := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIndiceaVistaDividir(const Value: Currency);
+begin
+  FIndiceaVistaDividir := Value;
+end;
+
+procedure TReplicarMontarCusto.SetIndiceaVistaMultiplicar(const Value: Currency);
+begin
+  FIndiceaVistaMultiplicar := Value;
+end;
+
+procedure TReplicarMontarCusto.SetMarkupNome(const Value: String);
+begin
+  FMarkupNome := Value;
+end;
+
+procedure TReplicarMontarCusto.SetModeloNome(const Value: String);
+begin
+  FModeloNome := Value;
+end;
+
+procedure TReplicarMontarCusto.SetOperador(const Value: String);
+begin
+  FOperador := Value;
+end;
+
+procedure TReplicarMontarCusto.SetQtdeProducao(const Value: Integer);
+begin
+  FQtdeProducao := Value;
+end;
+
+procedure TReplicarMontarCusto.SetTabelaSomenteAVIsta(const Value: Boolean);
+begin
+  FTabelaSomenteAVIsta := Value;
+end;
+
+procedure TReplicarMontarCusto.SetTipoFiltro(const Value: Integer);
+begin
+  FTipoFiltro := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorCustoComMarkup(const Value: Currency);
+begin
+  FValorCustoComMarkup := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorCustoMarkup(const Value: Currency);
+begin
+  FValorCustoMarkup := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorDespesaFixa(const Value: Currency);
+begin
+  FValorDespesaFixa := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorFichaTecnica(const Value: Currency);
+begin
+  FValorFichaTecnica := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorFrete(const Value: Currency);
+begin
+  FValorFrete := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorLucroReal(const Value: Currency);
+begin
+  FValorLucroReal := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorMaoObraAjustado(const Value: Currency);
+begin
+  FValorMaoObraAjustado := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorMaoObraExterna(const Value: Currency);
+begin
+  FValorMaoObraExterna := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorMaoObraInterna(const Value: Currency);
+begin
+  FValorMaoObraInterna := Value;
+end;
+
+procedure TReplicarMontarCusto.SetValorVendaaVista(const Value: Currency);
+begin
+  FValorVendaaVista := Value;
+end;
+
+end.

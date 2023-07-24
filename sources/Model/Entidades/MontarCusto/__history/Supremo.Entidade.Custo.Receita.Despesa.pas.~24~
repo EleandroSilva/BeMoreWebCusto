@@ -1,0 +1,368 @@
+unit Supremo.Entidade.Custo.Receita.Despesa;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TReceitaDespesa = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro : Integer;
+    FEscolhaTipoData : Integer;
+    FEscolhaTipoLancamento : Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus: Integer;
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo: String;
+    FIdProduto: String;
+    FIdParametro1: String;
+    FIdParametro2: String;
+    FValorLancamento1: Currency;
+    FValorLancamento2:Currency;
+    FValorLancamento3 : Currency;
+    FValorLancamento4 : Currency;
+    FQtdeInteger : Integer;
+    FQtdeCurrency : Currency;
+    FAliquota: Currency;
+    FPrazoMedio: Currency;
+    FInicioPeriodo : TDateTime;
+    FFimPeriodo : TDateTime;
+
+
+    FGenId: Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue: Integer): iModelEntidade;
+    function EscolhaTipoLancamento(aValue : Integer) : iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue: Integer): iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro1(aValue: String): iModelEntidade;
+    function IdParametro2(aValue: String): iModelEntidade;
+    function ValorLancamento1(aValue: Currency): iModelEntidade;
+    function ValorLancamento2(aValue: Currency): iModelEntidade;
+    function ValorLancamento3(aValue : Currency) : iModelEntidade;
+    function ValorLancamento4(aValue : Currency) : iModelEntidade;
+    function Qtde(aValue : Integer) : iModelEntidade; overload;
+    function Qtde(aValue : Currency) : iModelEntidade; overload;
+    function Aliquota(aValue: Currency): iModelEntidade;
+    function PrazoMedio(aValue: Currency): iModelEntidade;
+    function InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+    function FimPeriodo(aValue : TDateTime) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Append : iModelEntidade;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+{ TMateriaPrima }
+
+
+constructor TReceitaDespesa.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TReceitaDespesa.Destroy;
+begin
+  inherited;
+end;
+
+class function TReceitaDespesa.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TReceitaDespesa.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TReceitaDespesa.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TReceitaDespesa.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TReceitaDespesa.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TReceitaDespesa.EscolhaTipoLancamento(aValue : Integer) : iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoLancamento := aValue;
+end;
+
+function TReceitaDespesa.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TReceitaDespesa.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result:= Self;
+  FAtivo := AValue;
+end;
+
+function TReceitaDespesa.Status(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+function TReceitaDespesa.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TReceitaDespesa.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TReceitaDespesa.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TReceitaDespesa.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TReceitaDespesa.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TReceitaDespesa.IdParametro1(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro1 := aValue;
+end;
+
+function TReceitaDespesa.IdParametro2(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro2 := aValue;
+end;
+
+function TReceitaDespesa.ValorLancamento1(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento1 := aValue;
+end;
+
+function TReceitaDespesa.ValorLancamento2(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento2 := aValue;
+end;
+
+function TReceitaDespesa.ValorLancamento3(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento3 := aValue;
+end;
+
+function TReceitaDespesa.ValorLancamento4(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento4 := aValue;
+end;
+
+function TReceitaDespesa.Qtde(aValue : Integer) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeInteger := aValue;
+end;
+
+function TReceitaDespesa.Qtde(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeCurrency := aValue;
+end;
+
+function TReceitaDespesa.Aliquota(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FAliquota := aValue;
+end;
+
+function TReceitaDespesa.PrazoMedio(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FPrazoMedio := aValue;
+end;
+
+function TReceitaDespesa.InicioPeriodo(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FInicioPeriodo := aValue;
+end;
+
+function TReceitaDespesa.FimPeriodo(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FFimPeriodo := aValue;
+end;
+
+function TReceitaDespesa.Buscar(aValue: String): iModelEntidade;
+const
+  cSQL = (
+         'select '+
+         'coalesce(cast(sum(rd.receita) as numeric (10,2)),0) Receita, '+
+         'coalesce(cast(sum(rd.despesa) as numeric (10,2)),0) Despesa, '+
+         'coalesce(cast(sum(rd.despesa/rd.receita*100) as numeric (10,2)),0) MargemDepesa '+
+         'from receitadespesa rd '
+         );
+var
+  lWhere, lGrupo, lOrdem: String;
+  lHoje: TDateTime;
+begin
+  Result := Self;
+  lWhere := '';
+  lHoje := Now;
+
+  case FEscolhaFiltro of
+    0: lHoje := Now - 30;
+    1: lHoje := Now - 90;
+    2: lHoje := Now - 180;
+    3: lHoje := Now - 360;
+  end;
+
+  lWhere := FormatDateTime('dd.mm.yyyy', lHoje);
+
+  lWhere := ('where rd.inicioperiodo between '''+FormatDateTime('dd.mm.yyyy',lHoje)+''' '+
+                    'and rd.fimperiodo '''+FormatDateTime('dd.mm.yyyy',Now)+'''');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere := lWhere + ('and mp.Id_mp=' +IntToStr(StrToInt(aValue)) + ' ');
+      1: lWhere := lWhere + ('and mp.Descricao CONTAINING ''' + aValue + ''' ');
+      2: lWhere := lWhere + ('and mp.Usuario CONTAINING ''' + aValue + ''' ');
+    end;
+
+  FQuery.Open(cSQL + lWhere);
+end;
+
+
+function TReceitaDespesa.Insert(aValue: String): iModelEntidade;
+const
+  cInsert = (
+             'insert into receitadespesa ' +
+             '( ' +
+             'Receita, ' +
+             'Despesa,'+
+             'Periodo, '+
+             'Operador, ' +
+             'DataLancamento, ' +
+             'Status, '+
+             'Ativo ' +
+             ') '
+            );
+var
+  lInsert: String;
+begin
+  Result := Self;
+  lInsert := '';
+
+  lInsert := cInsert +
+    'values ' +
+    '( ' +
+    StringReplace(CurrToStr(FAliquota), ',', '.', [RFReplaceAll]) + ',' +
+    StringReplace(CurrToStr(FAliquota), ',', '.', [RFReplaceAll]) + ',' +
+    IntToStr(FEscolhaFiltro)+','+
+    '''' + FOperador + ''',' +
+    '''' + FormatDateTime('dd.mm.yyyy', FDataLancamento) + ''',' +
+    IntToStr(1)+', '+//Status 0 Não 1 - Sim serve para o enviar
+    IntToStr(1)+' '+//Ativo 0->Inativo  - 1 Ativo
+    ') ';
+  FQuery.ExecSQL(lInsert);
+end;
+
+function TReceitaDespesa.Insert: iModelEntidade;
+begin
+  Result := Self;
+  //Criar insert quando precisar
+end;
+
+function TReceitaDespesa.Append : iModelEntidade;
+begin
+  Result := Self;
+  FQuery.Append('');
+end;
+
+function TReceitaDespesa.Update(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Update quando precisar
+end;
+
+function TReceitaDespesa.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Delete quando precisar
+end;
+
+function TReceitaDespesa.PegarGenId: Integer;
+begin
+  Result := 0;
+  //Criar quando precisar
+end;
+
+function TReceitaDespesa.Get(const aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Json quando precisar
+end;
+
+end.

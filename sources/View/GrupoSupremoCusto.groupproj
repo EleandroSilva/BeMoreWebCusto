@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{F70A3397-65BF-4616-ACE2-90C4FA2D999E}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="SupremoCusto.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SupremoCusto">
+        <MSBuild Projects="SupremoCusto.dproj"/>
+    </Target>
+    <Target Name="SupremoCusto:Clean">
+        <MSBuild Projects="SupremoCusto.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SupremoCusto:Make">
+        <MSBuild Projects="SupremoCusto.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SupremoCusto"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SupremoCusto:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SupremoCusto:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -1,0 +1,393 @@
+unit Supremo.Entidade.Product;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TProduct = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData : Integer;
+    FEscolhaTipoLancamento : Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus : Integer;
+
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo : String;
+    FIdProduto : String;
+    FIdParametro1 : String;
+    FIdParametro2 : String;
+    FValorLancamento1 : Currency;
+    FValorLancamento2 : Currency;
+    FValorLancamento3 : Currency;
+    FValorLancamento4 : Currency;
+    FQtdeInteger : Integer;
+    FQtdeCurrency : Currency;
+    FAliquota1 : Currency;
+    FAliquota2 : Currency;
+    FAliquota3 : Currency;
+    FAliquota4 : Currency;
+    FPrazoMedio : Currency;
+    FInicioPeriodo : TDateTime;
+    FFimPeriodo : TDateTime;
+
+    FGenId : Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue : Integer) : iModelEntidade;
+    function EscolhaTipoLancamento(aValue : Integer) : iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue : Integer) :iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro1(aValue : String) : iModelEntidade;
+    function IdParametro2(aValue : String) : iModelEntidade;
+    function ValorLancamento1(aValue : Currency) : iModelEntidade;
+    function ValorLancamento2(aValue : Currency) : iModelEntidade;
+    function ValorLancamento3(aValue : Currency) : iModelEntidade;
+    function ValorLancamento4(aValue : Currency) : iModelEntidade;
+    function Qtde(aValue : Integer) : iModelEntidade; overload;
+    function Qtde(aValue : Currency) : iModelEntidade; overload;
+    function Aliquota1(aValue : Currency) : iModelEntidade;
+    function Aliquota2(aValue : Currency) : iModelEntidade;
+    function Aliquota3(aValue : Currency) : iModelEntidade;
+    function Aliquota4(aValue : Currency) : iModelEntidade;
+    function PrazoMedio(aValue : Currency) : iModelEntidade;
+    function InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+    function FimPeriodo(aValue : TDateTime) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue : String): iModelEntidade; overload;
+    function Append : iModelEntidade;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue : String) : iModelEntidade;
+    function PegarGenId : Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+{ TProduct }
+
+constructor TProduct.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TProduct.Destroy;
+begin
+  inherited;
+end;
+
+class function TProduct.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TProduct.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TProduct.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TProduct.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TProduct.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TProduct.EscolhaTipoLancamento(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoLancamento := aValue;
+end;
+
+function TProduct.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TProduct.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TProduct.Status(aValue : Integer) :iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+function TProduct.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TProduct.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TProduct.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TProduct.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TProduct.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TProduct.IdParametro1(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro1 := aValue;
+end;
+
+function TProduct.IdParametro2(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro2 := aValue;
+end;
+
+function TProduct.ValorLancamento1(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento1 := aValue;
+end;
+
+function TProduct.ValorLancamento2(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento2 := aValue;
+end;
+
+function TProduct.ValorLancamento3(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento3 := aValue;
+end;
+
+function TProduct.ValorLancamento4(aValue: Currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento4 := aValue;
+end;
+
+function TProduct.Qtde(aValue : Integer) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeInteger := aValue;
+end;
+
+function TProduct.Qtde(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FQtdeCurrency := aValue;
+end;
+
+function TProduct.Aliquota1(aValue: Currency): iModelEntidade;
+begin
+  Result :=Self;
+  FAliquota1 := aValue;
+end;
+
+function TProduct.Aliquota2(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota2 := aValue;
+end;
+
+function TProduct.Aliquota3(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota3 := aValue;
+end;
+
+function TProduct.Aliquota4(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota4 := aValue;
+end;
+
+function TProduct.PrazoMedio(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FPrazoMedio := aValue;
+end;
+
+function TProduct.InicioPeriodo(aValue : TDateTime) : iModelEntidade;
+begin
+  Result := Self;
+  FInicioPeriodo := aValue;
+end;
+
+function TProduct.FimPeriodo(aValue : TDateTime) : iModelEntidade;
+begin
+  Result := Self;
+  FFimPeriodo := aValue;
+end;
+
+function TProduct.Buscar(aValue: String): iModelEntidade;
+const
+  cSQL =(
+         'select '+
+         'pro.id_pro Id, '+
+         'pro.Enviar, '+
+
+         'case when cor.descricao=''.'' then pro.descricao '+
+         '     else (pro.descricao||'' ''||cor.descricao) '+
+         'end Descricao, '+
+
+         'pro.usuario '+
+         'from cad_pro pro '+
+         'inner join cad_cores cor on cor.id_cod_cor = pro.id_cod_cor '
+        );
+var
+  lWhere,lOrdem, lAtivo: String;
+begin
+  Result := Self;
+  lWhere := '';
+  lOrdem := '';
+
+  if FAtivo = 0 then
+    lAtivo := 'NAO'
+  else
+    lAtivo := 'SIM';
+
+  lWhere := ('where pro.Ativo=''' + lAtivo + ''' ');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere := lWhere + ('and pro.Id_Pro=' + aValue + ' ');
+      1: lWhere := lWhere + ('and pro.Descricao CONTAINING ''' + aValue + ''' ');
+      2: lWhere := lWhere + ('and pro.Usuario CONTAINING ''' + aValue + ''' ');
+    end;
+
+  lOrdem :=('order by (pro.descricao||'' ''||cor.descricao) ');
+  FQuery.Open(cSQL + lWhere+ lOrdem);
+end;
+
+function TProduct.Insert: iModelEntidade;
+begin
+  Result := Self;
+  //Criar insert into quando precisar
+end;
+
+function TProduct.Insert(aValue : String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar insert into quando precisar
+end;
+
+function TProduct.Append : iModelEntidade;
+begin
+  Result := Self;
+  FQuery.Append('');
+end;
+
+function TProduct.Update(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Update quando precisar
+end;
+
+function TProduct.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar delete quando precisar
+end;
+
+function TProduct.PegarGenId : Integer;
+begin
+  Result := 0;
+  //Criar GenId Quando precisar
+end;
+
+//JSON
+function TProduct.Get(const aValue: String): iModelEntidade;
+const
+  cSQL =(
+         'select '+
+         'pro.id_pro Id, '+
+         'pro.Enviar, '+
+         'pro.descricao, '+
+         'pro.usuario '+
+         'from cad_pro pro '
+        );
+
+var
+  lWhere, lAtivo : String;
+begin
+  Result := Self;
+  lWhere := '';
+
+  if FAtivo = 0 then
+    lAtivo := 'NAO'
+  else
+    lAtivo := 'SIM';
+
+  lWhere := ('where pro.Ativo=''' + lAtivo + ''' ');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere := lWhere + ('and pro.Id_Pro=' + aValue + ' ');
+      1: lWhere := lWhere + ('and pro.Descricao CONTAINING ''' + aValue + ''' ');
+      2: lWhere := lWhere + ('and pro.Usuario CONTAINING ''' + aValue + ''' ');
+    end;
+
+  FQuery.Get(cSQL + lWhere);
+end;
+
+end.

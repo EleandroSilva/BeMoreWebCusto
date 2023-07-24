@@ -1,0 +1,54 @@
+unit Whorkshop.Model.Connection.Interfaces;
+
+interface
+
+uses
+  Data.DB,
+  System.JSON,
+  DataSetConverter4D.Helper,
+  DataSetConverter4D.Impl;
+
+type
+  iModelConnection = interface
+    ['{069AE58B-0C5E-45AB-8485-627E6E92FD8A}']
+    function Connection :TCustomConnection;
+  end;
+
+  iModelQuery = interface
+    ['{0AF28CD6-73C0-4057-A552-800795288442}']
+    function Query : TDataSet;
+    function Open(aSQL : String) : iModelQuery;
+    function ExecSQL(aSQL : String) : iModelQuery;
+    function Append(aSQL : String) : iModelQuery;
+
+    function PegarGenId(aSQL : String) : Integer;
+
+
+    function Get(const aSQL : String = '') : TJSONArray;
+
+    //function Post(const Key : String; JObject : TJSONObject) : iModelQuery;//insert
+    //function Put(const Key : String; JObject : TJSONObject) : iModelQuery;//update
+    //function Delete(const Key : String) : iModelQuery;
+  end;
+
+  iModelConnectionFactory = interface
+    ['{3F30E9E9-BC14-4D2B-B89E-0549FADFC590}']
+    function Connection : iModelConnection;
+    function Query : iModelQuery;
+  end;
+
+  iModelConnectionConfig = interface
+    ['{D9994EDA-808C-4695-A3BD-242B81F81B3F}']
+    function DriverName : String;
+    function Database : String;
+    function UserName : String;
+    function Password : String;
+    function Server : String;
+    function Port : String;
+    function VendorLib : String;
+    function ServerName : String;
+  end;
+
+implementation
+
+end.

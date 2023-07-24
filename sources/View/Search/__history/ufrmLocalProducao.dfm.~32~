@@ -1,0 +1,220 @@
+inherited frmLocalProducao: TfrmLocalProducao
+  Caption = 'frmLocalProducao'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    ExplicitTop = 560
+    ExplicitWidth = 934
+    inherited pSite: TPanel
+      ExplicitLeft = 716
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+        OnClick = NavigatorClick
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 218
+      end
+    end
+    inherited btnSalve: TBitBtn
+      OnClick = btnSalveClick
+    end
+    inherited rgActive: TRadioGroup
+      ExplicitLeft = 652
+    end
+  end
+  inherited pCabecalho: TPanel
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 934
+    inherited pOperator: TPanel
+      ExplicitLeft = 814
+      inherited edtOperator: TDBEdit
+        ExplicitLeft = 6
+        ExplicitTop = 22
+        ExplicitWidth = 120
+      end
+    end
+  end
+  inherited pgMain: TPageControl
+    ExplicitLeft = 0
+    ExplicitTop = 41
+    ExplicitWidth = 934
+    ExplicitHeight = 519
+    inherited tsRegister: TTabSheet
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pGrid: TPanel
+        ExplicitWidth = 926
+        ExplicitHeight = 491
+        inherited pEdit: TPanel
+          ExplicitWidth = 924
+          inherited LId: TLabel
+            Left = 30
+            Width = 41
+            Caption = 'Id Local:'
+            ExplicitLeft = 30
+            ExplicitWidth = 41
+          end
+          inherited MedtReleaseDate: TDBEdit
+            DataField = 'DATALANCAMENTO'
+            DataSource = DataSource1
+          end
+          inherited edtDescricao: TDBEdit
+            DataField = 'DESCRICAO'
+            OnExit = editDescricaoExit
+          end
+          object rgInternoExterno: TRadioGroup
+            Left = 824
+            Top = 0
+            Width = 100
+            Height = 65
+            Align = alRight
+            Caption = 'Produ'#231#227'o'
+            ItemIndex = 0
+            Items.Strings = (
+              '0 - Interno'
+              '1 - Externo')
+            TabOrder = 3
+          end
+        end
+        inherited pGridCadastro: TPanel
+          ExplicitWidth = 924
+          ExplicitHeight = 424
+          object dbgCadastro: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 924
+            Height = 424
+            Align = alClient
+            DataSource = DataSource1
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+            OnDrawColumnCell = dbgCadastroDrawColumnCell
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'ID'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'ID:'
+                Width = 38
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DESCRICAO'
+                Title.Caption = 'Descri'#231#227'o:'
+                Width = 244
+                Visible = True
+              end
+              item
+                Alignment = taRightJustify
+                Expanded = False
+                FieldName = 'DATALANCAMENTO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Data Lan'#231'amento:'
+                Width = 108
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERADOR'
+                Title.Caption = 'Operador:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'STATUS'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Status:'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'ATIVO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Ativo:'
+                Visible = True
+              end>
+          end
+        end
+      end
+    end
+    inherited tsSearch: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
+      ExplicitWidth = 926
+      ExplicitHeight = 491
+      inherited pSearch: TPanel
+        ExplicitWidth = 926
+        inherited pFiltro: TPanel
+          ExplicitWidth = 501
+          inherited lDigiteConformeEscolha: TLabel
+            ExplicitLeft = 0
+            ExplicitTop = 28
+          end
+          inherited edtSearch: TEdit
+            OnKeyPress = nil
+            ExplicitLeft = 0
+            ExplicitTop = 46
+            ExplicitWidth = 501
+          end
+        end
+      end
+      inherited dbgSearch: TDBGrid
+        DataSource = DataSource1
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'ID'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'ID:'
+            Width = 38
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DESCRICAO'
+            Title.Caption = 'Descri'#231#227'o:'
+            Width = 244
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'DATALANCAMENTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Data Lan'#231'amento:'
+            Width = 108
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'OPERADOR'
+            Title.Caption = 'Operador:'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'STATUS'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Status:'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ATIVO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Ativo:'
+            Visible = True
+          end>
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    DataSet = dmPrincipal.cdsLocal
+  end
+end

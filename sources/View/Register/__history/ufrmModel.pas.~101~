@@ -1,0 +1,385 @@
+unit ufrmModel;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+  Vcl.Mask,
+
+  Data.DB,
+
+  ufrmModelo,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller,
+  System.ImageList,
+  Vcl.ImgList;
+
+type
+  TfrmModel = class(TfrmModelo)
+    dbgRegister: TDBGrid;
+    lfrmExecutando: TLabel;
+    Label1: TLabel;
+    edtQtdeProducao: TEdit;
+    tdbId: TDBEdit;
+    tdbMedtReleaseDate: TDBEdit;
+    tdbDescription: TDBEdit;
+    tdbQtdeProducao: TDBEdit;
+    tdbOperator: TDBEdit;
+    dbAliquotaInternaa: TDBEdit;
+    dbAliquotaExterna: TDBEdit;
+    Label2: TLabel;
+    Label3: TLabel;
+    procedure FormShow(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnSalveClick(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dbgRegisterDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnUpdateClick(Sender: TObject);
+    procedure dbgSearchDblClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure tdbQtdeProducaoExit(Sender: TObject);
+    procedure tdbQtdeProducaoKeyPress(Sender: TObject; var Key: Char);
+    procedure tdbDescriptionExit(Sender: TObject);
+    procedure btnPrintClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+  private
+    FController: iController;
+    FInsereNovo: Boolean;
+
+    procedure AtualizarSearch;
+    procedure AtualizarSalve;
+    procedure DeleteModelo(aValue: String);
+    function PesquisaModelo(aValue: String): Boolean;
+
+
+    procedure InserirModelo;
+    procedure SalvarModelo;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmModel: TfrmModel;
+
+implementation
+
+{$R *.dfm}
+
+uses udmPrincipal, udmEntidade.Relatorios;
+
+
+procedure TfrmModel.AtualizarSearch;
+begin
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnDelete.Enabled := True;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnNew.Enabled := True;
+end;
+
+procedure TfrmModel.AtualizarSalve;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModel.DeleteModelo(aValue: String);
+begin
+  if MessageBox(handle, 'Deseja excluir este registro?', 'Aviso', mb_IconQuestion or mb_Yesno) = mrYes then
+  begin
+     dmPrincipal.queryAuxiliar.Active := False;
+     dmPrincipal.queryAuxiliar.SQL.Clear;
+     dmPrincipal.queryAuxiliar.SQL.Text :=('delete from Modelo '+
+      'where id='+aValue+' ');
+     dmPrincipal.queryAuxiliar.ExecSQL();
+     dmPrincipal.queryAuxiliar.Active := False;
+     btnSearch.Click;
+     ShowMessage('Registro excluído com sucesso!');
+  end;
+end;
+
+function TfrmModel.PesquisaModelo(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+
+  lSQL := ('select '+
+    'm.Id, '+
+    'm.Descricao, '+
+    'm.QtdeProducao, '+
+    'm.Operador, '+
+    'm.DataLancamento, '+
+    'm.Status, '+
+    'm.Ativo, '+
+    'm.AliquotaInterna, '+
+    'm.AliquotaExterna '+
+    ', '+
+    '( '+
+    ' select '+
+    '   count(*) QtdeRegistro '+
+    ' from Modelo '+
+    ') '+
+    'from modelo m ');
+
+  if aValue<>'' then
+   case rgChoice.ItemIndex of
+     0: lWhere := ('where m.id=' + aValue + ' ');
+     1: lWhere := ('where m.Descricao CONTAINING ''' + aValue + ''' ');
+     2: lWhere := ('where m.IdRegiao=' + aValue + ' ');
+   end;
+
+  lOrdem := ('order by m.Descricao ');
+
+  dmPrincipal.sqlModelo.Active := false;
+  dmPrincipal.sqlModelo.CommandText := (lSQL + lWhere + lOrdem);
+  dmPrincipal.cdsModelo.Active := false;
+  dmPrincipal.cdsModelo.Active := True;
+
+  if not dmPrincipal.cdsModelo.IsEmpty then
+    Result := True
+  else
+    Result := false;
+
+  AtualizarSearch;
+end;
+
+procedure TfrmModel.InserirModelo;
+begin
+  dmPrincipal.sqlModelo.Active:=false;
+  dmPrincipal.sqlModelo.CommandText := ('select '+
+    'm.Id, '+
+    'm.Descricao, '+
+    'm.QtdeProducao, '+
+    'm.Operador, '+
+    'm.DataLancamento, '+
+    'm.Status, '+
+    'm.Ativo, '+
+    'm.AliquotaInterna, '+
+    'm.AliquotaExterna '+
+
+    ', '+
+    '( '+
+    ' select '+
+    '   count(*) QtdeRegistro '+
+    ' from Modelo '+
+    ') '+
+
+    'from modelo m '+
+    'where m.id=:Id ');
+
+  dmPrincipal.sqlModelo.Params.ParamByName('ID').DataType := ftInteger;
+  dmPrincipal.sqlModelo.Params.ParamValues['ID'] := 0;
+
+  dmPrincipal.cdsModelo.Active := True;
+  dmPrincipal.cdsModelo.Append;
+
+  dmPrincipal.cdsModelo.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsModelo.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  dmPrincipal.cdsModelo.FieldByName('DataLancamento').AsDateTime := Now;
+  dmPrincipal.cdsModelo.FieldByName('Status').AsInteger := 1;
+  dmPrincipal.cdsModelo.FieldByName('Ativo').AsInteger := 1;
+  tdbMedtReleaseDate.SetFocus;
+end;
+
+
+procedure TfrmModel.btnCancelClick(Sender: TObject);
+begin
+  dmPrincipal.FecharQuery;
+  inherited;
+end;
+
+procedure TfrmModel.btnDeleteClick(Sender: TObject);
+begin
+  if not dmPrincipal.cdsModelo.IsEmpty then DeleteModelo(dmPrincipal.cdsModelo.FieldByName('ID').AsString);
+end;
+
+procedure TfrmModel.btnNewClick(Sender: TObject);
+begin
+  FInsereNovo := True;
+  InserirModelo;
+end;
+
+procedure TfrmModel.btnPrintClick(Sender: TObject);
+begin
+ if not dmPrincipal.cdsModelo.IsEmpty then
+    dmEntidadeRelatorios.pprModelo.Print
+    else
+    raise Exception.Create(dmPrincipal.cMSGImpressao);
+end;
+
+procedure TfrmModel.btnSalveClick(Sender: TObject);
+begin
+   SalvarModelo;
+end;
+
+procedure TfrmModel.SalvarModelo;
+var
+  Erros: Integer;
+begin
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', mb_Yesno) = IDYES then
+  begin
+    if dmPrincipal.cdsModelo.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsModelo.Post;
+
+    dmPrincipal.sqlconexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsModelo.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsModelo.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.sqlconexao.Commit(TD);
+      ShowMessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      dmPrincipal.FecharQuery;
+    end
+    else
+    begin
+      dmPrincipal.sqlconexao.Rollback(TD);
+      ShowMessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+      dmPrincipal.FecharQuery;
+    end;
+    AtualizarSalve;
+  end
+  else
+    Abort;
+end;
+
+
+procedure TfrmModel.btnSearchClick(Sender: TObject);
+begin
+  frmModel.PesquisaModelo(edtSearch.Text);
+  inherited;
+end;
+
+procedure TfrmModel.btnUpdateClick(Sender: TObject);
+begin
+  FInsereNovo := True;
+  pgMain.ActivePageIndex := 0;
+  dmPrincipal.cdsModelo.Edit;
+  tdbMedtReleaseDate.SetFocus;
+end;
+
+procedure TfrmModel.dbgRegisterDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := clActiveCaption
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := clInfoBk;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmModel.dbgSearchDblClick(Sender: TObject);
+begin
+  inherited;
+  if not DataSource1.DataSet.IsEmpty then
+  begin
+    pgMain.ActivePageIndex := 0;
+    edtDescription.SetFocus;
+  end;
+end;
+
+procedure TfrmModel.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  dmPrincipal.FecharQuery;
+  frmModel := nil;
+  Action := caFree;
+end;
+
+procedure TfrmModel.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FController := TController.New;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmModel.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Modelo de Produtos';
+
+  edtOperator.Text := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+end;
+
+procedure TfrmModel.tdbDescriptionExit(Sender: TObject);
+begin
+  if tdbDescription.text='' then
+  begin
+     tdbDescription.SetFocus;
+     raise Exception.Create('Campo descrição não pode ser nulo!');
+  end;
+end;
+
+procedure TfrmModel.tdbQtdeProducaoExit(Sender: TObject);
+var
+  TextOnEdit: UnicodeString;
+  Value: Currency;
+begin
+  TextOnEdit := tdbQtdeProducao.Text;
+
+  if TryStrToCurr(TextOnEdit, Value) then
+    tdbQtdeProducao.Text := FormatFloat('0', Value)
+  else
+    tdbQtdeProducao.Text := '0'; // se caso não conseguiu converter o valor digitado em número, mostra 0
+
+  Value := StrToFloat(tdbQtdeProducao.Text);
+  if Value <= 0 then
+    raise Exception.Create('Favor preencher produção mensal!');
+
+  btnSalve.Enabled := True;
+  btnSalve.SetFocus;
+end;
+
+procedure TfrmModel.tdbQtdeProducaoKeyPress(Sender: TObject; var Key: Char);
+begin
+if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+    Key := #0;
+end;
+
+end.

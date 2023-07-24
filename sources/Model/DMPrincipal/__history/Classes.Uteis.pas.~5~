@@ -1,0 +1,58 @@
+unit Classes.Uteis;
+
+interface
+
+uses
+  System.IniFiles,
+  System.SysUtils,
+  Vcl.Forms;
+
+Type
+  TClasseUteis = class
+    private
+    FConfig: TIniFile;
+    FServidor : String;
+    FCliente : String;
+    FMaquina : String;
+    public
+    constructor Create;
+    destructor Destroy; override;
+    function Servidor : String;
+    function Cliente : String;
+    function Maquina : String;
+  end;
+
+implementation
+
+{ TClasseUteis }
+
+constructor TClasseUteis.Create;
+var
+  lDiretorio: String;
+begin
+  lDiretorio := (ExtractFilePath(Application.ExeName));
+  FConfig := TIniFile.Create(lDiretorio + 'SERVIDOR_CLIENTE.ini');
+end;
+
+destructor TClasseUteis.Destroy;
+begin
+  FreeAndNil(FConfig);
+  inherited;
+end;
+
+function TClasseUteis.Cliente: String;
+begin
+  Result := FConfig.ReadString('Informacao', 'Cliente', Result);
+end;
+
+function TClasseUteis.Maquina: String;
+begin
+  Result := FConfig.ReadString('Informacao', 'Maquina', Result);
+end;
+
+function TClasseUteis.Servidor: String;
+begin
+  Result := FConfig.ReadString('Informacao', 'Servidor', Result);
+end;
+
+end.

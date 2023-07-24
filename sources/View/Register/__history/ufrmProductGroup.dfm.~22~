@@ -1,0 +1,111 @@
+inherited frmProductGroup: TfrmProductGroup
+  Caption = 'Grupo de Produtos'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSearch: TBitBtn
+      OnClick = btnSearchClick
+    end
+  end
+  inherited Panel1: TPanel
+    inherited pgMain: TPageControl
+      ActivePage = tsSearch
+      inherited tsRegister: TTabSheet
+        inherited pEdit: TPanel
+          ExplicitTop = 0
+          inherited lId: TLabel
+            Left = 8
+            Width = 46
+            Caption = 'Id Grupo:'
+            ExplicitLeft = 8
+            ExplicitWidth = 46
+          end
+          inherited Label4: TLabel
+            Width = 82
+            Caption = 'Descri'#231#227'o Grupo:'
+            ExplicitWidth = 82
+          end
+        end
+        inherited pGrid: TPanel
+          ExplicitLeft = 0
+          ExplicitTop = 65
+          ExplicitWidth = 930
+          ExplicitHeight = 361
+        end
+      end
+      inherited tsSearch: TTabSheet
+        inherited pSearch: TPanel
+          inherited rgChoice: TRadioGroup
+            Items.Strings = (
+              '0 - Id Grupo'
+              '1 - Descri'#231#227'o '
+              '2 - Operador')
+          end
+        end
+        inherited dbgSearch: TDBGrid
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'Id'
+              Title.Alignment = taCenter
+              Title.Caption = 'Id Grupo:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 62
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'descricao'
+              Title.Caption = 'Descri'#231#227'o:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 333
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'usuario'
+              ImeName = 'usuario'
+              Title.Caption = 'Usu'#225'rio:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 88
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'cadastro'
+              Title.Alignment = taCenter
+              Title.Caption = 'Data Lan'#231'amento:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 104
+              Visible = True
+            end>
+        end
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    OnDataChange = DataSource1DataChange
+    Left = 664
+  end
+end

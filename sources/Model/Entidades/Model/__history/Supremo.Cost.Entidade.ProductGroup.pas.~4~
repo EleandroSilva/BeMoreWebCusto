@@ -1,0 +1,28 @@
+unit Supremo.Cost.Entidade.ProductGroup;
+
+interface
+
+uses
+  Whorkshop.Model.Conexao.Interfaces;
+
+type
+  TProductGroup = class(TInterfacedObject, iModelQuery)
+  private
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelQuery;
+
+    function Query: TObject;
+    function OpenTable(aTable: String): iModelQuery;
+    function OpenTableUpdate(aTable: String): iModelQuery;
+    function OpenTableDelete(aTable: String): iModelQuery;
+    function ExecSQL(aSQL: String): iModelQuery;
+    function MSG(aValue: Integer): String;
+
+  end;
+
+implementation
+
+end.

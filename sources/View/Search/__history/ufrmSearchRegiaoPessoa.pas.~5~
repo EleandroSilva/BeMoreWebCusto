@@ -1,0 +1,60 @@
+unit ufrmSearchRegiaoPessoa;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+
+  Data.DB,
+
+  ufrmModeloPesquisa,
+
+  Whorkshop.Controller.Interfaces;
+
+type
+  TfrmPesquisaRegiaoPessoa = class(TfrmModeloPesquisa)
+    procedure btnSearchClick(Sender: TObject);
+  private
+    FController: iController;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPesquisaRegiaoPessoa: TfrmPesquisaRegiaoPessoa;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmPesquisaRegiaoPessoa.btnSearchClick(Sender: TObject);
+begin
+  FController
+    .Entidades
+    .Model
+    .DataSet(DataSource1)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(rgChoice.ItemIndex)
+    .TextoFiltro(edtSearch.Text)
+    .Buscar(edtSearch.Text);
+end;
+
+end.

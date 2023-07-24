@@ -1,0 +1,211 @@
+unit Entidade.Recalcular.Mao.Obra;
+
+interface
+
+uses udmPrincipal, Data.SqlExpr, System.SysUtils;
+
+Type
+  TRecalcularMaoObra = class
+  public
+    FValorGasto: Currency;
+    FQtdeProducao: Integer;
+    FAliquotaFrete: Currency;
+    FId: String;
+    FIdParametro: String;
+    FIdModelo: String;
+    FIdLocal: String;
+    FCalcularValorAjustado: Integer;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    function UpdateItemFreteMaoObra: Currency;
+    function UpdateItemValorMaoObra: Currency;
+    procedure UpdateCabecalhoMaoObra;
+  private
+    FValorFrete: Currency;
+    FValorMaoObra: Currency;
+    FValorAjustado: Currency;
+    FAliquotaInterna: Currency;
+    FAliquotaExterna: Currency;
+
+    qrAuxiliar: TSQLQuery;
+
+    function ValorAjustado: Currency;
+    function CalcularValorAjustado(aValorMaoObra, aAliquota: Currency): Currency;
+    procedure UpdateValorAjustado;
+    procedure UpdateValorCusto;
+  end;
+
+implementation
+
+{ TRecalcularMaoObra }
+
+procedure TRecalcularMaoObra.UpdateCabecalhoMaoObra;
+var
+  lValorFrete, lValorMaoObra, lValorAjustado, lValorCusto: Currency;
+begin
+  lValorFrete := 0;
+  lValorMaoObra := 0;
+  lValorAjustado := 0;
+  lValorCusto :=0;
+
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Create.Text := ('select ' +
+    'coalesce(cast(sum(pitem.valorfrete) as numeric (10,2)),0) ValorFrete, ' +
+    'coalesce(cast(sum(pitem.valormaoobra) as numeric (10,2)),0) ValorMaoObra, ' +
+    'coalesce(cast(sum(pitem.valorAjustado) as numeric (10,2)),0) ValorAjustado ' +
+    'from ProducaoItem pitem ' +
+    'where pitem.IdProducao=' + FId + ' ');
+  qrAuxiliar.Active := True;
+  lValorFrete := qrAuxiliar.FieldByName('ValorFrete').AsCurrency;
+  lValorMaoObra := qrAuxiliar.FieldByName('ValorMaoObra').AsCurrency;
+  lValorAjustado := qrAuxiliar.FieldByName('ValorAjustado').AsCurrency;
+  lValorCusto :=StrToFloat(FormatFloat('0.00',lValorAjustado + lValorFrete));
+  try
+    qrAuxiliar.Active := False;
+    qrAuxiliar.SQL.Clear;
+    qrAuxiliar.SQL.Text := ('update Producao p set ' +
+      'p.ValorFrete=' + StringReplace(CurrToStr(lValorFrete), ',', '.', [RFReplaceAll]) + ', ' +
+      'p.ValorMaoObra=' + StringReplace(CurrToStr(lValorMaoObra), ',', '.', [RFReplaceAll]) + ', ' +
+      'p.ValorAjustado=' + StringReplace(CurrToStr(lValorAjustado), ',', '.', [RFReplaceAll]) + ', ' +
+      'p.ValorCusto=' + StringReplace(CurrToStr(lValorCusto), ',', '.', [RFReplaceAll]) + ' ' +
+      'where p.ID=' + FId + ' ');
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+procedure TRecalcularMaoObra.UpdateValorAjustado;
+begin
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  try
+    qrAuxiliar.SQL.Text := ('update ProducaoItem pitem set pitem.valorAjustado = ' +
+      StringReplace(CurrToStr(FValorAjustado), ',', '.', [RFReplaceAll]) +
+      'where pitem.ID=' + FIdParametro + ' ');
+    UpdateValorCusto;
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+procedure TRecalcularMaoObra.UpdateValorCusto;
+var
+ lSoma : Currency;
+begin
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  try
+    lSoma := 0;
+    lSoma := StrToFloat(FormatFloat('0.00', (FValorAjustado + FValorFrete)));
+    qrAuxiliar.SQL.Text := ('update ProducaoItem pitem set pitem.valorcusto = ' + StringReplace(CurrToStr(lSoma), ',', '.', [RFReplaceAll]) +
+      'where pitem.ID=' + FIdParametro + ' ');
+    FValorFrete :=0;
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+function TRecalcularMaoObra.UpdateItemFreteMaoObra: Currency;
+begin
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  try
+    Result := 0;
+    FValorFrete := 0;
+    Result := StrToFloat(FormatFloat('0.00', (FValorGasto / FQtdeProducao * FAliquotaFrete / 100)));
+    FValorFrete := Result;
+    qrAuxiliar.SQL.Text := ('update ProducaoItem pitem set pitem.valorfrete = ' + StringReplace(CurrToStr(Result), ',', '.', [RFReplaceAll]) +
+      'where pitem.ID=' + FIdParametro + ' ');
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+function TRecalcularMaoObra.CalcularValorAjustado(aValorMaoObra, aAliquota: Currency): Currency;
+var
+  lSoma: Currency;
+begin
+  lSoma := 0;
+  FValorAjustado := 0;
+  lSoma := aValorMaoObra * aAliquota / 100;
+  lSoma := StrToFloat(FormatFloat('0.00', lSoma));
+  Result := lSoma;
+  FValorAjustado := Result;
+end;
+
+function TRecalcularMaoObra.ValorAjustado: Currency;
+var
+  lStatus: Integer;
+begin
+  Result := 0;
+  lStatus := 99;
+  FAliquotaInterna := 0;
+  FAliquotaExterna := 0;
+  qrAuxiliar.Active := False;
+  qrAuxiliar.SQL.Clear;
+  qrAuxiliar.SQL.Text := ('select ' +
+    'm.AliquotaInterna, ' +
+    'm.AliquotaExterna ' +
+    'from Modelo m ' +
+    'where m.id=' + FIdModelo + '');
+  qrAuxiliar.Active := True;
+
+  FAliquotaInterna := qrAuxiliar.FieldByName('AliquotaInterna').AsCurrency;
+  FAliquotaExterna := qrAuxiliar.FieldByName('AliquotaExterna').AsCurrency;
+
+  if FCalcularValorAjustado = 1 then
+  begin
+    qrAuxiliar.Active := False;
+    qrAuxiliar.SQL.Clear;
+    qrAuxiliar.SQL.Text := ('select ' +
+      'l.Status ' +
+      'from Local l ' +
+      'where l.id=' + FIdLocal + '');
+    qrAuxiliar.Active := True;
+    lStatus := qrAuxiliar.FieldByName('Status').AsInteger;
+
+    if lStatus = 0 then
+      CalcularValorAjustado(FValorMaoObra, FAliquotaInterna)
+    else
+      CalcularValorAjustado(FValorMaoObra, FAliquotaExterna);
+  end
+  else
+    FValorAjustado := FValorMaoObra;
+  Result := FValorAjustado;
+  UpdateValorAjustado;
+end;
+
+function TRecalcularMaoObra.UpdateItemValorMaoObra: Currency;
+begin
+   qrAuxiliar.Active := False;
+   qrAuxiliar.SQL.Clear;
+  try
+    Result := 0;
+    Result := StrToFloat(FormatFloat('0.00', (FValorGasto / FQtdeProducao)));
+
+    qrAuxiliar.SQL.Text := ('update ProducaoItem pitem set pitem.valormaoobra = ' + StringReplace(CurrToStr(Result), ',', '.', [RFReplaceAll]) +
+      'where pitem.ID=' + FIdParametro + ' ');
+    FValorMaoObra := 0;
+    FValorMaoObra := Result;
+    ValorAjustado;
+  finally
+    qrAuxiliar.ExecSQL;
+  end;
+end;
+
+constructor TRecalcularMaoObra.Create;
+begin
+  qrAuxiliar := TSQLQuery.Create(nil);
+  qrAuxiliar.SQLConnection := dmPrincipal.sqlConexao;
+end;
+
+destructor TRecalcularMaoObra.Destroy;
+begin
+  FreeAndNil(qrAuxiliar);
+  inherited;
+end;
+
+end.

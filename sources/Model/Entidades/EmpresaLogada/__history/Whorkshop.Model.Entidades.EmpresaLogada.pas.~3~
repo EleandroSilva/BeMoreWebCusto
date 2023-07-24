@@ -1,0 +1,27 @@
+unit Whorkshop.Model.Entidades.EmpresaLogada;
+
+interface
+
+uses
+  System.SysUtils,
+  System.IniFiles,
+
+  Whorkshop.Model.Entidades.EmpresaLogada.Interfaces;
+
+type
+  TModelEntidadesEmpresaLogada = class(TInterfacedObject, iModelEntidadeEmpresaLogada)
+    private
+
+    public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidadeEmpresaLogada;
+
+    function IdEmpresa : String;
+    function NomeEmpresa : String;
+    function Operador : String;
+  end;
+
+implementation
+
+end.

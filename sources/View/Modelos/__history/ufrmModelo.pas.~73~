@@ -1,0 +1,263 @@
+unit ufrmModelo;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+
+  Vcl.Mask,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Winapi.UrlMon,
+  System.ImageList,
+  Vcl.ImgList;
+
+type
+  TfrmModelo = class(TForm)
+    Panel2: TPanel;
+    lTextoEmpresa: TLabel;
+    pButtons: TPanel;
+    Panel4: TPanel;
+    Navigator: TDBNavigator;
+    lSite: TLabel;
+    btnSearch: TBitBtn;
+    btnCancel: TBitBtn;
+    btnNew: TBitBtn;
+    btnSalve: TBitBtn;
+    btnUpdate: TBitBtn;
+    btnDelete: TBitBtn;
+    bbClose: TBitBtn;
+    Panel1: TPanel;
+    pgMain: TPageControl;
+    tsRegister: TTabSheet;
+    tsSearch: TTabSheet;
+    pSearch: TPanel;
+    dbgSearch: TDBGrid;
+    DataSource1: TDataSource;
+    rgChoice: TRadioGroup;
+    gbBetweenDates: TGroupBox;
+    lStart: TLabel;
+    lEnd: TLabel;
+    StartDate: TDateTimePicker;
+    EndDate: TDateTimePicker;
+    Panel6: TPanel;
+    lDigiteConformeEscolha: TLabel;
+    edtSearch: TEdit;
+    pGrid: TPanel;
+    rgActive: TRadioGroup;
+    pEdit: TPanel;
+    LId: TLabel;
+    lDataLancamento: TLabel;
+    edtId: TEdit;
+    edtDescription: TEdit;
+    MedtReleaseDate: TMaskEdit;
+    Panel9: TPanel;
+    pOperator: TPanel;
+    edtOperator: TEdit;
+    lOperator: TLabel;
+    lDescricao: TLabel;
+    ImageList1: TImageList;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure dbgSearchDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure lSiteClick(Sender: TObject);
+    procedure bbCloseClick(Sender: TObject);
+    procedure edtSearchKeyPress(Sender: TObject; var Key: Char);
+    procedure btnSearchClick(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
+  private
+
+    procedure AtualizarBtnNew;
+    procedure AtualizarBtnCancel;
+    procedure AtualizarBtnUpdate;
+    procedure AtualizarBtnDelete;
+    procedure AtualizarSalve;
+    procedure AtualizarSearch;
+
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmModelo: TfrmModelo;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TfrmModelo.AtualizarBtnCancel;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  pgMain.ActivePageIndex := 0;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelo.AtualizarBtnDelete;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  pgMain.ActivePageIndex := 0;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelo.AtualizarBtnNew;
+begin
+  btnNew.Enabled := False;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := True;
+  pgMain.ActivePageIndex := 0;
+  btnSearch.Enabled := False;
+end;
+
+procedure TfrmModelo.AtualizarBtnUpdate;
+begin
+  MedtReleaseDate.SetFocus;
+  btnNew.Enabled := False;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := True;
+  btnSearch.Enabled := False;
+  pgMain.ActivePageIndex := 0;
+end;
+
+procedure TfrmModelo.AtualizarSalve;
+begin
+ btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  pgMain.ActivePageIndex := 0;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelo.AtualizarSearch;
+begin
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnDelete.Enabled := True;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnNew.Enabled := True;
+end;
+
+procedure TfrmModelo.bbCloseClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmModelo.btnNewClick(Sender: TObject);
+begin
+  MedtReleaseDate.Text :=FormatDateTime('dd/mm/yyyy',Now);
+  pgMain.ActivePageIndex := 0;
+  MedtReleaseDate.SetFocus;
+end;
+
+procedure TfrmModelo.btnSearchClick(Sender: TObject);
+begin
+  if not DataSource1.DataSet.IsEmpty then
+    pgMain.ActivePageIndex := 1;
+end;
+
+procedure TfrmModelo.dbgSearchDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := clSkyBlue
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := clGray;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmModelo.edtSearchKeyPress(Sender: TObject; var Key: Char);
+begin
+  if rgChoice.ItemIndex = 0 then
+    if not(Key in ['0' .. '9', Chr(8), Chr(6)]) then
+      Key := #0;
+end;
+
+procedure TfrmModelo.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := CaFree;
+end;
+
+procedure TfrmModelo.FormCreate(Sender: TObject);
+begin
+  pgMain.TabIndex := 0;
+end;
+
+procedure TfrmModelo.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(CM_Dialogkey, VK_TAB, 0);
+  end;
+end;
+
+procedure TfrmModelo.FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_Escape:
+      Close;
+  end;
+end;
+
+procedure TfrmModelo.FormShow(Sender: TObject);
+var
+  lDia: String;
+begin
+  lDia := '01/' + FormatDateTime('MM', Now) + '/' + FormatDateTime('YYYY', Now);
+  StartDate.Date := StrToDate(lDia);
+  EndDate.Date := Now;
+
+  rgChoice.ItemIndex := 1;
+  btnSearch.SetFocus;
+end;
+
+procedure TfrmModelo.lSiteClick(Sender: TObject);
+begin
+  HlinkNavigateString(nil, 'http://bemoreweb.com.br/');
+end;
+
+end.

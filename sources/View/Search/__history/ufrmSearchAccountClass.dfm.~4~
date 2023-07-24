@@ -1,0 +1,13 @@
+inherited frmSearchAccountClass: TfrmSearchAccountClass
+  Caption = 'Pesquisa Classe de contas'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+  end
+end

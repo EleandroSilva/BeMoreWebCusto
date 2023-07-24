@@ -1,0 +1,49 @@
+unit Whorkshop.Model.Entidades.EmpresaLogada.Factory;
+
+interface
+
+uses
+  Whorkshop.Model.Entidades.EmpresaLogada.Interfaces;
+
+type
+  TModelEntidadesEmpresaLogada = class(TInterfacedObject, iModelEntidadeEmpresaLogadaFactory)
+    private
+     FEmpresaLogada : iModelEntidadeEmpresaLogada;
+    public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iModelEntidadeEmpresaLogadaFactory;
+
+    function DadosEmpresaLogada : iModelEntidadeEmpresaLogada;
+
+  end;
+
+implementation
+
+
+{ TModelEntidadesEmpresaLogada }
+
+constructor TModelEntidadesEmpresaLogada.Create;
+begin
+  inherited;
+end;
+
+function TModelEntidadesEmpresaLogada.DadosEmpresaLogada: iModelEntidadeEmpresaLogada;
+begin
+  if not Assigned(FEmpresaLogada) then
+    FEmpresaLogada := TModelEntidadeEmpresaLogada.New;
+
+  Result := FEmpresaLogada;
+end;
+
+destructor TModelEntidadesEmpresaLogada.Destroy;
+begin
+  inherited;
+end;
+
+class function TModelEntidadesEmpresaLogada.New: iModelEntidadeEmpresaLogadaFactory;
+begin
+  Result := Self.Create;
+end;
+
+end.

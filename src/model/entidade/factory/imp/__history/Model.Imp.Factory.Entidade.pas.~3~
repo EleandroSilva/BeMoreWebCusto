@@ -1,0 +1,28 @@
+unit Model.Imp.Factory.Entidade;
+
+interface
+
+uses
+  Model.Factory.Entidade.Interfaces,
+  Model.Entidade.Aliquota.Markup.Interfaces;
+
+type
+  TFactoryEntidade<T : iInterface> = Class(TInterfacedObject, iFactoryEntidade<T>)
+    private
+      [Weak]
+      FParent    : T;
+      FAliquotaMarkup : iFactoryEntidade<T>;
+    public
+      constructor Create(Parent : T);
+      destructor Destroy; override;
+      class function New(Parent : T): iAliquotaMarkup<T>;
+
+      function AliquotaMarkup : iAliquotaMarkup<T>;
+
+      function &End : T;
+  End;
+
+
+implementation
+
+end.

@@ -1,0 +1,7 @@
+unit Supremo.Entidade.Soma.Despesa.Fixa;
+
+interface
+
+implementation
+
+end.

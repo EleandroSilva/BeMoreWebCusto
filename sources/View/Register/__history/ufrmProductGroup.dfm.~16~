@@ -1,0 +1,162 @@
+inherited frmProductGroup: TfrmProductGroup
+  Caption = 'Grupo de Produtos'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSearch: TBitBtn
+      OnClick = btnSearchClick
+    end
+  end
+  inherited Panel1: TPanel
+    inherited pgMain: TPageControl
+      inherited tsRegister: TTabSheet
+        object pEdit: TPanel
+          Left = 0
+          Top = 0
+          Width = 930
+          Height = 65
+          Align = alTop
+          TabOrder = 0
+          object Label2: TLabel
+            Left = 40
+            Top = 13
+            Width = 14
+            Height = 13
+            Alignment = taRightJustify
+            Caption = 'Id:'
+          end
+          object Label3: TLabel
+            Left = 62
+            Top = 13
+            Width = 88
+            Height = 13
+            Caption = 'Data Lan'#231'amento:'
+          end
+          object Label4: TLabel
+            Left = 189
+            Top = 13
+            Width = 82
+            Height = 13
+            Caption = 'Descri'#231#227'o Grupo:'
+          end
+          object Label5: TLabel
+            Left = 688
+            Top = 13
+            Width = 50
+            Height = 13
+            Caption = 'Operador:'
+          end
+          object edtDescription: TEdit
+            Left = 189
+            Top = 32
+            Width = 476
+            Height = 21
+            TabOrder = 1
+          end
+          object edtOperator: TEdit
+            Left = 688
+            Top = 32
+            Width = 201
+            Height = 21
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
+            Color = 5592405
+            TabOrder = 2
+          end
+          object edtId: TEdit
+            Left = 8
+            Top = 32
+            Width = 46
+            Height = 21
+            Alignment = taRightJustify
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
+            Color = 5592405
+            TabOrder = 0
+          end
+          object MedtReleaseDate: TMaskEdit
+            Left = 60
+            Top = 32
+            Width = 121
+            Height = 21
+            TabOrder = 3
+            Text = 'MedtReleaseDate'
+          end
+        end
+      end
+      inherited tsSearch: TTabSheet
+        inherited pSearch: TPanel
+          inherited rgChoice: TRadioGroup
+            Items.Strings = (
+              '0 - Id Grupo'
+              '1 - Descri'#231#227'o ')
+          end
+        end
+        inherited dbgSearch: TDBGrid
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'Id'
+              Title.Alignment = taCenter
+              Title.Caption = 'Id Grupo:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 62
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'descricao'
+              Title.Caption = 'Descri'#231#227'o:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 333
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'usuario'
+              ImeName = 'usuario'
+              Title.Caption = 'Usu'#225'rio:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 88
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'cadastro'
+              Title.Alignment = taCenter
+              Title.Caption = 'Data Lan'#231'amento:'
+              Title.Font.Charset = ANSI_CHARSET
+              Title.Font.Color = clWindowText
+              Title.Font.Height = -13
+              Title.Font.Name = 'Berlin Sans FB'
+              Title.Font.Style = []
+              Width = 104
+              Visible = True
+            end>
+        end
+      end
+    end
+  end
+  inherited DataSource1: TDataSource
+    Left = 664
+  end
+end

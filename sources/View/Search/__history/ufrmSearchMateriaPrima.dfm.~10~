@@ -1,0 +1,79 @@
+inherited frmSearchMaterial: TfrmSearchMaterial
+  Caption = 'Pesquisa Mat'#233'ria Prima'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited lSite: TLabel
+        Width = 218
+      end
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+    inherited btnSearch: TBitBtn
+      OnClick = btnSearchClick
+    end
+  end
+  inherited pSearch: TPanel
+    inherited Panel6: TPanel
+      inherited Label1: TLabel
+        Width = 513
+      end
+    end
+  end
+  inherited Panel2: TPanel
+    inherited lTextoEmpresa: TLabel
+      Width = 870
+      Height = 34
+    end
+  end
+  inherited Panel1: TPanel
+    inherited dbgSearch: TDBGrid
+      OnCellClick = dbgSearchCellClick
+      Columns = <
+        item
+          Alignment = taRightJustify
+          Expanded = False
+          FieldName = 'Id'
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Id:'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Descricao'
+          Title.Caption = 'Nome Mat'#233'ria Prima:'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'UN'
+          Title.Caption = 'Unidade:'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'vl_liquido'
+          Title.Caption = 'Valor L'#237'quido:'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'vl_unitario'
+          Title.Caption = 'Valor Unit'#225'rio:'
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'ativo'
+          Title.Alignment = taCenter
+          Title.Caption = 'Ativo'
+          Width = 54
+          Visible = True
+        end>
+    end
+  end
+end

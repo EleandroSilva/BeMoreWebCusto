@@ -1,0 +1,167 @@
+{*******************************************************}
+{                  API-HORSE-REST-JSON                  }
+{                      ES Sistemas                      }
+{            Início do projeto 27/05/2023               }
+{                 www.bemoreweb.com.br                  }
+{                     (17)98169-5336                    }
+{                        2003/2023                      }
+{         Analista desenvolvedor (Eleandro Silva)       }
+{*******************************************************}
+unit Model.Imp.Entidade.Aliquota.Nome;
+
+interface
+
+uses
+  Model.Entidade.Aliquota.Nome.Interfaces;
+
+type
+  TAliquotaNome<T : Interfaces > = class(TInterfacedObject, iAliquotaNome<T>)
+    private
+      [Weak]
+      FParent         : T;
+      FId             : Integer;
+      FStatus         : Integer;
+      FDescricao      : String;
+      FAliquota       : Currency;
+      FOperador       : String;
+      FDataLancamento : TDateTime;
+      FFinanceiro     : Integer;
+      FAtivo          : Integer;
+    public
+      constructor Create(Parent : T);
+      destructor Destroy; override;
+      class function New(Parent : T) : iAliquotaNome<T>;
+
+      function Id(Value : Integer)               : iAliquotaNome<T>; overload;
+      function Id : Integer;                                         overload;
+      {Status uso para definir se o registro da tabela é margem de lucro da empresa 1-Sim margem de lucro 2-Não é margem de lucro}
+      function Status(Value : Integer)           : iAliquotaNome<T>; overload;
+      function Status : Integer;                                     overload;
+      function Descricao(Value : String)         : iAliquotaNome<T>; overload;
+      function Descricao : String;                                   overload;
+      function Aliquota(Value : Currency)        : iAliquotaNome<T>; overload;
+      function Aliquota : Currency;                                  overload;
+      function Operador(Value : String)          : iAliquotaNome<T>; overload;
+      function Operador : String;                                    overload;
+      function DataLancamento(Value : TDateTime) : iAliquotaNome<T>; overload;
+      function DataLancamento : TDateTime;                           overload;
+      function Financeiro(Value : Integer)       : iAliquotaNome<T>; overload;
+      function Financeiro : Integer;                                 overload;
+      function Ativo(Value : Integer)            : iAliquotaNome<T>; overload;
+      function Ativo : Integer;                                      overload;
+
+      function &End : T;
+  end;
+
+implementation
+
+constructor TAliquotaNome<T>.Create(Parent: T);
+begin
+  FParent := Parent;
+end;
+
+
+destructor TAliquotaNome<T>.Destroy;
+begin
+  inherited;
+end;
+
+class function TAliquotaNome<T>.New(Parent: T): iAliquotaNome<T>;
+begin
+  Result := Self.Create(Parent);
+end;
+
+function TAliquotaNome<T>.&End: T;
+begin
+  Result := FParent;
+end;
+
+function TAliquotaNome<T>.Id(Value: Integer): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FId    := Value;
+end;
+
+function TAliquotaNome<T>.Id: Integer;
+begin
+  Result := FId;
+end;
+
+function TAliquotaNome<T>.Status(Value: Integer): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FStatus := Value;
+end;
+
+function TAliquotaNome<T>.Status: Integer;
+begin
+  Result := FStatus;
+end;
+
+function TAliquotaNome<T>.Descricao(Value: String): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FDescricao := Value;
+end;
+
+function TAliquotaNome<T>.Descricao: String;
+begin
+  Result := FDescricao;
+end;
+
+function TAliquotaNome<T>.Aliquota(Value: Currency): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FAliquota := Value;
+end;
+
+function TAliquotaNome<T>.Aliquota: Currency;
+begin
+  Result := FAliquota;
+end;
+
+function TAliquotaNome<T>.Operador(Value: String): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FOperador := Value;
+end;
+
+function TAliquotaNome<T>.Operador: String;
+begin
+  Result := FOperador;
+end;
+
+function TAliquotaNome<T>.DataLancamento(Value: TDateTime): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FDataLancamento := Value;
+end;
+
+function TAliquotaNome<T>.DataLancamento: TDateTime;
+begin
+  Result := FDataLancamento;
+end;
+
+function TAliquotaNome<T>.Financeiro(Value: Integer): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FFinanceiro := Value;
+end;
+
+function TAliquotaNome<T>.Financeiro: Integer;
+begin
+  Result := FFinanceiro;
+end;
+
+function TAliquotaNome<T>.Ativo(Value: Integer): iAliquotaNome<T>;
+begin
+  Result := Self;
+  FAtivo := Value;
+end;
+
+function TAliquotaNome<T>.Ativo: Integer;
+begin
+  Result := FAtivo;
+end;
+
+end.

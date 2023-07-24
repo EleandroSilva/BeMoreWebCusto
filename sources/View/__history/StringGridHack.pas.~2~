@@ -1,0 +1,17 @@
+unit StringGridHack;
+
+interface
+
+uses
+  Vcl.Grids;
+
+type
+  TStringGridHack = class(TStringGrid)
+  protected
+    procedure DeleteRow(ARow: Longint); reintroduce;
+    procedure InsertRow(ARow: Longint);
+  end;
+
+implementation
+
+end.

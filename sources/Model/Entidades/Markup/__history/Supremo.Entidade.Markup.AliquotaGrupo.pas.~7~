@@ -1,0 +1,271 @@
+unit Supremo.Entidade.Markup.AliquotaGrupo;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TMarkupAliquotaGrupo = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData: Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus: Integer;
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo: String;
+    FIdProduto: String;
+    FIdParametro: String;
+    FValorLancamento: Currency;
+    FAliquota: Currency;
+    FGenId: Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue: Integer): iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro(aValue: String): iModelEntidade;
+    function ValorLancamento(aValue: currency): iModelEntidade;
+    function Aliquota(aValue : Currency) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+{ TMarkupAliquotaGrupo }
+
+constructor TMarkupAliquotaGrupo.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TMarkupAliquotaGrupo.Destroy;
+begin
+  inherited;
+end;
+
+class function TMarkupAliquotaGrupo.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+
+function TMarkupAliquotaGrupo.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TMarkupAliquotaGrupo.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TMarkupAliquotaGrupo.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TMarkupAliquotaGrupo.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TMarkupAliquotaGrupo.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Status(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TMarkupAliquotaGrupo.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TMarkupAliquotaGrupo.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TMarkupAliquotaGrupo.IdParametro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro := aValue;
+end;
+
+function TMarkupAliquotaGrupo.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TMarkupAliquotaGrupo.ValorLancamento(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Aliquota(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota := aValue;
+end;
+
+function TMarkupAliquotaGrupo.Buscar(aValue: String): iModelEntidade;
+const
+  cSQL = (
+          'select ' +
+          'AG.Id, '+
+          'AG.Descricao, ' +
+          'AG.Operador,' +
+          'AG.DataLancamento, '+
+          'AG.Ativo '+
+          'from AliquotaGrupo AG '
+         );
+var
+  lWhere: String;
+begin
+  Result := Self;
+  lWhere := '';
+
+  lWhere := ('where AG.Ativo=' + IntToStr(FAtivo) + ' ');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere := lWhere + ('and AG.Id=' +IntToStr(StrToInt(aValue)) + ' ');
+      1: lWhere := lWhere + ('and AG.Descricao CONTAINING ''' + aValue + ''' ');
+      2: lWhere := lWhere + ('and AG.Operador CONTAINING ''' + aValue + ''' ');
+    end;
+
+  FQuery.Open(cSQL + lWhere);
+end;
+
+function TMarkupAliquotaGrupo.Insert: iModelEntidade;
+const
+    cInsert = (
+               'insert into AliquotaGrupo ' +
+               '( ' +
+               'Descricao, ' +
+               'Operador, ' +
+               'DataLancamento, ' +
+               'Ativo ' +
+               ') '
+              );
+var
+  lInsert: String;
+begin
+  Result := Self;
+  lInsert := '';
+
+  lInsert := cInsert +
+    'values ' +
+    '( ' +
+    '''' + FDescricao + ''',' +
+    '''' + FOperador + ''',' +
+    '''' + FormatDateTime('dd.mm.yyyy', FDataLancamento) + ''',' +
+    IntToStr(1)+' '+//Ativo 0->Inativo  - 1 Ativo
+    ') ';
+  FQuery.ExecSQL(lInsert);
+end;
+
+function TMarkupAliquotaGrupo.Insert(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Json quando precisar
+end;
+
+function TMarkupAliquotaGrupo.Update(aValue: String): iModelEntidade;
+const
+  cUpdate = ('update Aliquota set ');
+begin
+  Result := Self;
+  FQuery.ExecSQL(cUpdate +
+    'descricao=''' + FDescricao + ''',' +
+    'ativo=' + IntToStr(FAtivo) + '' +
+    'where Id=' + aValue + ' ');
+end;
+
+function TMarkupAliquotaGrupo.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FQuery.ExecSQL('delete from Aliquota where Id='+aValue+'');
+end;
+
+function TMarkupAliquotaGrupo.PegarGenId: Integer;
+begin
+  Result := 0;
+  //Criar PegarGenId quando precisar
+end;
+
+
+//JSON
+function TMarkupAliquotaGrupo.Get(const aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Delete quando precisar
+end;
+
+
+
+end.

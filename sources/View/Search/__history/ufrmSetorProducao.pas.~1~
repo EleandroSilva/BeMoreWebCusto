@@ -1,0 +1,220 @@
+unit ufrmSetor;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+
+  Data.DB,
+
+  ufrmModelodbEdit,
+  udmPrincipal,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller;
+
+type
+  TfrmSetor = class(TfrmModelodbEdit)
+    lValorGasto: TLabel;
+    dbValorGasto: TDBEdit;
+    lAliquotaFrete: TLabel;
+    dbAliquotaFrete: TDBEdit;
+    dbgCadastro: TDBGrid;
+    procedure btnNewClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnSalveClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnSearchClick(Sender: TObject);
+    procedure dbgCadastroDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnDeleteClick(Sender: TObject);
+  private
+    FController: iController;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmSetor: TfrmSetor;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TfrmSetor.btnDeleteClick(Sender: TObject);
+var
+  Erros: Integer;
+begin
+  if MessageBox(handle, 'Deseja excluir este registro?', 'Aviso', mb_IconQuestion or mb_Yesno) = mrYes then
+  begin
+    dmPrincipal.cdsSetor.Delete;
+    if not dmprincipal.sqlconexao.InTransaction then
+      dmprincipal.sqlconexao.StartTransaction(TD);
+
+    Erros := dmPrincipal.cdsSetor.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmprincipal.sqlconexao.Commit(TD);
+      showmessage('Parabéns ' + edtOperator.Text + ' Registro excluído com sucesso!');
+    end
+    else
+    begin
+      dmprincipal.sqlconexao.Rollback(TD);
+      showmessage('Atenção ' + edtOperator.Text + ' Registro não pode ser excluído!');
+      Abort;
+    end;
+
+    dmPrincipal.cdsSetor.Active := False;
+    dmPrincipal.sqlSetor.Active := False;
+    dmPrincipal.sqlSetor.CommandText := ('select * from setor ');
+  end;
+
+  inherited;
+
+end;
+
+procedure TfrmSetor.btnNewClick(Sender: TObject);
+begin
+  inherited;
+
+  dmPrincipal.sqlSetor.Active := False;
+  dmPrincipal.sqlSetor.CommandText := ('select * from Setor where id=0 ');
+  dmPrincipal.cdsSetor.Active := True;
+  dmPrincipal.cdsSetor.Append;
+  dmPrincipal.cdsSetor.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsSetor.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  dmPrincipal.cdsSetor.FieldByName('DataLancamento').AsDateTime := Now;
+  dmPrincipal.cdsSetor.FieldByName('Status').AsInteger := 1;
+  dmPrincipal.cdsSetor.FieldByName('Ativo').AsInteger := 1;
+end;
+
+procedure TfrmSetor.btnSalveClick(Sender: TObject);
+var
+  Erros: Integer;
+begin
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', MB_YESNO) = IDYES then
+  begin
+    dmPrincipal.cdsSetor.Edit;
+
+    if dmPrincipal.cdsSetor.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsSetor.Post;
+
+    dmPrincipal.SQLConexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsSetor.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsSetor.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.SQLConexao.Commit(TD);
+      showmessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      dmPrincipal.cdsSetor.Active := False;
+    end
+    else
+    begin
+      dmPrincipal.SQLConexao.RollBack(TD);
+      showmessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+    end;
+    inherited;
+    btnCancel.Click;
+  end
+  else
+    Abort;
+end;
+
+procedure TfrmSetor.btnSearchClick(Sender: TObject);
+begin
+  try
+    dmPrincipal.sqlSetor.Active := False;
+    dmPrincipal.sqlSetor.CommandText := ('select * from Setor ' +
+      'where ativo=1 ' +
+      'order by descricao ');
+    dmPrincipal.cdsSetor.Active := False;
+    dmPrincipal.cdsSetor.Active := True;
+
+    if dmPrincipal.cdsSetor.IsEmpty then
+    begin
+      raise Exception.Create('Atenção... ' + FController
+        .EntidadesEmpresaLogada
+        .DadosEmpresaLogada
+        .Operador + ' Registro não encontrado!');
+    end;
+
+  finally
+
+  end;
+
+  inherited;
+end;
+
+procedure TfrmSetor.dbgCadastroDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := $00757575
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := $0053A9FF;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmSetor.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  frmSetor := nil;
+  Action := caFree;
+end;
+
+procedure TfrmSetor.FormCreate(Sender: TObject);
+begin
+  inherited;
+
+  FController := TController.New;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmSetor.FormShow(Sender: TObject);
+begin
+  inherited;
+
+  lTextoEmpresa.Caption := 'Setores de Produção';
+end;
+
+end.

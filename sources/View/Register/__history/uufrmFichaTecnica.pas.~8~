@@ -1,0 +1,115 @@
+unit uufrmFichaTecnica;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+
+  Data.DB,
+
+  ufrmModelodbEdit,
+  udmPrincipal,
+
+  Whorkshop.Controller.Interfaces;
+
+type
+  TufrmFichaTecnica = class(TfrmModelodbEdit)
+    Label1: TLabel;
+    lModel: TLabel;
+    Label8: TLabel;
+    edtQtdeProducao: TDBEdit;
+    pProduct: TPanel;
+    Label10: TLabel;
+    lNomeMateriaPrima: TLabel;
+    Label12: TLabel;
+    rgFiltroMateriaPrima: TRadioGroup;
+    Panel3: TPanel;
+    Panel8: TPanel;
+    Label9: TLabel;
+    edtFiltroMateriaPrima: TEdit;
+    btnBuscarMateriaPrima: TBitBtn;
+    dbnMateriaPrima: TDBNavigator;
+    Panel5: TPanel;
+    Label18: TLabel;
+    lValorPerda: TLabel;
+    Label20: TLabel;
+    lValorFinal: TLabel;
+    Label17: TLabel;
+    lSubTotal: TLabel;
+    Label15: TLabel;
+    Panel7: TPanel;
+    lUnidade: TLabel;
+    Panel10: TPanel;
+    Label14: TLabel;
+    Label13: TLabel;
+    Label16: TLabel;
+    Label19: TLabel;
+    btnConfirmaMateriaPrima: TBitBtn;
+    btnCancelaMateriaPrima: TBitBtn;
+    edtIdMateriaPrima: TDBEdit;
+    edtValorUnitario: TDBEdit;
+    edtQtde: TDBEdit;
+    edtPerda: TDBEdit;
+    procedure edtDescricaoExit(Sender: TObject);
+  private
+    FController : iController;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ufrmFichaTecnica: TufrmFichaTecnica;
+
+implementation
+
+{$R *.dfm}
+
+procedure TufrmFichaTecnica.edtDescricaoExit(Sender: TObject);
+begin
+  if edtDescription.Text = '' then
+    raise Exception.Create('Atenção... ' + edtOperator.Text + ' Favor informar Id Modelo!');
+
+  FController
+    .Entidades
+    .Model
+    .DataSet(dsAuxiliar)
+    .Ativo(rgActive.ItemIndex)
+    .EscolhaFiltro(0)
+    .TextoFiltro(edtDescription.Text)
+    .Buscar(edtDescription.Text);
+
+  if not dsAuxiliar.DataSet.IsEmpty then
+  begin
+    lModel.Caption := dsAuxiliar.DataSet.FieldByName('Descricao').AsString;
+    edtQtdeProducao.Text := dsAuxiliar.DataSet.FieldByName('QtdeProducao').AsString;
+    edtQtdeProducao.SetFocus;
+  end
+  else
+  begin
+    lModel.Caption := '...';
+    raise Exception.Create('Registro não encontrado!');
+  end;
+end;
+
+end.

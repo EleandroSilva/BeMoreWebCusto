@@ -1,0 +1,67 @@
+unit Supremo.Entidade.ProductGroup;
+
+interface
+
+uses
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TProductGroup = class(TInterfacedObject, iModelQuery)
+  private
+   FQuery: iModelQuery;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelQuery;
+
+    function Query: TObject;
+    function Open(aSQL: String): iModelQuery;
+    function ExecSQL(aSQL: String): iModelQuery;
+    function MSG(aValue: Integer): String;
+  end;
+
+implementation
+
+{ TProductGroup }
+
+constructor TProductGroup.Create;
+begin
+  //FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TProductGroup.Destroy;
+begin
+  inherited;
+end;
+
+class function TProductGroup.New: iModelQuery;
+begin
+  Result := Self.Create;
+end;
+
+function TProductGroup.ExecSQL(aSQL: String): iModelQuery;
+begin
+
+end;
+
+function TProductGroup.MSG(aValue: Integer): String;
+begin
+
+end;
+
+
+function TProductGroup.Open(aSQL: String): iModelQuery;
+begin
+  Result := Self;
+
+  FQuery.Open(aSQL);
+end;
+
+
+function TProductGroup.Query: TObject;
+begin
+
+end;
+
+end.

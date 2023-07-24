@@ -1,0 +1,17 @@
+inherited frmModeloPesquisa1: TfrmModeloPesquisa1
+  Caption = 'frmModeloPesquisa1'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pButtons: TPanel
+    inherited Panel4: TPanel
+      inherited Navigator: TDBNavigator
+        Hints.Strings = ()
+      end
+    end
+  end
+  inherited pSearch: TPanel
+    inherited gbBetweenDates: TGroupBox
+      Visible = False
+    end
+  end
+end

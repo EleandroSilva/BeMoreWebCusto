@@ -1,0 +1,24 @@
+unit Whorkshop.Model.Entidades.EmpresaLogada.Factory;
+
+interface
+
+uses
+  Whorkshop.Model.Entidades.EmpresaLogada.Interfaces;
+
+type
+  TModelEntidadesEmpresaLogada = class(TInterfacedObject, iModelEntidadeEmpresaLogadaFactory)
+    private
+
+    public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iModelEntidadeEmpresaLogadaFactory;
+
+    function IdEmpresa : String;
+    function NomeEmpresa : String;
+    function Operador : String;
+  end;
+
+implementation
+
+end.

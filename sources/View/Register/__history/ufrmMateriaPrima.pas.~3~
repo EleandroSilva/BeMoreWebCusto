@@ -1,0 +1,45 @@
+unit ufrmMateriaPrima;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ufrmModelodbEdit, Data.DB,
+  System.ImageList, Vcl.ImgList, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Buttons, udmPrincipal;
+
+type
+  TfrmMateriaPrima = class(TfrmModelodbEdit)
+  private
+    function Unidade(aValue: Integer): String;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmMateriaPrima: TfrmMateriaPrima;
+
+implementation
+
+{$R *.dfm}
+
+{ TfrmMateriaPrima }
+
+function TfrmMateriaPrima.Unidade(aValue: Integer): String;
+begin
+  case aValue of
+    0: Result := 'PC';
+    1: Result := 'KG';
+    2: Result := 'LT';
+    3: Result := 'ML';
+    4: Result := 'M2';
+    5: Result := 'M3';
+    6: Result := 'CE';
+    7: Result := 'MI';
+    8: Result := 'PAR';
+    9: Result := 'GR';
+  end;
+end;
+
+end.

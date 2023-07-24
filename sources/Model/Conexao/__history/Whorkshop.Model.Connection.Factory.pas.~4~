@@ -1,0 +1,50 @@
+unit Whorkshop.Model.Connection.Factory;
+
+interface
+
+uses
+  Whorkshop.Model.Connection.Interfaces;
+
+type
+ TModelConnectionFactory = class(TInterfacedObject, iModelConnection)
+ private
+ public
+  constructor Create;
+  destructor Destroy; override;
+  class function New : iModelConnection;
+
+  function Connection : iModelConnection;
+  function Query : iModelQuery;
+ end;
+
+
+implementation
+
+{ TModelConnectionFactory }
+
+function TModelConnectionFactory.Connection: iModelConnection;
+begin
+  //Result := TModelConnectionFiredac.New;
+end;
+
+constructor TModelConnectionFactory.Create;
+begin
+  //
+end;
+
+destructor TModelConnectionFactory.Destroy;
+begin
+  inherited;
+end;
+
+class function TModelConnectionFactory.New: iModelConnection;
+begin
+  Result := Self.Create;
+end;
+
+function TModelConnectionFactory.Query: iModelQuery;
+begin
+
+end;
+
+end.

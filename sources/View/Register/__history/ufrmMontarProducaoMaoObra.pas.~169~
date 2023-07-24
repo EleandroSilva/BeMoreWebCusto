@@ -1,0 +1,1041 @@
+unit ufrmMontarProducaoMaoObra;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  MidasLib,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Data.DB,
+
+  ufrmModelodbEdit,
+
+  udmPrincipal,
+
+  Whorkshop.Controller.Interfaces,
+  Whorkshop.Controller,
+  udmEntidade.Relatorios,
+
+  Entidade.Recalcular.Mao.Obra;
+
+type
+  TfrmMontarProducaoMaoObra = class(TfrmModelodbEdit)
+    dbgCadastro: TDBGrid;
+    lValorFrete: TLabel;
+    edtValorFrete: TDBEdit;
+    Label4: TLabel;
+    edtValorMaoObra: TDBEdit;
+    Label3: TLabel;
+    edtValorCusto: TDBEdit;
+    pProducaoCabecalho: TPanel;
+    pProducaoSetorLocal: TPanel;
+    Panel1: TPanel;
+    Label1: TLabel;
+    dblkSetorLocal: TDBLookupComboBox;
+    Label5: TLabel;
+    edtQtdeProducaoItem: TDBEdit;
+    Label6: TLabel;
+    edtValorFreteProducaoItem: TDBEdit;
+    Label7: TLabel;
+    edtValorMaoObraProducaoItem: TDBEdit;
+    Label8: TLabel;
+    edtValorCustoProducaoItem: TDBEdit;
+    btnInserirOutraProducao: TBitBtn;
+    Label2: TLabel;
+    dblkModelo: TDBLookupComboBox;
+    dbAliquotaExterna: TDBEdit;
+    Label10: TLabel;
+    dbAliquotaInterna: TDBEdit;
+    Label9: TLabel;
+    Panel11: TPanel;
+    btnAlterarMateriaPrima: TBitBtn;
+    btnExcluirMateriaPrima: TBitBtn;
+    dbnFichaTecnicaItem: TDBNavigator;
+    btnInsereNovoItem: TBitBtn;
+    btnRecalcularProducaoMaoObra: TBitBtn;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure dblkModeloEnter(Sender: TObject);
+    procedure dblkSetorLocalEnter(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnUpdateClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure btnSalveClick(Sender: TObject);
+    procedure dbgCadastroDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure edtQtdeProducaoItemExit(Sender: TObject);
+    procedure dblkModeloExit(Sender: TObject);
+    procedure btnInserirOutraProducaoClick(Sender: TObject);
+    procedure MedtReleaseDateExit(Sender: TObject);
+    procedure edtQtdeProducaoItemEnter(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure NavigatorClick(Sender: TObject; Button: TNavigateBtn);
+    procedure btnExcluirMateriaPrimaClick(Sender: TObject);
+    procedure btnImprimirClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure btnRecalcularProducaoMaoObraClick(Sender: TObject);
+  private
+    FController: iController;
+    FRecalcularMaoObra: TRecalcularMaoObra;
+
+    lSoma1, lSoma2, lSoma3: Currency;
+
+    function CalcularValorFrete(aIdSetor: String; aQtdeProducao: Integer): Currency;
+    function CalcularValorMaoObra(aQtdeProducao: Integer; aValorGasto: Currency): Currency;
+    function CalcularValorAjustado(aValorMaoObra, aAliquota: Currency): Currency;
+    function CalcularValorCusto(aValorFrete, aValueMaoObra: Currency): Currency;
+
+    procedure InserirProducao;
+    procedure AtualizaIdModelo;
+    procedure AtualizaIdSetorLocal;
+    procedure InserirOutraProducaoSetor;
+
+    function PesquisaProducao(aChoice: Integer; aValue: String): Boolean;
+    function PesquisaListaProducao(aValue: String): Boolean;
+    function PesquisaProducaoItem(aValue: String): Boolean;
+
+    function PegarGenId(): Integer;
+
+    procedure FecharQuery;
+    function SomaProducaoCabecalho(aValorFrete, aValorMaoObra, aValorAjustado: Currency): Currency;
+
+    function RecalcularMaoObra: Currency;
+    procedure LoopProducao(aValue: String);
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmMontarProducaoMaoObra: TfrmMontarProducaoMaoObra;
+
+implementation
+
+uses
+  ufrmAguarde;
+
+{$R *.dfm}
+
+
+procedure TfrmMontarProducaoMaoObra.AtualizaIdModelo;
+begin
+  dmPrincipal.sqlModelo.Active := False;
+  dmPrincipal.sqlModelo.CommandText := ('select ' +
+    'm.Id, ' +
+    'm.Descricao, ' +
+    'm.QtdeProducao, ' +
+    'm.Operador, ' +
+    'm.DataLancamento, ' +
+    'm.Status, ' +
+    'm.Ativo, ' +
+    'm.AliquotaInterna, ' +
+    'm.AliquotaExterna ' +
+    ', ' +
+    '( ' +
+    ' select ' +
+    '   count(*) QtdeRegistro ' +
+    ' from Modelo ' +
+    ') ' +
+    'from modelo m ' +
+    'where Id=' + dmPrincipal.cdsProducao.FieldByName('IdModelo').AsString + ' ' +
+    'order by Descricao ');
+  dmPrincipal.cdsModelo.Active := False;
+  dmPrincipal.cdsModelo.Active := True;
+end;
+
+procedure TfrmMontarProducaoMaoObra.AtualizaIdSetorLocal;
+begin
+  dmPrincipal.sqlSetorLocal.Active := False;
+  dmPrincipal.sqlSetorLocal.CommandText := ('select * from SetorLocal ' +
+    'where Ativo=1 ' +
+    'and Id=' + dmPrincipal.cdsProducaoItem.FieldByName('IdSetorLocal').AsString + ' ' +
+    'order by Descricao ');
+  dmPrincipal.cdsSetorLocal.Active := False;
+  dmPrincipal.cdsSetorLocal.Active := True;
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnCancelClick(Sender: TObject);
+begin
+  if dmPrincipal.cdsProducao.State in [DsInsert, DsEdit] then
+    dmPrincipal.cdsProducao.Cancel;
+
+  if dmPrincipal.cdsProducao.ChangeCount > 0 then
+    dmPrincipal.cdsProducao.CancelUpdates;
+
+  if dmPrincipal.sqlconexao.InTransaction then
+    dmPrincipal.sqlconexao.Rollback(TD);
+
+  dmPrincipal.sqlModelo.Active := False;
+  dmPrincipal.cdsModelo.Active := False;
+
+  dmPrincipal.sqlSetorLocal.Active := False;
+  dmPrincipal.cdsSetorLocal.Active := False;
+
+  dmPrincipal.sqlProducao.Active := False;
+  dmPrincipal.cdsProducao.Active := False;
+
+  dmPrincipal.sqlProducaoItem.Active := False;
+  dmPrincipal.cdsProducaoItem.Active := False;
+
+  inherited;
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnDeleteClick(Sender: TObject);
+var
+  Erros: Integer;
+begin
+  if MessageBox(handle, 'Deseja excluir este registro?', 'Aviso', mb_IconQuestion or mb_Yesno) = mrYes then
+  begin
+    dmPrincipal.cdsProducao.Delete;
+
+    if not dmPrincipal.sqlconexao.InTransaction then
+      dmPrincipal.sqlconexao.StartTransaction(TD);
+
+    Erros := dmPrincipal.cdsProducao.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.sqlconexao.Commit(TD);
+      showmessage('Parabéns ' + edtOperator.Text + ' Registro excluído com sucesso!');
+    end
+    else
+    begin
+      dmPrincipal.sqlconexao.Rollback(TD);
+      showmessage('Atenção ' + edtOperator.Text + ' Registro não pode ser excluído!');
+      Abort;
+    end;
+
+    dmPrincipal.cdsProducao.Active := False;
+    dmPrincipal.sqlProducao.Active := False;
+    dmPrincipal.sqlProducao.CommandText := ('select ' +
+      'p.id, ' +
+      'p.idmodelo, ' +
+      'm.descricao, ' +
+      'm.AliquotaInterna, ' +
+      'm.AliquotaExterna, ' +
+      'p.qtdeproducao, ' +
+      'p.valorfrete, ' +
+      'p.valorajustado, ' +
+      'p.valormaoobra, ' +
+      'p.valorcusto, ' +
+      'p.datalancamento, ' +
+      'p.operador, ' +
+      'p.status, ' +
+      'p.ativo ' +
+      'from Producao p ' +
+      'inner join Modelo m on m.id = p.idmodelo ');
+    dmPrincipal.sqlSetor.Active := False;
+    dmPrincipal.cdsSetor.Active := False;
+
+    dmPrincipal.sqlModelo.Active := False;
+    dmPrincipal.cdsModelo.Active := False;
+  end;
+
+  inherited;
+
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnExcluirMateriaPrimaClick(
+  Sender: TObject);
+begin
+  dmPrincipal.cdsProducaoItem.Edit;
+  dmPrincipal.cdsProducaoItem.Delete;
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnImprimirClick(Sender: TObject);
+begin
+  if not dmPrincipal.cdsProducao.IsEmpty then
+    if PesquisaListaProducao(edtSearch.Text) then
+      dmEntidadeRelatorios.pprListaProducao.Print
+    else
+      raise Exception.Create(dmPrincipal.cMSGImpressao);
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnInserirOutraProducaoClick(
+  Sender: TObject);
+begin
+  dblkModelo.Enabled := False;
+
+  dmPrincipal.cdsProducaoItem.Append;
+  dblkSetorLocal.SetFocus;
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnNewClick(Sender: TObject);
+begin
+  dmPrincipal.Alterar := False;
+  InserirProducao;
+
+  inherited;
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnRecalcularProducaoMaoObraClick(
+  Sender: TObject);
+begin
+  if dmPrincipal.cdsProducao.IsEmpty then
+    raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado)
+  else
+    frmMontarProducaoMaoObra.LoopProducao(dbgSearch.Fields[0].AsString);
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnSalveClick(Sender: TObject);
+var
+  Erros, aIdProducao: Integer;
+begin
+  if dblkModelo.KeyValue = null then
+  begin
+    dblkModelo.SetFocus;
+    raise Exception.Create('Campo Modelo não pode ser vazio');
+  end;
+
+  if dblkSetorLocal.KeyValue = null then
+  begin
+    dblkSetorLocal.SetFocus;
+    raise Exception.Create('Campo Setor/Local não pode ser vazio');
+  end;
+
+  if trim(edtDescription.Text) = '' then
+  begin
+    edtDescription.SetFocus;
+    raise Exception.Create('Campo Qtde de Produção não pode ser vazio');
+  end;
+
+  if Application.MessageBox('Deseja realmente salvar este registro?', 'Confirmação', mb_Yesno) = IDYES then
+  begin
+    lSoma1 := 0;
+    lSoma2 := 0;
+    lSoma3 := 0;
+
+    if dmPrincipal.cdsProducao.State in [DsEdit] then
+      aIdProducao := dmPrincipal.cdsProducao.FieldByName('ID').AsInteger;
+
+    dmPrincipal.cdsProducaoItem.First;
+    while not dmPrincipal.cdsProducaoItem.Eof do
+    begin
+      if dmPrincipal.cdsProducao.State in [DsEdit] then
+      begin
+        if dmPrincipal.cdsProducaoItem.FieldByName('IdProducao').AsInteger = 0 then
+        begin
+          dmPrincipal.cdsProducaoItem.Edit;
+          dmPrincipal.cdsProducaoItem.FieldByName('IdProducao').AsInteger := aIdProducao;
+        end;
+      end;
+
+      SomaProducaoCabecalho(
+        dmPrincipal.cdsProducaoItem.FieldByName('ValorFrete').AsCurrency,
+        dmPrincipal.cdsProducaoItem.FieldByName('ValorMaoObra').AsCurrency,
+        dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency);
+
+      dmPrincipal.cdsProducaoItem.Next;
+    end;
+
+    dmPrincipal.cdsProducao.Edit;
+
+    dmPrincipal.cdsProducaoItem.Edit;
+    if dmPrincipal.cdsProducaoItem.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsProducaoItem.Post;
+
+    if dmPrincipal.cdsProducao.State in [DsInsert, DsEdit] then
+      dmPrincipal.cdsProducao.Post;
+
+    dmPrincipal.sqlconexao.StartTransaction(TD);
+    Erros := 0;
+
+    if dmPrincipal.cdsProducao.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsProducao.ApplyUpdates(0);
+
+    if dmPrincipal.cdsProducaoItem.ChangeCount > 0 then
+      Erros := dmPrincipal.cdsProducaoItem.ApplyUpdates(0);
+
+    if Erros = 0 then
+    begin
+      dmPrincipal.sqlconexao.Commit(TD);
+      showmessage('Parabéns... ' + edtOperator.Text + ' Registro salvo com sucesso!');
+      FecharQuery;
+    end
+    else
+    begin
+      dmPrincipal.sqlconexao.Rollback(TD);
+      showmessage('Atenção... ' + edtOperator.Text + ' Ocorreu algum erro, registro será cancelado!');
+      FecharQuery;
+    end;
+    inherited;
+    btnCancel.Click;
+  end
+  else
+    Abort;
+
+  inherited;
+
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnSearchClick(Sender: TObject);
+begin
+  if edtSearch.Text = '' then
+    frmMontarProducaoMaoObra.PesquisaProducao(rgChoice.ItemIndex, dbgSearch.Fields[0].AsString)
+  else
+    frmMontarProducaoMaoObra.PesquisaProducao(rgChoice.ItemIndex, edtSearch.Text);
+  inherited;
+end;
+
+procedure TfrmMontarProducaoMaoObra.btnUpdateClick(Sender: TObject);
+begin
+  if edtSearch.Text = '' then
+    frmMontarProducaoMaoObra.PesquisaProducao(rgChoice.ItemIndex, dbgSearch.Fields[0].AsString)
+  else
+    frmMontarProducaoMaoObra.PesquisaProducao(rgChoice.ItemIndex, edtSearch.Text);
+
+  dmPrincipal.Alterar := True;
+  dmPrincipal.cdsProducao.Edit;
+  dblkModelo.Enabled := True;
+  inherited;
+end;
+
+function TfrmMontarProducaoMaoObra.CalcularValorAjustado(aValorMaoObra, aAliquota: Currency): Currency;
+var
+  lSoma: Currency;
+begin
+  lSoma := 0;
+
+  lSoma := aValorMaoObra * aAliquota / 100;
+  lSoma := StrToFloat(FormatFloat('0.00', lSoma));
+  Result := lSoma;
+  if Result > 0 then
+    dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency := Result
+  else
+    dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency := aValorMaoObra;
+end;
+
+function TfrmMontarProducaoMaoObra.CalcularValorCusto(
+  aValorFrete,
+  aValueMaoObra: Currency): Currency;
+var
+  lSoma: Currency;
+begin
+  lSoma := 0;
+
+  lSoma := aValueMaoObra + aValorFrete;
+  Result := StrToFloat(FormatFloat('0.00', lSoma));
+
+  dmPrincipal.cdsProducaoItem.FieldByName('ValorCusto').AsCurrency := Result;
+end;
+
+function TfrmMontarProducaoMaoObra.CalcularValorFrete(
+  aIdSetor: String;
+  aQtdeProducao: Integer): Currency;
+var
+  lSoma: Currency;
+begin
+  dmPrincipal.sqlSetor.Active := False;
+  dmPrincipal.sqlSetor.CommandText := ('select * from Setor ' +
+    'where Id=' + aIdSetor + '');
+  dmPrincipal.cdsSetor.Active := False;
+  dmPrincipal.cdsSetor.Active := True;
+  lSoma := 0;
+
+  if dmPrincipal.cdsSetor.FieldByName('AliquotaFrete').AsCurrency > 0 then
+  begin
+    lSoma := dmPrincipal.cdsSetor.FieldByName('ValorGasto').AsCurrency * dmPrincipal.cdsSetor.FieldByName('AliquotaFrete').AsCurrency / 100;
+    lSoma := lSoma / aQtdeProducao;
+  end;
+
+  Result := StrToFloat(FormatFloat('0.00', lSoma));
+  dmPrincipal.cdsProducaoItem.FieldByName('ValorFrete').AsCurrency := Result;
+
+  CalcularValorMaoObra(
+    aQtdeProducao,
+    dmPrincipal.cdsSetor.FieldByName('ValorGasto').AsCurrency);
+
+  CalcularValorCusto(
+    Result,
+    dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency);
+end;
+
+function TfrmMontarProducaoMaoObra.CalcularValorMaoObra(
+  aQtdeProducao: Integer;
+  aValorGasto: Currency): Currency;
+var
+  lSoma, lAliquotaInterna, lAliquotaExterna: Currency;
+begin
+  lSoma := 0;
+  lAliquotaInterna := 0;
+  lAliquotaExterna := 0;
+
+  lSoma := aValorGasto / aQtdeProducao;
+  lSoma := StrToFloat(FormatFloat('0.00', lSoma));
+  Result := lSoma;
+  dmPrincipal.cdsProducaoItem.FieldByName('ValorMaoObra').AsCurrency := Result;
+
+  dmPrincipal.queryAuxiliar.Active := False;
+  dmPrincipal.queryAuxiliar.SQL.Clear;
+  dmPrincipal.queryAuxiliar.SQL.Text := ('select ' +
+    'm.AliquotaInterna, ' +
+    'm.AliquotaExterna ' +
+    'from Modelo m ' +
+    'where m.id=' + dmPrincipal.cdsModelo.FieldByName('Id').AsString + '');
+  dmPrincipal.queryAuxiliar.Active := True;
+
+  if dmPrincipal.cdsSetorLocal.FieldByName('CalcularValorAjustado').AsInteger = 1 then
+  begin
+    lAliquotaInterna := dmPrincipal.cdsProducao.FieldByName('AliquotaInterna').AsCurrency;
+    lAliquotaExterna := dmPrincipal.cdsProducao.FieldByName('AliquotaExterna').AsCurrency;
+
+    dmPrincipal.queryAuxiliar.Active := False;
+    dmPrincipal.queryAuxiliar.SQL.Clear;
+    dmPrincipal.queryAuxiliar.SQL.Text := ('select l.Status ' +
+      'from Local l ' +
+      'where l.id=' + dmPrincipal.cdsSetorLocal.FieldByName('IdLocal').AsString + '');
+    dmPrincipal.queryAuxiliar.Active := True;
+    if dmPrincipal.queryAuxiliar.FieldByName('Status').AsInteger = 0 then
+      CalcularValorAjustado(Result, lAliquotaInterna)
+    else
+      CalcularValorAjustado(Result, lAliquotaExterna);
+  end
+  else
+    dmPrincipal.cdsProducaoItem.FieldByName('ValorAjustado').AsCurrency := Result;
+end;
+
+procedure TfrmMontarProducaoMaoObra.dbgCadastroDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := clActiveCaption
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := clInfoBk;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmMontarProducaoMaoObra.dblkModeloEnter(Sender: TObject);
+begin
+  dmPrincipal.sqlModelo.Active := False;
+  dmPrincipal.sqlModelo.CommandText := ('select ' +
+    'm.Id, ' +
+    'm.Descricao, ' +
+    'm.QtdeProducao, ' +
+    'm.Operador, ' +
+    'm.DataLancamento, ' +
+    'm.Status, ' +
+    'm.Ativo, ' +
+    'm.AliquotaInterna, ' +
+    'm.AliquotaExterna ' +
+    ', ' +
+    '( ' +
+    ' select ' +
+    '   count(*) QtdeRegistro ' +
+    ' from Modelo ' +
+    ') ' +
+    'from modelo m ' +
+    'order by Descricao ');
+  dmPrincipal.cdsModelo.Active := False;
+  dmPrincipal.cdsModelo.Active := True;
+end;
+
+procedure TfrmMontarProducaoMaoObra.dblkModeloExit(Sender: TObject);
+begin
+  if dblkModelo.KeyValue = null then
+    raise Exception.Create('Campo Modelo não poder ser nulo');
+
+  if dmPrincipal.cdsModelo.FieldByName('QtdeProducao').AsInteger > 0 then
+  begin
+    dmPrincipal.cdsProducao.FieldByName('QtdeProducao').AsInteger := dmPrincipal.cdsModelo.FieldByName('QtdeProducao').AsInteger;
+    dmPrincipal.cdsProducao.FieldByName('Descricao').AsString := dmPrincipal.cdsModelo.FieldByName('Descricao').AsString;
+    dmPrincipal.cdsProducao.FieldByName('AliquotaInterna').AsCurrency := dmPrincipal.cdsModelo.FieldByName('AliquotaInterna').AsCurrency;
+    dmPrincipal.cdsProducao.FieldByName('AliquotaExterna').AsCurrency := dmPrincipal.cdsModelo.FieldByName('AliquotaExterna').AsCurrency;
+
+    dblkModelo.Enabled := False;
+    dblkSetorLocal.SetFocus;
+    InserirOutraProducaoSetor;
+  end
+  else
+    raise Exception.Create('Qtde de Produção do Modelo não pode ser menor ou igual a 0(Zedro)');
+end;
+
+procedure TfrmMontarProducaoMaoObra.dblkSetorLocalEnter(Sender: TObject);
+begin
+  dmPrincipal.sqlSetorLocal.Active := False;
+  dmPrincipal.sqlSetorLocal.CommandText := ('select * from SetorLocal ' +
+    'order by Descricao ');
+  dmPrincipal.cdsSetorLocal.Active := False;
+  dmPrincipal.cdsSetorLocal.Active := True;
+end;
+
+procedure TfrmMontarProducaoMaoObra.edtQtdeProducaoItemEnter(Sender: TObject);
+begin
+  if dmPrincipal.cdsProducao.State in [DsEdit] then
+    dmPrincipal.cdsProducaoItem.Edit;
+end;
+
+procedure TfrmMontarProducaoMaoObra.edtQtdeProducaoItemExit(Sender: TObject);
+begin
+  if dblkSetorLocal.KeyValue <> null then
+    if dmPrincipal.cdsProducao.FieldByName('QtdeProducao').AsInteger > 0 then
+    begin
+      CalcularValorFrete(
+        dmPrincipal.cdsSetorLocal.FieldByName('IdSetor').AsString,
+        dmPrincipal.cdsProducaoItem.FieldByName('QtdeProducao').AsInteger);
+
+      dmPrincipal.cdsProducaoItem.FieldByName('Descricao').AsString := dmPrincipal.cdsSetorLocal.FieldByName('Descricao').AsString;
+
+      if not dmPrincipal.Alterar then
+        dmPrincipal.cdsProducaoItem.FieldByName('ID').AsInteger := dbgCadastro.Fields[1].AsInteger;
+      dmPrincipal.cdsProducaoItem.FieldByName('IdProducao').AsInteger := 0;
+      btnInserirOutraProducao.Enabled := True;
+      btnInserirOutraProducao.SetFocus;
+    end
+    else
+    begin
+      edtDescription.SetFocus;
+    end;
+end;
+
+procedure TfrmMontarProducaoMaoObra.FecharQuery;
+begin
+  dmPrincipal.sqlProducao.Active := False;
+  dmPrincipal.cdsProducao.Active := False;
+  dmPrincipal.sqlProducaoItem.Active := False;
+  dmPrincipal.cdsProducaoItem.Active := False;
+  dmPrincipal.sqlSetorLocal.Active := False;
+  dmPrincipal.sqlModelo.Active := False;
+  dmPrincipal.cdsSetorLocal.Active := False;
+  dmPrincipal.cdsModelo.Active := False;
+end;
+
+procedure TfrmMontarProducaoMaoObra.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  FecharQuery;
+  inherited;
+  frmMontarProducaoMaoObra := nil;
+  Action := caFree;
+end;
+
+procedure TfrmMontarProducaoMaoObra.FormCreate(Sender: TObject);
+begin
+  inherited;
+
+  FController := TController.New;
+
+  FRecalcularMaoObra := TRecalcularMaoObra.Create;
+
+  lSite.Caption := FController
+    .EntidadesRedeInfocon
+    .DadosRedeInfocon
+    .Site;
+end;
+
+procedure TfrmMontarProducaoMaoObra.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FRecalcularMaoObra);
+end;
+
+procedure TfrmMontarProducaoMaoObra.FormShow(Sender: TObject);
+begin
+  inherited;
+  lTextoEmpresa.Caption := 'Montar Produção Mão de Obra';
+end;
+
+procedure TfrmMontarProducaoMaoObra.InserirOutraProducaoSetor;
+begin
+  if not dmPrincipal.cdsProducaoItem.Active then
+  begin
+    dmPrincipal.sqlProducaoItem.Active := False;
+    dmPrincipal.sqlProducaoItem.CommandText := ('select ' +
+      'ProItem.id, ' +
+      'ProItem.IdProducao, ' +
+      'ProItem.idsetorlocal, ' +
+      'sl.descricao, ' +
+      'ProItem.qtdeproducao, ' +
+      'ProItem.valorfrete, ' +
+      'ProItem.valorajustado, ' +
+      'ProItem.valormaoobra, ' +
+      'ProItem.valorcusto ' +
+      'from ProducaoItem ProItem ' +
+      'inner join setorlocal sl on sl.id = ProItem.idsetorlocal ' +
+      'where ProItem.Id=0 ');
+    dmPrincipal.cdsProducaoItem.Active := False;
+    dmPrincipal.cdsProducaoItem.Active := True;
+  end;
+
+  if not dmPrincipal.Alterar then
+  begin
+    dmPrincipal.cdsProducaoItem.Append;
+    dmPrincipal.cdsProducaoItem.FieldByName('ID').AsInteger := 0;
+    dmPrincipal.cdsProducaoItem.FieldByName('IdProducao').AsInteger := 0;
+  end;
+
+  if dmPrincipal.Alterar then
+  begin
+    dmPrincipal.cdsProducaoItem.Edit;
+    dmPrincipal.cdsProducaoItem.FieldByName('IDProducao').AsInteger := dmPrincipal.cdsProducao.FieldByName('ID').AsInteger;
+  end;
+end;
+
+procedure TfrmMontarProducaoMaoObra.InserirProducao;
+begin
+  dmPrincipal.sqlProducao.Active := False;
+  dmPrincipal.sqlProducao.CommandText := ('select ' +
+    'p.id, ' +
+    'p.idmodelo, ' +
+    'm.descricao, ' +
+    'm.AliquotaInterna, ' +
+    'm.AliquotaExterna, ' +
+    'p.qtdeproducao, ' +
+    'p.valorfrete, ' +
+    'p.valormaoobra, ' +
+    'p.ValorAjustado, ' +
+    'p.valorcusto, ' +
+    'p.datalancamento, ' +
+    'p.operador, ' +
+    'p.status, ' +
+    'p.ativo ' +
+    'from Producao p ' +
+    'inner join Modelo m on m.id = p.idmodelo ' +
+    'where p.id=:Id ');
+  dmPrincipal.sqlProducao.Params.ParamByName('ID').DataType := ftInteger;
+  dmPrincipal.sqlProducao.Params.ParamValues['ID'] := 0;
+
+  dmPrincipal.cdsProducao.Active := True;
+  dmPrincipal.cdsProducao.Append;
+
+  dmPrincipal.cdsProducao.FieldByName('ID').AsInteger := 0;
+  dmPrincipal.cdsProducao.FieldByName('Operador').AsString := FController
+    .EntidadesEmpresaLogada
+    .DadosEmpresaLogada
+    .Operador;
+  dmPrincipal.cdsProducao.FieldByName('DataLancamento').AsDateTime := Now;
+
+  dmPrincipal.cdsProducao.FieldByName('ValorFrete').AsCurrency := 0;
+  dmPrincipal.cdsProducao.FieldByName('ValorMaoObra').AsCurrency := 0;
+  dmPrincipal.cdsProducao.FieldByName('ValorCusto').AsCurrency := 0;
+  dmPrincipal.cdsProducao.FieldByName('Status').AsInteger := 1;
+  dmPrincipal.cdsProducao.FieldByName('Ativo').AsInteger := 1;
+  dblkModelo.Enabled := True;
+end;
+
+procedure TfrmMontarProducaoMaoObra.LoopProducao(aValue: String);
+begin
+  frmAguarde := TfrmAguarde.Create(Application);
+  frmAguarde.lTextoAguarde.Caption :='Aguarde... atualizando valores!';
+  try
+  frmAguarde.Show;
+  if not dmPrincipal.cdsProducao.IsEmpty then
+  begin
+    dmPrincipal.cdsProducao.First;
+    dmPrincipal.cdsProducao.DisableControls;
+    while not dmPrincipal.cdsProducao.Eof do
+    begin
+      dmPrincipal.queryAuxiliar.Active := False;
+      dmPrincipal.queryAuxiliar.SQL.Clear;
+      dmPrincipal.queryAuxiliar.SQL.Text := ('select ' +
+        'pitem.Id, ' +
+        'pitem.idproducao, ' +
+        'pitem.qtdeproducao, ' +
+        's.valorgasto, ' +
+        's.aliquotafrete, ' +
+        'sl.IdSetor, ' +
+        'sl.IdLocal, ' +
+        'sl.CalcularValorAjustado ' +
+        'from ProducaoItem pitem ' +
+        'inner join SetorLocal sl on sl.id = pitem.idsetorlocal ' +
+        'inner join Setor       s on s.id  = sl.idsetor ' +
+        'where pitem.IdProducao=' + dmPrincipal.cdsProducao.FieldByName('ID').AsString + ''+
+        'order by pitem.id asc ');
+      dmPrincipal.queryAuxiliar.Active := True;
+
+      dmPrincipal.queryAuxiliar.First;
+      while not dmPrincipal.queryAuxiliar.Eof do
+      begin
+        FRecalcularMaoObra.FId := dmPrincipal.queryAuxiliar.FieldByName('IdProducao').AsString;
+        FRecalcularMaoObra.FValorGasto := dmPrincipal.queryAuxiliar.FieldByName('ValorGasto').AsCurrency;
+        FRecalcularMaoObra.FQtdeProducao := dmPrincipal.queryAuxiliar.FieldByName('QtdeProducao').AsInteger;
+        FRecalcularMaoObra.FAliquotaFrete := dmPrincipal.queryAuxiliar.FieldByName('AliquotaFrete').AsCurrency;
+        FRecalcularMaoObra.FIdParametro := dmPrincipal.queryAuxiliar.FieldByName('ID').AsString;
+        FRecalcularMaoObra.FIdLocal := dmPrincipal.queryAuxiliar.FieldByName('IdLocal').AsString;
+        FRecalcularMaoObra.FIdModelo := dmPrincipal.cdsProducao.FieldByName('IdModelo').AsString;
+        FRecalcularMaoObra.FCalcularValorAjustado := dmPrincipal.queryAuxiliar.FieldByName('CalcularValorAjustado').AsInteger;
+
+        if FRecalcularMaoObra.FAliquotaFrete > 0 then
+          FRecalcularMaoObra.UpdateItemFreteMaoObra;
+
+        FRecalcularMaoObra.UpdateItemValorMaoObra;
+
+        dmPrincipal.queryAuxiliar.Next;
+      end;
+
+      dmPrincipal.cdsProducao.Next;
+      FRecalcularMaoObra.UpdateCabecalhoMaoObra;
+    end;
+    dmPrincipal.cdsProducao.EnableControls;
+  end
+  else
+    raise Exception.Create(dmPrincipal.cMSGRegistroNaoEncontrado);
+  finally
+    frmAguarde.Release;
+    frmAguarde := nil;
+  end;
+end;
+
+procedure TfrmMontarProducaoMaoObra.MedtReleaseDateExit(Sender: TObject);
+begin
+  dblkModelo.SetFocus;
+end;
+
+procedure TfrmMontarProducaoMaoObra.NavigatorClick(Sender: TObject;
+  Button: TNavigateBtn);
+begin
+  if not dmPrincipal.cdsProducao.IsEmpty then
+    PesquisaProducaoItem(dmPrincipal.cdsProducao.FieldByName('ID').AsString);
+end;
+
+function TfrmMontarProducaoMaoObra.PegarGenId(): Integer;
+begin
+  dmPrincipal.queryAuxiliar.Active := False;
+  dmPrincipal.queryAuxiliar.SQL.Clear;
+  dmPrincipal.queryAuxiliar.SQL.Text := ('select gen_id(GEN_PRODUCAO_ID,0) from rdb$database ');
+  dmPrincipal.queryAuxiliar.Active := True;
+
+  if dmPrincipal.queryAuxiliar.FieldByName('GEN_ID').IsNull then
+    Result := 0
+  else
+    Result := dmPrincipal.queryAuxiliar.FieldByName('GEN_ID').AsInteger;
+end;
+
+function TfrmMontarProducaoMaoObra.PesquisaListaProducao(aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  lSQL := '';
+  lWhere := '';
+  lOrdem := '';
+  lSQL := ('select ' +
+    'p.idmodelo, ' +
+    'm.descricao Modelo, ' +
+    'ProItem.id, ' +
+    'ProItem.idsetorlocal, ' +
+    'sl.descricao, ' +
+    'ProItem.qtdeproducao, ' +
+    'ProItem.valorfrete, ' +
+    'ProItem.valormaoobra, ' +
+    'ProItem.valorajustado, ' +
+    'ProItem.valorcusto ' +
+    ', ' +
+    '( ' +
+    ' select ' +
+    '  count(*) QtdeRegistro ' +
+    ' from ProducaoItem ProItem1 ' +
+    ' inner join Producao p1 on p1.id  = ProItem1.id ' +
+    ' where p1.idmodelo = p.idmodelo ' +
+    ') ' +
+    ', ' +
+
+    '( ' +
+    ' select ' +
+    '  coalesce(cast(sum(ProItem1.qtdeproducao) as Numeric (10,0)),0) QtdeProducaoModelo ' +
+    ' from ProducaoItem ProItem1 ' +
+    ' inner join Producao p1 on p1.id  = ProItem1.id ' +
+    ' where p1.idmodelo = p.idmodelo ' +
+    '), ' +
+
+    '( ' +
+    ' select ' +
+    '  coalesce(cast(sum(ProItem2.valorfrete) as Numeric (10,2)),0) ValorFreteModelo ' +
+    ' from ProducaoItem ProItem2 ' +
+    ' inner join Producao p2 on p2.id  = ProItem2.id ' +
+    ' where p2.idmodelo = p.idmodelo ' +
+    ') ' +
+
+    ' , ' +
+
+    '  ( ' +
+    '   select ' +
+    '   coalesce(cast(sum(ProItem3.valorajustado) as Numeric (10,2)),0) ValorAjustadoModelo ' +
+    '   from ProducaoItem ProItem3 ' +
+    '   inner join Producao p3 on p3.id  = ProItem3.id ' +
+    '   where p3.idmodelo = p.idmodelo ' +
+    '  ), ' +
+
+    '  ( ' +
+    '   select ' +
+    '   coalesce(cast(sum(ProItem3.valormaoobra) as Numeric (10,2)),0) ValorMaobraModelo ' +
+    '   from ProducaoItem ProItem3 ' +
+    '   inner join Producao p3 on p3.id  = ProItem3.id ' +
+    '   where p3.idmodelo = p.idmodelo ' +
+    '  ) ' +
+
+    '  , ' +
+
+    '  ( ' +
+    '   select ' +
+    '    coalesce(cast(sum(ProItem3.valorcusto) as Numeric (10,2)),0) ValorCustoModelo ' +
+    '   from ProducaoItem ProItem3 ' +
+    '   inner join Producao p3 on p3.id  = ProItem3.id ' +
+    '   where p3.idmodelo = p.idmodelo ' +
+    '  ) ' +
+
+    'from ProducaoItem ProItem ' +
+    'inner join Producao    p on p.id  = ProItem.idproducao ' +
+    'inner join Modelo      m on m.id  = p.idmodelo ' +
+    'inner join setorlocal sl on sl.id = ProItem.idsetorlocal ');
+
+  if aValue <> '' then
+    lWhere := lWhere + ('and ProItem.IDProducao=' + aValue + '');
+
+  lOrdem := ('order by ProItem.id asc, m.descricao, sl.descricao ');
+  dmPrincipal.sqlListaProducao.Active := False;
+  dmPrincipal.sqlListaProducao.CommandText := lSQL + lWhere + lOrdem;
+  dmPrincipal.cdsListaProducao.Active := False;
+  dmPrincipal.cdsListaProducao.Active := True;
+
+  if dmPrincipal.cdsListaProducao.IsEmpty then
+    Result := False
+  else
+    Result := True;
+end;
+
+function TfrmMontarProducaoMaoObra.PesquisaProducao(aChoice: Integer; aValue: String): Boolean;
+var
+  lSQL, lWhere, lOrdem: String;
+begin
+  try
+    lSQL := '';
+    lWhere := '';
+    lOrdem := '';
+
+    lSQL := ('select ' +
+      'p.id, ' +
+      'p.idmodelo, ' +
+      'm.descricao, ' +
+      'm.AliquotaInterna, ' +
+      'm.AliquotaExterna, ' +
+      'p.qtdeproducao, ' +
+      'p.valorfrete, ' +
+      'p.valormaoobra, ' +
+      'p.ValorAjustado, ' +
+      'p.valorcusto, ' +
+      'p.datalancamento, ' +
+      'p.operador, ' +
+      'p.status, ' +
+      'p.ativo ' +
+      'from Producao p ' +
+      'inner join Modelo m on m.id = p.idmodelo ');
+
+    case rgActive.ItemIndex of
+      0: lWhere := ('where p.ativo=0 ');
+      1: lWhere := ('where p.ativo=1 ');
+    end;
+
+    if aValue <> '' then
+      case aChoice of
+        0: lWhere := lWhere + ('and p.ID=' + aValue + '');
+        1: lWhere := lWhere + ('and p.IdModelo= '+ aValue+ ' ');
+        2: lWhere := lWhere + ('and m.Descricao CONTAINING ''' + aValue + ''' ');
+        3: lWhere := lWhere + ('and p.Operador CONTAINING ''' + aValue + ''' ');
+      end;
+
+    dmPrincipal.sqlProducao.Active := False;
+    dmPrincipal.sqlProducao.CommandText := lSQL + lWhere + lOrdem;
+    dmPrincipal.cdsProducao.Active := False;
+    dmPrincipal.cdsProducao.Active := True;
+
+    if dmPrincipal.cdsProducao.IsEmpty then
+    begin
+      Result := False;
+      raise Exception.Create('Atenção... ' + FController
+        .EntidadesEmpresaLogada
+        .DadosEmpresaLogada
+        .Operador + ' Registro não encontrado!');
+    end
+    else
+    begin
+      Result := True;
+      PesquisaProducaoItem(dmPrincipal.cdsProducao.FieldByName('ID').AsString);
+    end;
+
+  finally
+
+  end;
+end;
+
+function TfrmMontarProducaoMaoObra.PesquisaProducaoItem(aValue: String): Boolean;
+begin
+  Result := False;
+  dmPrincipal.sqlProducaoItem.Active := False;
+  dmPrincipal.sqlProducaoItem.CommandText := ('select ' +
+    'ProItem.id, ' +
+    'ProItem.IdProducao, ' +
+    'ProItem.idsetorlocal, ' +
+    'sl.descricao, ' +
+    'ProItem.qtdeproducao, ' +
+    'ProItem.valorfrete, ' +
+    'ProItem.valorajustado, ' +
+    'ProItem.valormaoobra, ' +
+    'ProItem.valorcusto ' +
+    'from ProducaoItem ProItem ' +
+    'inner join setorlocal sl on sl.id = ProItem.idsetorlocal ' +
+    'where ProItem.IdProducao=' + aValue + '');
+  dmPrincipal.cdsProducaoItem.Active := False;
+  dmPrincipal.cdsProducaoItem.Active := True;
+
+  if not dmPrincipal.cdsProducaoItem.IsEmpty then
+  begin
+    Result := True;
+    AtualizaIdModelo;
+    AtualizaIdSetorLocal;
+  end
+  else
+    Result := False
+end;
+
+function TfrmMontarProducaoMaoObra.RecalcularMaoObra: Currency;
+begin
+  dmPrincipal.cdsProducao.First;
+  dmPrincipal.cdsProducao.DisableControls;
+  while not dmPrincipal.cdsProducao.Eof do
+  begin
+
+    dmPrincipal.cdsProducao.Next;
+  end;
+  dmPrincipal.cdsProducao.EnableControls;
+end;
+
+function TfrmMontarProducaoMaoObra.SomaProducaoCabecalho(aValorFrete, aValorMaoObra, aValorAjustado: Currency): Currency;
+begin
+  lSoma1 := lSoma1 + aValorFrete;
+  lSoma2 := lSoma2 + aValorMaoObra;
+  lSoma3 := lSoma3 + aValorAjustado;
+
+  Result := lSoma1 + lSoma3;
+  dmPrincipal.cdsProducao.FieldByName('ValorFrete').AsCurrency := lSoma1;
+  dmPrincipal.cdsProducao.FieldByName('ValorMaoObra').AsCurrency := lSoma2;
+  dmPrincipal.cdsProducao.FieldByName('ValorAjustado').AsCurrency := lSoma3;
+  dmPrincipal.cdsProducao.FieldByName('ValorCusto').AsCurrency := Result;
+end;
+
+end.

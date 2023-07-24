@@ -1,0 +1,289 @@
+unit Model.Entidade.Config;
+
+interface
+
+uses
+  System.SysUtils,
+  System.IniFiles,
+  Vcl.Forms;
+
+type
+  TEntidadeConfig = Class
+    private
+     FArquivoIni               : TIniFile;
+     FDiretorio                : string;
+
+     FId                       : String;
+     FNomeEmpresaLogada        : String;
+     FDriverId                 : String;
+     FNomeServidor             : String;
+     FNomeDriver               : String;
+     FDiretorioBaseDados       : String;
+     FUserName                 : String;
+     FPassword                 : String;
+     FPortaBaseDados           : String;
+     FVendorLib                : String;
+     FSouServidor              : Integer;
+     FOperador                 : String;
+     FIdSATCFe                 : Integer;
+     FSoftwareHouseMensagem    : String;
+     FSoftwareHouseNome        : String;
+     FSoftwareHouseNomeFantasia: String;
+     FSoftwareHouseCelular     : String;
+     FSoftwareHouseCNPJ        : String;
+     FSoftwareHouseSite        :  String;
+     FIdPedidoLucro: Integer;
+     FChamarFormLucroPedido: Integer;
+
+
+     procedure SetId                       (const Value : String);
+     procedure SetNomeEmpresaLogada        (const Value : String);
+     procedure SetDriverId                 (const Value : String);
+     procedure SetNomeServidor             (const Value : String);
+     procedure SetNomeDriver               (const Value : String);
+     procedure SetDiretorioBaseDados       (const Value : String);
+     procedure SetUserName                 (const Value : String);
+     procedure SetPassword                 (const Value : String);
+     procedure SetPortaBaseDados           (const Value : String);
+     procedure SetVendorLib                (const Value : String);
+     procedure SetSouServidor              (const Value : Integer);
+     procedure SetOperador                 (const Value : String);
+     procedure SetIdSATCFe                 (const Value : Integer);
+     procedure SetSoftwareHouseCelular     (const Value: String);
+     procedure SetSoftwareHouseCNPJ        (const Value: String);
+     procedure SetSoftwareHouseMensagem    (const Value: String);
+     procedure SetSoftwareHouseNome        (const Value: String);
+     procedure SetSoftwareHouseNomeFantasia(const Value: String);
+     procedure SetSoftwareHouseSite        (const Value: String);
+    procedure SetIdPedidoLucro(const Value: Integer);
+    procedure SetChamarFormLucroPedido(const Value: Integer);
+   public
+     property Id                 : String  read FId                 write SetId;
+     property NomeEmpresaLogada  : String  read FNomeEmpresaLogada  write SetNomeEmpresaLogada;
+     property DriverId           : String  read FDriverId           write SetDriverId;
+     property NomeServidor       : String  read FNomeServidor       write SetNomeServidor;
+     property NomeDriver         : String  read FNomeDriver         write SetNomeDriver;
+     property DiretorioBaseDados : String  read FDiretorioBaseDados write SetDiretorioBaseDados;
+     property UserName           : String  read FUserName           write SetUserName;
+     property Password           : String  read FPassword           write SetPassword;
+     property PortaBaseDados     : String  read FPortaBaseDados     write SetPortaBaseDados;
+     property VendorLib          : String  read FVendorLib          write SetVendorLib;
+     property SouServidor        : Integer read FSouServidor        write SetSouServidor;
+
+     property Operador           : String  read FOperador           write SetOperador;
+     property IdSATCFe           : Integer read FIdSATCFe           write SetIdSATCFe;
+     property IdPedidoLucro      : Integer read FIdPedidoLucro write SetIdPedidoLucro;
+     property ChamarFormLucroPedido : Integer read FChamarFormLucroPedido write SetChamarFormLucroPedido;
+
+     procedure ConfiguracaoBasedeDados;
+     procedure EmpresaLogada;
+
+     //SoftwareHouse
+     property SoftwareHouseMensagem     : String read FSoftwareHouseMensagem     write SetSoftwareHouseMensagem;
+     property SoftwareHouseNome         : String read FSoftwareHouseNome         write SetSoftwareHouseNome;
+     property SoftwareHouseNomeFantasia : String read FSoftwareHouseNomeFantasia write SetSoftwareHouseNomeFantasia;
+     property SoftwareHouseSite         : String read FSoftwareHouseSite         write SetSoftwareHouseSite;
+     property SoftwareHouseCelular      : String read FSoftwareHouseCelular      write SetSoftwareHouseCelular;
+     property SoftwareHouseCNPJ         : String read FSoftwareHouseCNPJ         write SetSoftwareHouseCNPJ;
+
+
+     procedure SoftwareHouseIni;
+
+     procedure IniPegarUltimoIdSATCFe;
+     procedure IniPegarUltimoIdPedido;
+     procedure SalvarUltimoIdPedido;
+  End;
+
+
+implementation
+
+{ TUtilitarioIni }
+
+procedure TEntidadeConfig.ConfiguracaoBasedeDados;
+begin
+  FDiretorio := (ExtractFilePath(Application.ExeName));
+  FArquivoIni := TIniFile.Create(FDiretorio + 'ConfigFireBird.INI');
+  try
+    SetDriverID          (FArquivoIni.ReadString('CONFIG', 'DriverID',     FDriverID));
+    SetDiretorioBaseDados(FArquivoIni.ReadString('CONFIG', 'Database',     FDiretorioBaseDados));
+    SetUserName          (FArquivoIni.ReadString('CONFIG', 'UserName',     FUserName));
+    SetPassword          (FArquivoIni.ReadString('CONFIG', 'Password',     FPassword));
+    SetNomeServidor      (FArquivoIni.ReadString('CONFIG', 'NomeServidor', FNomeServidor));
+    SetPortaBaseDados    (FArquivoIni.ReadString('CONFIG', 'Port',         FPortaBaseDados));
+    SetVendorLib         (FArquivoIni.ReadString('CONFIG', 'VendorLib',    FVendorLib));
+  finally
+    FArquivoIni.Free;
+  end;
+end;
+
+procedure TEntidadeConfig.EmpresaLogada;
+begin
+  FDiretorio  := (ExtractFilePath(Application.ExeName));
+  FArquivoIni := TIniFile.Create(FDiretorio + 'llempresa.Ini');
+  try
+    SetId               (FArquivoIni.ReadString('Informacao', 'codempresa', FId));
+    SetNomeEmpresaLogada(FArquivoIni.ReadString('Informacao', 'nome',       FNomeEmpresaLogada));
+    SetOperador         (FArquivoIni.ReadString('Informacao', 'usuario',    FOperador));
+  finally
+    FArquivoIni.Free;
+  end;
+end;
+
+procedure TEntidadeConfig.IniPegarUltimoIdSATCFe;
+begin
+  FDiretorio := (ExtractFilePath(Application.ExeName));
+  FArquivoIni := tIniFile.Create(FDiretorio + 'IdSATCFe.Ini');
+  try
+    SetIdSATCFe(FArquivoIni.ReadInteger('Informacao', 'IdSATCFe', FIdSATCFe));
+  finally
+    FArquivoIni.Free;
+  end;
+end;
+
+procedure TEntidadeConfig.IniPegarUltimoIdPedido;
+begin
+  FDiretorio := (ExtractFilePath(Application.ExeName));
+  FArquivoIni := tIniFile.Create(FDiretorio + 'IdPedidoLucro.Ini');
+  try
+    SetIdPedidoLucro(FArquivoIni.ReadInteger('Informacao', 'IdPedidoLucro', FIdPedidoLucro));
+    SetChamarFormLucroPedido(FArquivoIni.ReadInteger('Informacao', 'ChamarFormLucroPedido', FChamarFormLucroPedido));
+  finally
+    FArquivoIni.Free;
+  end;
+end;
+
+procedure TEntidadeConfig.SoftwareHouseIni;
+begin
+  FDiretorio  := (ExtractFilePath(Application.ExeName));
+  FArquivoIni := TIniFile.Create(FDiretorio + 'DadosRedeInfocon.Ini');
+  try
+    SetSoftwareHouseMensagem    (FArquivoIni.ReadString('Informacao', 'Mensagem',    FSoftwareHouseMensagem));
+    SetSoftwareHouseNome        (FArquivoIni.ReadString('Informacao', 'NomeEmpresa', FSoftwareHouseNome));
+    SetSoftwareHouseNomeFantasia(FArquivoIni.ReadString('Informacao', 'NomeFantasia',FSoftwareHouseNomeFantasia));
+    SetSoftwareHouseSite        (FArquivoIni.ReadString('Informacao', 'Site',        FSoftwareHouseSite));
+    SetSoftwareHouseCelular     (FArquivoIni.ReadString('Informacao', 'Cel',         FSoftwareHouseCelular));
+    SetSoftwareHouseCNPJ        (FArquivoIni.ReadString('Informacao', 'CNPJ',        FSoftwareHouseCNPJ));
+  finally
+    FArquivoIni.Free;
+  end;
+end;
+
+
+procedure TEntidadeConfig.SalvarUltimoIdPedido;
+begin
+  FDiretorio:=(ExtractFilePath(Application.ExeName));
+  try
+    FArquivoIni := TIniFile.Create(FDiretorio + 'IdPedidoLucro.ini');
+    FArquivoIni.WriteInteger('Informacao', 'IdPedidoLucro', FIdPedidoLucro);
+    FArquivoIni.WriteInteger('Informacao', 'ChamarFormLucroPedido', FChamarFormLucroPedido);
+  finally
+    FArquivoIni.Free;
+  end;
+end;
+
+procedure TEntidadeConfig.SetChamarFormLucroPedido(const Value: Integer);
+begin
+  FChamarFormLucroPedido := Value;
+end;
+
+procedure TEntidadeConfig.SetDiretorioBaseDados(const Value: String);
+begin
+  FDiretorioBaseDados := Value;
+end;
+
+procedure TEntidadeConfig.SetDriverId(const Value: String);
+begin
+  FDriverId := Value;
+end;
+
+procedure TEntidadeConfig.SetId(const Value: String);
+begin
+  FId := Value;
+end;
+
+procedure TEntidadeConfig.SetIdPedidoLucro(const Value: Integer);
+begin
+  FIdPedidoLucro := Value;
+end;
+
+procedure TEntidadeConfig.SetIdSATCFe(const Value: Integer);
+begin
+  FIdSATCFe := Value;
+end;
+
+procedure TEntidadeConfig.SetNomeDriver(const Value: String);
+begin
+  FNomeDriver := Value;
+end;
+
+procedure TEntidadeConfig.SetNomeEmpresaLogada(const Value: String);
+begin
+  FNomeEmpresaLogada := Value;
+end;
+
+procedure TEntidadeConfig.SetNomeServidor(const Value: String);
+begin
+  FNomeServidor := Value;
+end;
+
+procedure TEntidadeConfig.SetOperador(const Value: String);
+begin
+  FOperador := Value;
+end;
+
+procedure TEntidadeConfig.SetPassword(const Value: String);
+begin
+  FPassword := Value;
+end;
+
+procedure TEntidadeConfig.SetPortaBaseDados(const Value: String);
+begin
+  FPortaBaseDados := Value;
+end;
+
+procedure TEntidadeConfig.SetSoftwareHouseCelular(const Value: String);
+begin
+  FSoftwareHouseCelular := Value;
+end;
+
+procedure TEntidadeConfig.SetSoftwareHouseCNPJ(const Value: String);
+begin
+  FSoftwareHouseCNPJ := Value;
+end;
+
+procedure TEntidadeConfig.SetSoftwareHouseMensagem(const Value: String);
+begin
+  FSoftwareHouseMensagem := Value;
+end;
+
+procedure TEntidadeConfig.SetSoftwareHouseNome(const Value: String);
+begin
+  FSoftwareHouseNome := Value;
+end;
+
+procedure TEntidadeConfig.SetSoftwareHouseNomeFantasia(const Value: String);
+begin
+  FSoftwareHouseNomeFantasia := Value;
+end;
+
+procedure TEntidadeConfig.SetSoftwareHouseSite(const Value: String);
+begin
+  FSoftwareHouseSite := Value;
+end;
+
+procedure TEntidadeConfig.SetSouServidor(const Value: Integer);
+begin
+  FSouServidor := Value;
+end;
+
+procedure TEntidadeConfig.SetUserName(const Value: String);
+begin
+  FUserName := Value;
+end;
+
+procedure TEntidadeConfig.SetVendorLib(const Value: String);
+begin
+  FVendorLib := Value;
+end;
+
+end.

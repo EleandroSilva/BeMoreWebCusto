@@ -1,0 +1,238 @@
+unit Supremo.Entidade.Aliquota;
+
+interface
+
+uses
+  Data.DB,
+  System.SysUtils,
+
+  Whorkshop.Model.Entidades.Interfaces,
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory;
+
+type
+  TAliquota = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FEscolhaTipoData : Integer;
+    FTextoFiltro: String;
+    FAtivo: Integer;
+    FStatus : Integer;
+    FDescricao: String;
+    FOperador: String;
+    FDataLancamento: TDateTime;
+    FIdModelo : String;
+    FIdProduto : String;
+    FIdParametro : String;
+    FValorLancamento : Currency;
+    FAliquota : Currency;
+    FGenId : Integer;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function EscolhaTipoData(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+    function Ativo(aValue: Integer): iModelEntidade;
+    function Status(aValue: Integer): iModelEntidade;
+
+    function Descricao(aValue: String): iModelEntidade;
+    function Operador(aValue: String): iModelEntidade;
+    function DataLancamento(aValue: TDateTime): iModelEntidade;
+    function IdModelo(aValue: String): iModelEntidade;
+    function IdProduto(aValue: String): iModelEntidade;
+    function IdParametro(aValue: String): iModelEntidade;
+    function ValorLancamento(aValue: currency): iModelEntidade;
+    function Aliquota(aValue : Currency) : iModelEntidade;
+
+    function Buscar(aValue: String): iModelEntidade;
+    function Insert: iModelEntidade; overload;
+    function Insert(aValue: String): iModelEntidade; overload;
+    function Update(aValue: String): iModelEntidade;
+    function Delete(aValue: String): iModelEntidade;
+    function PegarGenId: Integer;
+
+    function Get(const aValue: String = ''): iModelEntidade;
+  end;
+
+implementation
+
+{ TAliquota }
+
+constructor TAliquota.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+destructor TAliquota.Destroy;
+begin
+  inherited;
+end;
+
+class function TAliquota.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TAliquota.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TAliquota.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+function TAliquota.Ativo(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FAtivo := aValue;
+end;
+
+function TAliquota.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaFiltro := aValue;
+end;
+
+function TAliquota.EscolhaTipoData(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FEscolhaTipoData := aValue;
+end;
+
+function TAliquota.Status(aValue: Integer): iModelEntidade;
+begin
+  Result := Self;
+  FStatus := aValue;
+end;
+
+function TAliquota.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FTextoFiltro := aValue;
+end;
+
+function TAliquota.Descricao(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FDescricao := aValue;
+end;
+
+function TAliquota.Operador(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FOperador := aValue;
+end;
+
+function TAliquota.DataLancamento(aValue: TDateTime): iModelEntidade;
+begin
+  Result := Self;
+  FDataLancamento := aValue;
+end;
+
+function TAliquota.IdModelo(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdModelo := aValue;
+end;
+
+function TAliquota.IdParametro(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdParametro := aValue;
+end;
+
+function TAliquota.IdProduto(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  FIdProduto := aValue;
+end;
+
+function TAliquota.ValorLancamento(aValue: currency): iModelEntidade;
+begin
+  Result := Self;
+  FValorLancamento := aValue;
+end;
+
+function TAliquota.Aliquota(aValue : Currency) : iModelEntidade;
+begin
+  Result := Self;
+  FAliquota := aValue;
+end;
+
+function TAliquota.Buscar(aValue: String): iModelEntidade;
+const
+  cSQL = (
+          'select ' +
+          'A.Id, '+
+          'A.Descricao +
+          'from Aliquota A '
+         );
+var
+  lWhere: String;
+begin
+  Result := Self;
+  lWhere := '';
+
+  lWhere := ('where mp.Ativo=' + IntToStr(FAtivo) + ' ');
+
+  if FTextoFiltro <> '' then
+    case FEscolhaFiltro of
+      0: lWhere := lWhere + ('and mp.Id_mp=' +IntToStr(StrToInt(aValue)) + ' ');
+      1: lWhere := lWhere + ('and mp.Descricao CONTAINING ''' + aValue + ''' ');
+      2: lWhere := lWhere + ('and mp.Usuario CONTAINING ''' + aValue + ''' ');
+    end;
+
+  FQuery.Open(cSQL + lWhere);
+end;
+
+function TAliquota.Insert: iModelEntidade;
+begin
+  Result := Self;
+  //Criar Update quando precisar
+end;
+
+function TAliquota.Insert(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Json quando precisar
+end;
+
+function TAliquota.Update(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar isert into quando precisar
+end;
+
+function TAliquota.Delete(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar quando precisar
+end;
+
+function TAliquota.PegarGenId: Integer;
+begin
+  Result := 0;
+  //Criar PegarGenId quando precisar
+end;
+
+
+//JSON
+function TAliquota.Get(const aValue: String): iModelEntidade;
+begin
+  Result := Self;
+  //Criar Delete quando precisar
+end;
+
+end.

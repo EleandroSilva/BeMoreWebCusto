@@ -1,0 +1,287 @@
+unit ufrmModelodbEdit;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  Winapi.UrlMon,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  Data.DB,
+  Data.SqlExpr,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.DBCtrls,
+  Vcl.Mask,
+
+  udmPrincipal;
+
+type
+  TfrmModelodbEdit = class(TForm)
+    Navigator: TDBNavigator;
+
+    btnSearch: TBitBtn;
+    btnCancel: TBitBtn;
+    btnNew: TBitBtn;
+    btnSalve: TBitBtn;
+    btnUpdate: TBitBtn;
+    btnDelete: TBitBtn;
+    bbClose: TBitBtn;
+
+    rgActive: TRadioGroup;
+
+    pgMain: TPageControl;
+    tsRegister: TTabSheet;
+
+    lSite: TLabel;
+    lTextoEmpresa: TLabel;
+    lOperator: TLabel;
+    LId: TLabel;
+    lDataLancamento: TLabel;
+    lDescricao: TLabel;
+    lStart: TLabel;
+    lEnd: TLabel;
+    lDigiteConformeEscolha: TLabel;
+
+    tsSearch: TTabSheet;
+    rgChoice: TRadioGroup;
+    gbBetweenDates: TGroupBox;
+
+    StartDate: TDateTimePicker;
+    EndDate: TDateTimePicker;
+
+    dbgSearch: TDBGrid;
+
+    ImageList1: TImageList;
+    DataSource1: TDataSource;
+
+    edtSearch: TEdit;
+    edtOperator: TDBEdit;
+    editId: TDBEdit;
+    MedtReleaseDate: TDBEdit;
+    editDescricao: TDBEdit;
+
+    pButtons: TPanel;
+    pSite: TPanel;
+    pCabecalho: TPanel;
+    pOperator: TPanel;
+    pGrid: TPanel;
+    pEdit: TPanel;
+    pGridCadastro: TPanel;
+    pSearch: TPanel;
+    pFiltro: TPanel;
+
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
+    procedure lSiteClick(Sender: TObject);
+    procedure dbgSearchDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure btnNewClick(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure bbCloseClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnUpdateClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+  private
+    procedure AtualizarBtnNew;
+    procedure AtualizarBtnCancel;
+    procedure AtualizarBtnUpdate;
+    procedure AtualizarBtnDelete;
+    procedure AtualizarSalve;
+    procedure AtualizarSearch;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmModelodbEdit: TfrmModelodbEdit;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TfrmModelodbEdit.AtualizarBtnCancel;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelodbEdit.AtualizarBtnDelete;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelodbEdit.AtualizarBtnNew;
+begin
+  btnNew.Enabled := False;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := True;
+  btnSearch.Enabled := False;
+end;
+
+procedure TfrmModelodbEdit.AtualizarBtnUpdate;
+begin
+  MedtReleaseDate.SetFocus;
+  btnNew.Enabled := False;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := True;
+  btnSearch.Enabled := False;
+end;
+
+procedure TfrmModelodbEdit.AtualizarSalve;
+begin
+  btnNew.Enabled := True;
+  btnCancel.Enabled := False;
+  btnUpdate.Enabled := False;
+  btnDelete.Enabled := False;
+  btnSalve.Enabled := False;
+  btnSearch.Enabled := True;
+  btnNew.SetFocus;
+end;
+
+procedure TfrmModelodbEdit.AtualizarSearch;
+begin
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnDelete.Enabled := True;
+  btnCancel.Enabled := True;
+  btnUpdate.Enabled := True;
+  btnNew.Enabled := True;
+end;
+
+procedure TfrmModelodbEdit.bbCloseClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmModelodbEdit.btnCancelClick(Sender: TObject);
+begin
+  AtualizarBtnCancel;
+end;
+
+procedure TfrmModelodbEdit.btnDeleteClick(Sender: TObject);
+begin
+  AtualizarBtnDelete;
+end;
+
+procedure TfrmModelodbEdit.btnNewClick(Sender: TObject);
+begin
+  pgMain.ActivePageIndex := 0;
+  MedtReleaseDate.SetFocus;
+  AtualizarBtnNew;
+end;
+
+procedure TfrmModelodbEdit.btnSearchClick(Sender: TObject);
+begin
+  if not DataSource1.DataSet.IsEmpty then
+    pgMain.ActivePageIndex := 1;
+
+  AtualizarSearch;
+end;
+
+procedure TfrmModelodbEdit.btnUpdateClick(Sender: TObject);
+begin
+  pgMain.ActivePageIndex := 0;
+  AtualizarBtnUpdate;
+end;
+
+procedure TfrmModelodbEdit.dbgSearchDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Odd(TDBGrid(Sender).DATASOURCE.DataSet.RecNo) Then
+    TDBGrid(Sender).Canvas.Brush.Color := clSkyBlue
+  Else
+    TDBGrid(Sender).Canvas.Brush.Color := clGray;
+
+  If (State = [GdSelected]) Or (State = [GdFocused]) Or (State = [GdSelected, GdFocused]) Then
+  Begin
+    TDBGrid(Sender).Canvas.Brush.Color := cl3DLight;
+    TDBGrid(Sender).Canvas.Font.Color := clBlack;
+  End;
+  TDBGrid(Sender).DefaultDrawDataCell(Rect, Column.Field, State);
+end;
+
+procedure TfrmModelodbEdit.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := CaFree;
+end;
+
+procedure TfrmModelodbEdit.FormCreate(Sender: TObject);
+begin
+  pgMain.TabIndex := 0;
+end;
+
+procedure TfrmModelodbEdit.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(CM_Dialogkey, VK_TAB, 0);
+  end;
+end;
+
+procedure TfrmModelodbEdit.FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_Escape:
+      Close;
+  end;
+end;
+
+procedure TfrmModelodbEdit.FormShow(Sender: TObject);
+var
+  lDia: String;
+begin
+  lDia := '01/' + FormatDateTime('MM', Now) + '/' + FormatDateTime('YYYY', Now);
+  StartDate.Date := StrToDate(lDia);
+  EndDate.Date := Now;
+
+  rgChoice.ItemIndex := 1;
+  btnSearch.SetFocus;
+
+  Td.TransactionID := 1;
+  Td.IsolationLevel := xilreadcommitted;
+end;
+
+procedure TfrmModelodbEdit.lSiteClick(Sender: TObject);
+begin
+  HlinkNavigateString(nil, 'http://bemoreweb.com.br/');
+end;
+
+end.

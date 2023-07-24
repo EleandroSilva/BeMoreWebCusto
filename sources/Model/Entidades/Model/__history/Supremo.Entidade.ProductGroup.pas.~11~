@@ -1,0 +1,96 @@
+unit Supremo.Entidade.ProductGroup;
+
+interface
+
+uses
+  Data.DB,
+
+  Whorkshop.Model.Connection.Interfaces,
+  Whorkshop.Model.Connection.Factory,
+  Whorkshop.Model.Entidades.Interfaces, System.SysUtils;
+
+type
+  TProductGroup = class(TInterfacedObject, iModelEntidade)
+  private
+    FQuery: iModelQuery;
+    FEscolhaFiltro: Integer;
+    FTextoFiltro: String;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidade;
+
+    function DataSet(aValue: TDataSource): iModelEntidade; overload;
+    function DataSet(aValue: TDataSet): iModelEntidade; overload;
+
+    function EscolhaFiltro(aValue: Integer): iModelEntidade;
+    function TextoFiltro(aValue: String): iModelEntidade;
+
+    function Buscar: iModelEntidade; overload;
+    function Buscar(aID: Integer): iModelEntidade; overload;
+    function Buscar(aValue: String): iModelEntidade; overload;
+  end;
+
+implementation
+
+{ TProductGroup }
+
+function TProductGroup.Buscar: iModelEntidade;
+begin
+  Result := Self;
+end;
+
+function TProductGroup.Buscar(aID: Integer): iModelEntidade;
+begin
+  Result := Self;
+
+  FQuery.Open('cad_grupo ' +
+    'where id=' + IntToStr(aID) + '');
+end;
+
+function TProductGroup.Buscar(aValue: String): iModelEntidade;
+begin
+  Result := Self;
+
+  FQuery.Open('cad_grupo ' +
+    'where descricao=' + QuotedStr(aValue));
+end;
+
+constructor TProductGroup.Create;
+begin
+  FQuery := TModelConnectionFactory.New.Query;
+end;
+
+function TProductGroup.DataSet(aValue: TDataSource): iModelEntidade;
+begin
+  Result := Self;
+  aValue.DataSet := FQuery.Query;
+end;
+
+function TProductGroup.DataSet(aValue: TDataSet): iModelEntidade;
+begin
+  Result := Self;
+  aValue.Assign(FQuery.Query);
+end;
+
+destructor TProductGroup.Destroy;
+begin
+  inherited;
+end;
+
+function TProductGroup.EscolhaFiltro(aValue: Integer): iModelEntidade;
+begin
+  FEscolhaFiltro := aValue;
+end;
+
+class function TProductGroup.New: iModelEntidade;
+begin
+  Result := Self.Create;
+end;
+
+function TProductGroup.TextoFiltro(aValue: String): iModelEntidade;
+begin
+  FTextoFiltro := aValue;
+end;
+
+end.

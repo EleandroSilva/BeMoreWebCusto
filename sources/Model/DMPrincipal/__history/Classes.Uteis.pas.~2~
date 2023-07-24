@@ -1,0 +1,40 @@
+unit Classes.Uteis;
+
+interface
+
+uses
+  System.IniFiles,
+  System.SysUtils,
+  Vcl.Forms;
+
+Type
+  TClasseUteis = class
+    private
+    FServidor : String;
+    FCliente : String;
+    FMaquina : String;
+    public
+    procedure LeIniServidor(var Servidor, Cliente, Maquina: string);
+  end;
+
+implementation
+
+{ TClasseUteis }
+
+procedure TClasseUteis.LeIniServidor(var Servidor, Cliente, Maquina: string);
+var
+  ArqIni: TIniFile;
+  CAMINHO: string;
+begin
+  CAMINHO := (ExtractFilePath(Application.ExeName));
+  ArqIni := TIniFile.Create(CAMINHO + 'SERVIDOR_CLIENTE.INI');
+  try
+    SERVIDOR := ArqIni.ReadString('Informacao', 'SERVIDOR', SERVIDOR);
+    CLIENTE := ArqIni.ReadString('Informacao', 'CLIENTE', CLIENTE);
+    MAQUINA := ArqIni.ReadString('Informacao', 'MAQUINA', MAQUINA);
+  finally
+    ArqIni.Free;
+  end;
+end;
+
+end.
